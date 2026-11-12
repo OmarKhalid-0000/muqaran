@@ -4,7 +4,7 @@ const axios = require('axios');
 const cheerio = require('cheerio');
 
 const app = express();
-const PORT = process.0 || 3000;
+const PORT = process.env.PORT || 3000;
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
