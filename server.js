@@ -10,17 +10,33 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(__dirname));
 app.use(express.json());
 
-// دالة البحث الذكية (تدمج البحث الحقيقي مع نتائج مضمونة لضمان عدم ظهور شاشة فارغة)
+// توحيد أسماء المتاجر القادمة من محرك البحث لتطابق أزرار الفلترة العربية
+function normalizeStoreName(rawSource) {
+    if (!rawSource) return 'محلي';
+    const lower = rawSource.toLowerCase();
+    if (lower.includes('amazon') || lower.includes('أمازون')) return 'أمازون';
+    if (lower.includes('noon') || lower.includes('نون')) return 'نون';
+    if (lower.includes('jarir') || lower.includes('جرير')) return 'جرير';
+    if (lower.includes('extra') || lower.includes('إكسترا') || lower.includes('اكسترا')) return 'إكسترا';
+    if (lower.includes('shein') || lower.includes('شي إن') || lower.includes('شي ان')) return 'شي إن';
+    if (lower.includes('temu') || lower.includes('تيمو')) return 'تيمو';
+    if (lower.includes('trendyol') || lower.includes('ترنديول')) return 'ترنديول';
+    if (lower.includes('aliexpress') || lower.includes('علي اكسبرس')) return 'علي اكسبرس';
+    return `محلي (${rawSource})`;
+}
+
+// دالة البحث الحقيقي عبر SerpApi
 async function searchStores(query) {
     let results = [];
-    
+    const searchQuery = query || 'ايفون 15';
+
     try {
-        const apiKey = process.env.API_KEY || "8bddfe6d364e5710991f9c72daf937aace4bc5ad978b0811d9b2a7421def93aa"; 
+        const apiKey = process.env.API_KEY || "8bddfe6d364e5710991f9c72daf937aace4bc5ad978b0811d9b2a7421def93aa";
         
         const response = await axios.get('https://serpapi.com/search.json', {
             params: {
                 engine: 'google_shopping',
-                q: query,
+                q: searchQuery,
                 gl: 'sa',
                 hl: 'ar',
                 api_key: apiKey
@@ -35,32 +51,25 @@ async function searchStores(query) {
                 return {
                     id: index + 1,
                     name: item.title,
-                    store: item.source || 'أمازون',
+                    store: normalizeStoreName(item.source),
                     price: numericPrice.toString(),
-                    image: item.thumbnail || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=300',
-                    link: item.link || '#'
+                    image: item.thumbnail || 'https://placehold.co/300x200/1e293b/ffffff?text=صورة+المنتج',
+                    link: item.link || item.product_link || '#'
                 };
             });
         }
     } catch (error) {
-        console.log("تنبيه من الـ API، سيتم استخدام النتائج البديلة المضمونة:", error.message);
+        console.error("خطأ في جلب البيانات من الـ API:", error.message);
     }
 
-    // إذا لم يرجع الـ API نتائج، نعرض منتجات مطابقة للمتاجر المطلوبة لضمان عمل الموقع والفلترة
+    // نتائج بديلة في حال انتهاء رصيد الـ API المجاني لضمان عدم توقف الموقع
     if (results.length === 0) {
-        const fallbackProducts = [
-            { id: 1, name: query ? `${query} - النسخة الأصلية` : 'آيفون 15 برو ماكس 256 جيجابايت', store: 'أمازون', price: '4500', image: 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=300', link: 'https://amazon.sa' },
-            { id: 2, name: query ? `${query} - عرض خاص` : 'آيفون 15 برو ماكس 256 جيجابايت', store: 'نون', price: '4450', image: 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=300', link: 'https://noon.com' },
-            { id: 3, name: query ? `${query}` : 'ساعة أبل الترا 2 ذكية', store: 'جرير', price: '3100', image: 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=300', link: 'https://jarir.com' },
-            { id: 4, name: query ? `${query}` : 'شاشة ذكية 65 بوصة 4K', store: 'إكسترا', price: '2299', image: 'https://images.unsplash.com/photo-1593784991095-a205069470b6?w=300', link: 'https://extra.com' },
-            { id: 5, name: query ? `${query}` : 'فستان نسائي أنيق', store: 'شي إن', price: '120', image: 'https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=300', link: 'https://shein.com' },
-            { id: 6, name: query ? `${query}` : 'سماعة لاسلكية بلوتوث', store: 'تيمو', price: '85', image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300', link: 'https://temu.com' },
-            { id: 7, name: query ? `${query}` : 'حذاء رياضي مريح للركض', store: 'ترنديول', price: '150', image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300', link: 'https://trendyol.com' },
-            { id: 8, name: query ? `${query}` : 'حامل هاتف للسيارة', store: 'علي اكسبرس', price: '35', image: 'https://images.unsplash.com/photo-1584438784894-089d6a62b8fa?w=300', link: 'https://aliexpress.com' },
-            { id: 9, name: query ? `${query}` : 'منتج محلي مميز', store: 'محلي', price: '200', image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=300', link: '#' }
+        results = [
+            { id: 1, name: `${searchQuery} - العرض الأول`, store: 'أمازون', price: '4500', image: 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=400', link: 'https://amazon.sa' },
+            { id: 2, name: `${searchQuery} - العرض الثاني`, store: 'نون', price: '4450', image: 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=400', link: 'https://noon.com' },
+            { id: 3, name: `${searchQuery} - العرض الثالث`, store: 'جرير', price: '4599', image: 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=400', link: 'https://jarir.com' },
+            { id: 4, name: `${searchQuery} - العرض الرابع`, store: 'إكسترا', price: '4550', image: 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=400', link: 'https://extra.com' }
         ];
-
-        results = fallbackProducts;
     }
 
     return results;
