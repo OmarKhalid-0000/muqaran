@@ -90,7 +90,7 @@
 
                     <form onsubmit="handleHeroSearch(event)" class="flex flex-col sm:flex-row gap-2.5 pt-2">
                         <div class="relative flex-1">
-                            <input type="text" id="hero-search-input" placeholder="ابحث عن منتج..."
+                            <input type="text" id="hero-search-input" placeholder="ابحث عن منتج (مثال: ايفون 15، سماعات سوني)..."
                                 class="w-full bg-slate-950 border border-slate-700 focus:border-sky-500 rounded-xl sm:rounded-2xl py-3.5 sm:py-4 pr-11 pl-4 text-white placeholder-slate-500 text-xs sm:text-sm focus:outline-none shadow-inner">
                             <i class="fa-solid fa-magnifying-glass absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm sm:text-lg"></i>
                         </div>
@@ -130,38 +130,38 @@
                         <label class="text-xs font-bold text-slate-300 block">المتاجر الإلكترونية</label>
                         <div class="grid grid-cols-2 sm:grid-cols-1 gap-2">
                             <label class="flex items-center gap-2 text-xs text-slate-300 cursor-pointer">
-                                <input type="checkbox" value="أمازون" onchange="applyFilters()" class="store-filter rounded bg-slate-950 border-slate-700 text-sky-500 focus:ring-0" checked> أمازون
+                                <input type="checkbox" value="أمازون" onchange="filterClientSide()" class="store-filter rounded bg-slate-950 border-slate-700 text-sky-500 focus:ring-0" checked> أمازون
                             </label>
                             <label class="flex items-center gap-2 text-xs text-slate-300 cursor-pointer">
-                                <input type="checkbox" value="نون" onchange="applyFilters()" class="store-filter rounded bg-slate-950 border-slate-700 text-sky-500 focus:ring-0" checked> نون
+                                <input type="checkbox" value="نون" onchange="filterClientSide()" class="store-filter rounded bg-slate-950 border-slate-700 text-sky-500 focus:ring-0" checked> نون
                             </label>
                             <label class="flex items-center gap-2 text-xs text-slate-300 cursor-pointer">
-                                <input type="checkbox" value="شي إن" onchange="applyFilters()" class="store-filter rounded bg-slate-950 border-slate-700 text-sky-500 focus:ring-0" checked> شي إن
+                                <input type="checkbox" value="شي إن" onchange="filterClientSide()" class="store-filter rounded bg-slate-950 border-slate-700 text-sky-500 focus:ring-0" checked> شي إن
                             </label>
                             <label class="flex items-center gap-2 text-xs text-slate-300 cursor-pointer">
-                                <input type="checkbox" value="تيمو" onchange="applyFilters()" class="store-filter rounded bg-slate-950 border-slate-700 text-sky-500 focus:ring-0" checked> تيمو
+                                <input type="checkbox" value="تيمو" onchange="filterClientSide()" class="store-filter rounded bg-slate-950 border-slate-700 text-sky-500 focus:ring-0" checked> تيمو
                             </label>
                             <label class="flex items-center gap-2 text-xs text-slate-300 cursor-pointer">
-                                <input type="checkbox" value="ترنديول" onchange="applyFilters()" class="store-filter rounded bg-slate-950 border-slate-700 text-sky-500 focus:ring-0" checked> ترنديول
+                                <input type="checkbox" value="ترنديول" onchange="filterClientSide()" class="store-filter rounded bg-slate-950 border-slate-700 text-sky-500 focus:ring-0" checked> ترنديول
                             </label>
                             <label class="flex items-center gap-2 text-xs text-slate-300 cursor-pointer">
-                                <input type="checkbox" value="علي اكسبرس" onchange="applyFilters()" class="store-filter rounded bg-slate-950 border-slate-700 text-sky-500 focus:ring-0" checked> علي اكسبرس
+                                <input type="checkbox" value="علي اكسبرس" onchange="filterClientSide()" class="store-filter rounded bg-slate-950 border-slate-700 text-sky-500 focus:ring-0" checked> علي اكسبرس
                             </label>
                             <label class="flex items-center gap-2 text-xs text-slate-300 cursor-pointer">
-                                <input type="checkbox" value="محلي" onchange="applyFilters()" class="store-filter rounded bg-slate-950 border-slate-700 text-sky-500 focus:ring-0" checked> محلي
+                                <input type="checkbox" value="محلي" onchange="filterClientSide()" class="store-filter rounded bg-slate-950 border-slate-700 text-sky-500 focus:ring-0" checked> محلي
                             </label>
                             <label class="flex items-center gap-2 text-xs text-slate-300 cursor-pointer">
-                                <input type="checkbox" value="جرير" onchange="applyFilters()" class="store-filter rounded bg-slate-950 border-slate-700 text-sky-500 focus:ring-0" checked> جرير
+                                <input type="checkbox" value="جرير" onchange="filterClientSide()" class="store-filter rounded bg-slate-950 border-slate-700 text-sky-500 focus:ring-0" checked> جرير
                             </label>
                             <label class="flex items-center gap-2 text-xs text-slate-300 cursor-pointer">
-                                <input type="checkbox" value="إكسترا" onchange="applyFilters()" class="store-filter rounded bg-slate-950 border-slate-700 text-sky-500 focus:ring-0" checked> إكسترا
+                                <input type="checkbox" value="إكسترا" onchange="filterClientSide()" class="store-filter rounded bg-slate-950 border-slate-700 text-sky-500 focus:ring-0" checked> إكسترا
                             </label>
                         </div>
                     </div>
 
                     <div class="space-y-2 border-t border-slate-800 pt-4">
                         <label class="text-xs font-bold text-slate-300 block">ترتيب حسب</label>
-                        <select id="sort-select" onchange="applyFilters()" class="w-full bg-slate-950 border border-slate-800 text-xs text-slate-200 rounded-xl p-2.5 focus:outline-none">
+                        <select id="sort-select" onchange="filterClientSide()" class="w-full bg-slate-950 border border-slate-800 text-xs text-slate-200 rounded-xl p-2.5 focus:outline-none">
                             <option value="default">الافتراضي</option>
                             <option value="price-asc">الأقل سعراً أولاً</option>
                             <option value="price-desc">الأعلى سعراً أولاً</option>
@@ -175,11 +175,13 @@
                             <h2 class="text-base sm:text-lg font-bold text-white" id="search-title">جميع المنتجات</h2>
                             <p class="text-[11px] sm:text-xs text-slate-400" id="search-count">عرض النتائج المتاحة</p>
                         </div>
-                        <div class="relative w-full sm:w-64">
-                            <input type="text" id="grid-search-input" placeholder="تصفية حسب الاسم..." oninput="applyFilters()"
+                        <form onsubmit="handleGridSearch(event)" class="relative w-full sm:w-64">
+                            <input type="text" id="grid-search-input" placeholder="ابحث عن منتج..."
                                 class="w-full bg-slate-950 border border-slate-800 rounded-xl py-2 pr-9 pl-3 text-xs text-slate-200 focus:outline-none">
-                            <i class="fa-solid fa-filter absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 text-xs"></i>
-                        </div>
+                            <button type="submit" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-sky-400 text-xs">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                            </button>
+                        </form>
                     </div>
                     <div id="main-products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"></div>
                 </div>
@@ -334,7 +336,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-right">
             <div class="flex items-center justify-center gap-2">
                 <span class="bg-sky-600 text-white font-extrabold text-xs px-2 py-0.5 rounded-lg">مُقارن</span>
-                <p class="text-[11px] sm:text-xs text-slate-400">©️ 2026 جميع الحقوق محفوظة لمنصة مقارن الأسعار</p>
+                <p class="text-[11px] sm:text-xs text-slate-400">© 2026 جميع الحقوق محفوظة لمنصة مقارن الأسعار</p>
             </div>
             <div class="flex items-center gap-4 text-[11px] sm:text-xs text-slate-400">
                 <a href="#" onclick="switchView('privacy-view'); return false;" class="hover:text-white transition">الخصوصية</a>
@@ -405,7 +407,7 @@
                 if (unsubscribeFavs) unsubscribeFavs();
                 window.favorites = [];
                 window.updateFavBadge();
-                window.applyFilters();
+                window.filterClientSide();
                 authControls.innerHTML = `
                     <button onclick="openAuthModal()" class="bg-sky-600 hover:bg-sky-500 text-white px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-xl font-bold text-xs transition whitespace-nowrap">
                         تسجيل دخول
@@ -452,7 +454,6 @@
                 const favsSnapshot = await getDocs(collection(db, "users", userUid, "favorites"));
                 const deletePromises = favsSnapshot.docs.map(d => deleteDoc(d.ref));
                 await Promise.all(deletePromises);
-
                 await deleteUser(currentUser);
                 showToast("تم حذف الحساب بنجاح");
                 switchView('hero-view');
@@ -475,7 +476,7 @@
                 return;
             }
 
-            const product = window.sampleProducts.find(p => p.id === id);
+            const product = window.allFetchedProducts.find(p => p.id === id);
             if (!product) return;
 
             const idx = window.favorites.indexOf(id);
@@ -484,39 +485,31 @@
             if (idx > -1) {
                 window.favorites.splice(idx, 1);
                 window.updateFavBadge();
-                window.applyFilters();
+                window.filterClientSide();
                 if (document.getElementById('wishlist-view').classList.contains('active')) {
                     window.renderWishlist();
                 }
                 showToast("تم الحذف من المفضلة");
-
-                try {
-                    await deleteDoc(favDocRef);
-                } catch (err) {
-                    console.error("Error removing fav:", err);
-                }
+                try { await deleteDoc(favDocRef); } catch (err) { console.error(err); }
             } else {
                 window.favorites.push(id);
                 window.updateFavBadge();
-                window.applyFilters();
+                window.filterClientSide();
                 if (document.getElementById('wishlist-view').classList.contains('active')) {
                     window.renderWishlist();
                 }
-                showToast("تمت الإضافة للمفضلة ♥️");
-
+                showToast("تمت الإضافة للمفضلة ♥");
                 try {
                     await setDoc(favDocRef, {
                         productId: product.id,
-                        title: product.title,
+                        title: product.name || product.title,
                         price: product.price,
                         store: product.store,
                         image: product.image,
                         link: product.link,
                         createdAt: new Date()
                     });
-                } catch (err) {
-                    console.error("Error adding fav:", err);
-                }
+                } catch (err) { console.error(err); }
             }
         }
 
@@ -530,19 +523,16 @@
                 });
                 window.favorites = favIds;
                 window.updateFavBadge();
-                window.applyFilters();
+                window.filterClientSide();
                 if (document.getElementById('wishlist-view').classList.contains('active')) {
                     window.renderWishlist();
                 }
-            }, (err) => {
-                console.error("Error loading favorites:", err);
-            });
+            }, (err) => { console.error(err); });
         }
     </script>
 
     <script>
-        // مصفوفة المنتجات التي ستستقبل النتائج الحقيقية من السيرفر
-        window.sampleProducts = [];
+        window.allFetchedProducts = [];
         window.favorites = [];
 
         window.switchView = function(viewId) {
@@ -570,7 +560,9 @@
                 }
             }
 
-            if (viewId === 'search-view') applyFilters();
+            if (viewId === 'search-view' && window.allFetchedProducts.length === 0) {
+                fetchProductsFromServer('');
+            }
             if (viewId === 'wishlist-view') renderWishlist();
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
@@ -587,39 +579,24 @@
                 header.className = "sticky top-0 z-40 bg-slate-900/95 backdrop-blur-md border-b border-slate-800 shadow-lg transition-colors duration-300";
                 footer.className = "bg-slate-900 border-t border-slate-800 mt-12 py-8 transition-colors duration-300";
                 themeIcon.className = "fa-solid fa-sun text-base";
-                
-                document.querySelectorAll('.bg-slate-100, .bg-white').forEach(el => {
-                    el.classList.replace('bg-slate-100', 'bg-slate-900');
-                    el.classList.replace('bg-white', 'bg-slate-900');
-                    el.classList.replace('border-slate-300', 'border-slate-800');
-                    el.classList.replace('text-slate-900', 'text-white');
-                });
                 showToast("تم تفعيل الوضع الداكن");
             } else {
                 bodyRoot.className = "min-h-screen flex flex-col justify-between bg-slate-50 text-slate-900 antialiased transition-colors duration-300";
                 header.className = "sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm transition-colors duration-300";
                 footer.className = "bg-white border-t border-slate-200 mt-12 py-8 transition-colors duration-300";
                 themeIcon.className = "fa-solid fa-moon text-base";
-
-                document.querySelectorAll('.bg-slate-900, .bg-slate-950').forEach(el => {
-                    if(el.id !== 'toast-container') {
-                        el.classList.replace('bg-slate-900', 'bg-white');
-                        el.classList.replace('bg-slate-950', 'bg-slate-100');
-                        el.classList.replace('border-slate-800', 'border-slate-300');
-                        el.classList.replace('text-white', 'text-slate-900');
-                    }
-                });
                 showToast("تم تفعيل الوضع الفاتح");
             }
         }
 
         function createProductCardHTML(p) {
             const isFav = window.favorites.includes(p.id);
+            const title = p.name || p.title;
             return `
                 <div class="bg-slate-900 border border-slate-800 hover:border-slate-700 rounded-2xl overflow-hidden flex flex-col justify-between shadow-md transition group">
                     <div>
                         <div class="relative w-full h-44 sm:h-48 bg-slate-950 overflow-hidden flex items-center justify-center p-4">
-                            <img src="${p.image}" alt="${p.title || p.name}" class="h-full w-full object-cover group-hover:scale-105 transition duration-300" onerror="this.src='https://placehold.co/300x200/1e293b/ffffff?text=صورة+المنتج'">
+                            <img src="${p.image}" alt="${title}" class="h-full w-full object-contain group-hover:scale-105 transition duration-300" onerror="this.src='https://placehold.co/300x200/1e293b/ffffff?text=صورة+المنتج'">
                             <button onclick="toggleFavorite(${p.id})" class="absolute top-3 left-3 w-9 h-9 rounded-full bg-slate-900/80 hover:bg-slate-900 border border-slate-700 flex items-center justify-center text-slate-300 hover:text-rose-500 transition shadow">
                                 <i class="${isFav ? 'fa-solid text-rose-500' : 'fa-regular'} fa-heart text-base"></i>
                             </button>
@@ -628,14 +605,14 @@
                             </span>
                         </div>
                         <div class="p-4 sm:p-5 space-y-2">
-                            <h3 class="font-bold text-xs sm:text-sm text-white line-clamp-2 leading-snug">${p.title || p.name}</h3>
+                            <h3 class="font-bold text-xs sm:text-sm text-white line-clamp-2 leading-snug">${title}</h3>
                             <div class="text-lg sm:text-xl font-extrabold text-sky-400 pt-1">
-                                ${typeof p.price === 'number' ? p.price.toLocaleString() : p.price} <span class="text-xs text-slate-400 font-normal">ر.س</span>
+                                ${Number(p.price).toLocaleString()} <span class="text-xs text-slate-400 font-normal">ر.س</span>
                             </div>
                         </div>
                     </div>
                     <div class="px-4 pb-4 sm:px-5 sm:pb-5 pt-1">
-                        <a href="${p.link || '#'}" target="_blank" class="w-full py-2.5 bg-slate-800 hover:bg-sky-600 text-slate-200 hover:text-white font-bold text-xs rounded-xl flex items-center justify-center gap-2 transition">
+                        <a href="${p.link}" target="_blank" class="w-full py-2.5 bg-slate-800 hover:bg-sky-600 text-slate-200 hover:text-white font-bold text-xs rounded-xl flex items-center justify-center gap-2 transition">
                             <span>الذهاب للمتجر</span>
                             <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
                         </a>
@@ -644,16 +621,41 @@
             `;
         }
 
-        window.applyFilters = function() {
-            const query = (document.getElementById('grid-search-input')?.value || '').trim().toLowerCase();
+        // جلب البيانات من السيرفر عند البحث
+        async function fetchProductsFromServer(query) {
+            const grid = document.getElementById('main-products-grid');
+            const countLabel = document.getElementById('search-count');
+            const titleLabel = document.getElementById('search-title');
+
+            if (titleLabel) titleLabel.textContent = query ? `نتائج البحث عن: "${query}"` : 'جميع المنتجات';
+            if (grid) {
+                grid.innerHTML = `
+                    <div class="col-span-full py-12 text-center text-sky-400">
+                        <i class="fa-solid fa-spinner fa-spin text-3xl mb-3"></i>
+                        <p class="text-xs sm:text-sm font-bold">جاري البحث في المتاجر ومقارنة الأسعار...</p>
+                    </div>
+                `;
+            }
+
+            try {
+                const response = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+                const products = await response.json();
+                window.allFetchedProducts = products;
+                filterClientSide();
+            } catch (err) {
+                console.error("Error fetching search results:", err);
+                if (grid) grid.innerHTML = '<div class="col-span-full py-12 text-center text-rose-400">حدث خطأ أثناء الاتصال بالسيرفر</div>';
+            }
+        }
+
+        // تصفية وترتيب المنتجات المعروضة في الواجهة
+        window.filterClientSide = function() {
             const selectedStores = Array.from(document.querySelectorAll('.store-filter:checked')).map(cb => cb.value);
             const sortVal = document.getElementById('sort-select')?.value || 'default';
 
-            let filtered = window.sampleProducts.filter(p => {
-                const title = p.title || p.name || '';
-                const matchesQuery = title.toLowerCase().includes(query) || p.store.toLowerCase().includes(query);
-                const matchesStore = selectedStores.includes(p.store);
-                return matchesQuery && matchesStore;
+            let filtered = window.allFetchedProducts.filter(p => {
+                const storeName = p.store || '';
+                return selectedStores.some(s => storeName.includes(s));
             });
 
             if (sortVal === 'price-asc') filtered.sort((a, b) => Number(a.price) - Number(b.price));
@@ -675,9 +677,9 @@
 
         window.resetFilters = function() {
             document.querySelectorAll('.store-filter').forEach(cb => cb.checked = true);
-            const input = document.getElementById('grid-search-input');
-            if (input) input.value = '';
-            applyFilters();
+            const sortSelect = document.getElementById('sort-select');
+            if (sortSelect) sortSelect.value = 'default';
+            filterClientSide();
         }
 
         window.filterByStore = function(storeName) {
@@ -685,46 +687,31 @@
             document.querySelectorAll('.store-filter').forEach(cb => {
                 cb.checked = (cb.value === storeName);
             });
-            applyFilters();
+            if (window.allFetchedProducts.length === 0) {
+                fetchProductsFromServer('');
+            } else {
+                filterClientSide();
+            }
         }
 
-        // تعديل دالة البحث لجلب النتائج الحقيقية من السيرفر
-        window.handleHeroSearch = async function(e) {
+        window.handleHeroSearch = function(e) {
             e.preventDefault();
             const query = document.getElementById('hero-search-input').value.trim();
-            if (!query) return;
-            
             switchView('search-view');
-            const grid = document.getElementById('main-products-grid');
-            const countLabel = document.getElementById('search-count');
-            
-            if (grid) grid.innerHTML = '<div class="col-span-full py-12 text-center text-slate-400">جاري البحث وجلب النتائج من المتاجر...</div>';
-            if (countLabel) countLabel.textContent = 'جاري البحث...';
+            const gridSearchInput = document.getElementById('grid-search-input');
+            if (gridSearchInput) gridSearchInput.value = query;
+            fetchProductsFromServer(query);
+        }
 
-            try {
-                const response = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
-                const products = await response.json();
-                
-                // توحيد مسميات الحقول (title و name) لضمان توافقها مع القوالب
-                window.sampleProducts = products.map((p, index) => ({
-                    id: p.id || index + 1,
-                    title: p.title || p.name,
-                    store: p.store || 'أمازون',
-                    price: p.price || 0,
-                    image: p.image || 'https://via.placeholder.com/150',
-                    link: p.link || '#'
-                }));
-
-                applyFilters();
-            } catch (err) {
-                console.error(err);
-                if (grid) grid.innerHTML = '<div class="col-span-full py-12 text-center text-rose-400">حدث خطأ أثناء جلب النتائج من السيرفر.</div>';
-            }
+        window.handleGridSearch = function(e) {
+            e.preventDefault();
+            const query = document.getElementById('grid-search-input').value.trim();
+            fetchProductsFromServer(query);
         }
 
         window.renderWishlist = function() {
             const grid = document.getElementById('wishlist-grid');
-            const favItems = window.sampleProducts.filter(p => window.favorites.includes(p.id));
+            const favItems = window.allFetchedProducts.filter(p => window.favorites.includes(p.id));
             if (grid) {
                 grid.innerHTML = favItems.length === 0 ? `
                     <div class="col-span-full py-12 text-center text-slate-500">
