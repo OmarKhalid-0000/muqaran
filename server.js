@@ -4,7 +4,7 @@ const axios = require('axios');
 const cheerio = require('cheerio');
 
 const app = express();
-const PORT = 3000;
+const PORT = process.0 || 3000;
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
@@ -49,5 +49,5 @@ app.get('/api/search', async (req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log(`✅ السيرفر يعمل بنجاح على: http://localhost:3000`);
+    console.log(`✅ السيرفر يعمل بنجاح على المنفذ: ${PORT}`);
 });
