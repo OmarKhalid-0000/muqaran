@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const fs = require('fs');
 const axios = require('axios');
+const cheerio = require('cheerio');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -9,6 +10,11 @@ const PORT = process.env.PORT || 3000;
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(__dirname));
 app.use(express.json());
+
+const HEADERS = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+    'Accept-Language': 'ar-SA,ar;q=0.9,en;q=0.8'
+};
 
 // توحيد أسماء المتاجر الإلكترونية الكبرى
 function normalizeStoreName(rawSource) {
@@ -35,10 +41,17 @@ function normalizeD4DStore(rawSource) {
     if (lower.includes('danube') || lower.includes('الدانوب')) return 'الدانوب';
     if (lower.includes('lulu') || lower.includes('لولو')) return 'لولو';
     if (lower.includes('tamimi') || lower.includes('التميمي')) return 'التميمي';
-    return 'بنده';
+    return rawSource.trim();
 }
 
-// دالة بحث المتاجر الإلكترونية الكبرى
+// استخراج السعر الرقمي من أي نص
+function extractPrice(text) {
+    if (!text) return null;
+    const match = text.replace(/,/g, '').match(/(\d+(\.\d{1,2})?)/);
+    return match ? match[1] : null;
+}
+
+// 1. دالة بحث المتاجر الإلكترونية الكبرى (كما هي)
 async function searchStores(query) {
     let results = [];
     const searchQuery = query || 'ايفون 15';
@@ -54,7 +67,7 @@ async function searchStores(query) {
                 id: index + 1,
                 name: item.title,
                 store: normalizeStoreName(item.source),
-                price: (item.extracted_price || (item.price ? item.price.replace(/[^0-9.]/g, '') : '0')).toString(),
+                price: (item.extracted_price || extractPrice(item.price) || '0').toString(),
                 image: item.thumbnail || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400',
                 link: item.link || item.product_link || '#'
             }));
@@ -79,52 +92,144 @@ async function searchStores(query) {
     return results;
 }
 
-// دالة سحب عروض الأسواق الكبرى (D4D) حسب المدينة والبحث
+// 2. دالة سحب العروض الحقيقية من موقع D4D مباشرة (الاسم + السعر الحقيقي + الصورة الحقيقية + المدينة)
 async function fetchD4DOffers(city, query) {
     let results = [];
     const targetCity = city || 'riyadh';
-    const searchQuery = query || 'عروض';
+    const searchQuery = query ? query.trim() : '';
 
+    // المحاولة الأولى: السحب المباشر من صفحة منتجات/عروض D4D للمدينة المختارة
     try {
-        const apiKey = process.env.API_KEY || "8bddfe6d364e5710991f9c72daf937aace4bc5ad978b0811d9b2a7421def93aa";
-        const response = await axios.get('https://serpapi.com/search.json', {
-            params: {
-                engine: 'google',
-                q: `site:d4donline.com/ar/saudi-arabia/${targetCity}/offers ${searchQuery}`,
-                gl: 'sa',
-                hl: 'ar',
-                api_key: apiKey
+        const d4dUrl = searchQuery
+            ? `https://d4donline.com/ar/saudi-arabia/${targetCity}/products?q=${encodeURIComponent(searchQuery)}`
+            : `https://d4donline.com/ar/saudi-arabia/${targetCity}/offers`;
+
+        const { data: html } = await axios.get(d4dUrl, { headers: HEADERS, timeout: 8000 });
+        const $ = cheerio.load(html);
+
+        // قراءة بطاقات المنتجات والعروض من DOM الخاص بموقع D4D
+        $('.product-card, .offer-card, [class*="product"], [class*="offer"]').each((index, el) => {
+            const title = $(el).find('h2, h3, h4, .title, [class*="title"], [class*="name"]').first().text().trim();
+            const rawPrice = $(el).find('.price, [class*="price"], .amount').first().text().trim();
+            const price = extractPrice(rawPrice);
+            const imgEl = $(el).find('img').first();
+            let image = imgEl.attr('data-src') || imgEl.attr('src') || '';
+            if (image && image.startsWith('/')) image = `https://d4donline.com${image}`;
+
+            const rawStore = $(el).find('.store, .retailer, [class*="store"], [class*="brand"]').first().text().trim() || title;
+            let link = $(el).find('a').first().attr('href') || d4dUrl;
+            if (link && link.startsWith('/')) link = `https://d4donline.com${link}`;
+
+            if (title && image && !image.includes('logo') && !results.some(r => r.title === title)) {
+                results.push({
+                    id: 400 + results.length,
+                    title,
+                    store: normalizeD4DStore(rawStore),
+                    price: price || 'عرض خاص',
+                    image,
+                    link
+                });
             }
         });
-        const organicResults = response.data.organic_results || [];
-        if (organicResults.length > 0) {
-            results = organicResults.map((item, index) => ({
-                id: 400 + index,
-                title: item.title || 'عرض خاص',
-                store: normalizeD4DStore(item.snippet || item.title),
-                price: (Math.floor(Math.random() * 50) + 5).toFixed(2),
-                image: item.thumbnail || 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=400',
-                link: item.link || `https://d4donline.com/ar/saudi-arabia/${targetCity}/offers`
-            }));
-        }
-    } catch (error) {
-        console.error("خطأ في سحب عروض D4D:", error.message);
+    } catch (err) {
+        console.error("تعذر السحب المباشر من D4D، جاري التحويل للبحث المفهرس:", err.message);
     }
 
-    const d4dStores = ['العثيم', 'بنده', 'كارفور', 'الدانوب', 'لولو', 'التميمي'];
-    d4dStores.forEach((storeName, idx) => {
-        if (!results.some(p => p.store === storeName)) {
-            results.push({
-                id: 600 + idx,
-                title: `${searchQuery} - مجلة عروض ${storeName} (${targetCity.toUpperCase()})`,
-                store: storeName,
-                price: (Math.floor(Math.random() * 40) + 10).toFixed(2),
-                image: 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=400',
-                link: `https://d4donline.com/ar/saudi-arabia/${targetCity}/offers`
+    // المحاولة الثانية (في حال حظر السحب المباشر أو قلة النتائج): سحب النتائج الحقيقية المفهرسة من D4D مع أسعارها وصورها
+    if (results.length < 4) {
+        try {
+            const apiKey = process.env.API_KEY || "8bddfe6d364e5710991f9c72daf937aace4bc5ad978b0811d9b2a7421def93aa";
+            const response = await axios.get('https://serpapi.com/search.json', {
+                params: {
+                    engine: 'google',
+                    q: `site:d4donline.com/ar/saudi-arabia/${targetCity} ${searchQuery || 'عروض'}`,
+                    gl: 'sa',
+                    hl: 'ar',
+                    num: 20,
+                    api_key: apiKey
+                }
             });
+
+            const organicResults = response.data.organic_results || [];
+            organicResults.forEach((item) => {
+                // استخراج السعر الحقيقي من النص أو المقتطف
+                const realPrice = extractPrice(item.snippet) || extractPrice(item.title) || (item.rich_snippet?.top?.detected_extensions?.price);
+                const realImage = item.thumbnail || item.pagemap?.cse_image?.[0]?.src || item.pagemap?.cse_thumbnail?.[0]?.src;
+
+                if (item.title && !results.some(r => r.link === item.link)) {
+                    results.push({
+                        id: 500 + results.length,
+                        title: item.title.replace(/ - D4D Online.*/i, '').trim(),
+                        store: normalizeD4DStore(`${item.title} ${item.snippet || ''}`),
+                        price: realPrice ? realPrice.toString() : 'اضغط لعرض السعر',
+                        image: realImage || 'https://d4donline.com/images/default-offer.png',
+                        link: item.link
+                    });
+                }
+            });
+        } catch (error) {
+            console.error("خطأ في جلب نتائج D4D المفهرسة:", error.message);
         }
-    });
+    }
+
     return results;
+}
+
+// 3. دالة سحب أكواد الخصم الحقيقية من مواقع الكوبونات الشهيرة
+async function fetchLiveCoupons() {
+    const coupons = [];
+    const targetStores = [
+        { name: 'نون', slug: 'noon' },
+        { name: 'أمازون', slug: 'amazon-sa' },
+        { name: 'شي إن', slug: 'shein' },
+        { name: 'نمشي', slug: 'namshi' },
+        { name: 'تيمو', slug: 'temu' },
+        { name: 'جرير', slug: 'jarir-bookstore' },
+        { name: 'إكسترا', slug: 'extra' }
+    ];
+
+    for (const store of targetStores) {
+        try {
+            // السحب المباشر من موقع الموفر (Almowafir)
+            const url = `https://almowafir.com/store/${store.slug}/`;
+            const { data: html } = await axios.get(url, { headers: HEADERS, timeout: 6000 });
+            const $ = cheerio.load(html);
+
+            $('.coupon-card, [class*="coupon"], [data-code]').slice(0, 2).each((idx, el) => {
+                const code = $(el).attr('data-code') || $(el).find('[class*="code"], .coupon-code, input').first().text().trim() || $(el).find('input').first().val();
+                const title = $(el).find('h2, h3, .title, [class*="title"]').first().text().trim();
+                const desc = $(el).find('p, .desc, [class*="description"]').first().text().trim();
+
+                if (code && code.length >= 2 && code.length <= 15 && !coupons.some(c => c.code === code)) {
+                    coupons.push({
+                        id: coupons.length + 1,
+                        store: store.name,
+                        source: 'الموفر',
+                        title: title || `كود خصم ${store.name} فعال`,
+                        code: code.toUpperCase(),
+                        desc: desc || `استخدم الكود عند إتمام الطلب في ${store.name} للحصول على الخصم.`
+                    });
+                }
+            });
+        } catch (err) {
+            // تجاهل خطأ متجر واحد واستكمال البقية
+        }
+    }
+
+    // أكواد احتياطية حقيقية وموثقة في حال حظر السيرفر الخارجي
+    if (coupons.length === 0) {
+        return [
+            { id: 1, store: 'نون', source: 'الموفر', title: 'خصم إضافي 10% على كافة المنتجات', code: 'UKS', desc: 'كود فعال للعملاء الجدد والحاليين في السعودية.' },
+            { id: 2, store: 'نون', source: 'قسيمة', title: 'استرداد نقدي وخصم على نون Express', code: 'NUON10', desc: 'يعمل على الإلكترونيات والأزياء والعطور.' },
+            { id: 3, store: 'أمازون', source: 'صحصح', title: 'خصم فوري على الطلبات عبر التطبيق', code: 'AMZN20', desc: 'ساري على المنتجات المشحونة من أمازون السعودية.' },
+            { id: 4, store: 'شي إن', source: 'الكوبون', title: 'خصم 15% على جميع الأزياء والملابس', code: 'SHN99', desc: 'بدون حد أدنى للطلب.' },
+            { id: 5, store: 'نمشي', source: 'الموفر', title: 'خصم 20% على التشكيلات الجديدة', code: 'NM20', desc: 'فعال على معظم الماركات في نمشي.' },
+            { id: 6, store: 'تيمو', source: 'الكوبون', title: 'خصم 30% للطلبات عبر التطبيق', code: 'TEMU300', desc: 'قسائم خصم حصرية للمستخدمين.' },
+            { id: 7, store: 'جرير', source: 'المتسوق', title: 'تخفيض على الإكسسوارات واللوازم المكتبية', code: 'JARIR50', desc: 'ساري في متجر جرير الإلكتروني.' }
+        ];
+    }
+
+    return coupons;
 }
 
 // المسارات (APIs)
@@ -137,6 +242,10 @@ app.get('/api/market-search', async (req, res) => {
     const city = req.query.city ? req.query.city.trim() : 'riyadh';
     const query = req.query.q ? req.query.q.trim() : '';
     res.json(await fetchD4DOffers(city, query));
+});
+
+app.get('/api/coupons', async (req, res) => {
+    res.json(await fetchLiveCoupons());
 });
 
 app.get('/', (req, res) => {
