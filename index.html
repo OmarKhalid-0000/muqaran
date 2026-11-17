@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>مقارن</title>
+    <title>مقارن - مقارنة الأسعار والعروض والكوبونات</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome Icons -->
@@ -57,7 +57,7 @@
 
                 <button onclick="switchView('market-view')" id="nav-market-view" class="nav-item border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white p-2 sm:px-3 sm:py-2 rounded-xl font-bold text-xs sm:text-sm transition flex items-center gap-1.5 relative shadow-sm shrink-0">
                     <i class="fa-solid fa-shop text-sm sm:text-base text-emerald-500"></i>
-                    <span>مقارن ماركت </span>
+                    <span>مقارن ماركت (D4D)</span>
                 </button>
 
                 <button onclick="switchView('coupons-view')" id="nav-coupons-view" class="nav-item border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white p-2 sm:px-3 sm:py-2 rounded-xl font-bold text-xs sm:text-sm transition flex items-center gap-1.5 relative shadow-sm shrink-0">
@@ -136,7 +136,7 @@
             </div>
         </section>
 
-        <!-- MUQARAN MARKET VIEW (مقارن ماركت - عروض الأسواق الكبرى بناءً على موقع D4D والمدينة) -->
+        <!-- MUQARAN MARKET VIEW (مقارن ماركت - عروض الأسواق الكبرى بناءً على D4D والمدينة) -->
         <section id="market-view" class="view-section space-y-6">
             <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl shadow-xl space-y-4">
                 <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -169,7 +169,7 @@
                     <button type="submit" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-6 py-3 rounded-xl text-xs whitespace-nowrap shadow">بحث العروض</button>
                 </form>
 
-                <!-- فلتر المتاجر الكبرى (المطابق لموقع D4D: العثيم، بنده، كارفور، الدانوب، لولو، التميمي) -->
+                <!-- فلتر المتاجر الكبرى (العثيم، بنده، كارفور، الدانوب، لولو، التميمي) -->
                 <div class="pt-2 border-t border-slate-200 dark:border-slate-800 flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
                     <span class="text-xs font-bold text-slate-700 dark:text-slate-300 shrink-0 ml-2">فلتر المتاجر:</span>
                     <button onclick="filterD4DStore('الكل')" id="d4d-filter-الكل" class="d4d-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-500 text-white shrink-0 transition shadow-sm">الكل</button>
@@ -186,15 +186,15 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6" id="d4d-products-grid"></div>
         </section>
 
-        <!-- COUPONS VIEW (أكواد الخصم الصحيحة والحصرية) -->
+        <!-- COUPONS VIEW (أكواد الخصم الحقيقية المأخوذة من مواقع الكوبونات الشهيرة) -->
         <section id="coupons-view" class="view-section space-y-6">
             <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl shadow-xl space-y-4">
                 <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
                     <div>
                         <h2 class="text-xl font-black text-slate-900 dark:text-white flex items-center gap-2">
-                            <i class="fa-solid fa-ticket text-amber-500"></i> كوبونات وأكواد الخصم الحصرية الصحيحة
+                            <i class="fa-solid fa-ticket text-amber-500"></i> كوبونات وأكواد الخصم الحقيقية (الموثقة)
                         </h2>
-                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">أحدث وأقوى الكوبونات الفعالة 100% المحدثة دورياً للمتاجر الإلكترونية</p>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">أحدث وأقوى الكوبونات الفعلية المأخوذة من منصات الكوبونات الكبرى (نون، أمازون، شي إن، نمشي، جرير)</p>
                     </div>
                     <span class="px-3 py-1 bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 text-xs font-bold rounded-lg whitespace-nowrap">كوبونات فعالة 100%</span>
                 </div>
@@ -202,11 +202,12 @@
                 <div class="pt-4 border-t border-slate-200 dark:border-slate-800 flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
                     <span class="text-xs font-bold text-slate-700 dark:text-slate-300 shrink-0 ml-2">فلتر حسب المتجر:</span>
                     <button onclick="filterCoupons('الكل')" id="coupon-filter-الكل" class="coupon-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-500 text-white shrink-0 transition shadow-sm">الكل</button>
-                    <button onclick="filterCoupons('نون')" id="coupon-filter-نون" class="coupon-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 hover:bg-slate-700 shrink-0 transition shadow-sm">نون</button>
-                    <button onclick="filterCoupons('أمازون')" id="coupon-filter-أمازون" class="coupon-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 hover:bg-slate-700 shrink-0 transition shadow-sm">أمازون</button>
-                    <button onclick="filterCoupons('شي إن')" id="coupon-filter-شي إن" class="coupon-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 hover:bg-slate-700 shrink-0 transition shadow-sm">شي إن</button>
-                    <button onclick="filterCoupons('تيمو')" id="coupon-filter-تيمو" class="coupon-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 hover:bg-slate-700 shrink-0 transition shadow-sm">تيمو</button>
-                    <button onclick="filterCoupons('جرير')" id="coupon-filter-جرير" class="coupon-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 hover:bg-slate-700 shrink-0 transition shadow-sm">جرير</button>
+                    <button onclick="filterCoupons('نون')" id="coupon-filter-نون" class="coupon-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 transition shadow-sm">نون</button>
+                    <button onclick="filterCoupons('أمازون')" id="coupon-filter-أمازون" class="coupon-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 transition shadow-sm">أمازون</button>
+                    <button onclick="filterCoupons('شي إن')" id="coupon-filter-شي إن" class="coupon-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 transition shadow-sm">شي إن</button>
+                    <button onclick="filterCoupons('نمشي')" id="coupon-filter-نمشي" class="coupon-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 transition shadow-sm">نمشي</button>
+                    <button onclick="filterCoupons('تيمو')" id="coupon-filter-تيمو" class="coupon-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 transition shadow-sm">تيمو</button>
+                    <button onclick="filterCoupons('جرير')" id="coupon-filter-جرير" class="coupon-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 transition shadow-sm">جرير</button>
                 </div>
             </div>
 
@@ -281,7 +282,7 @@
                     <h2 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
                         <i class="fa-solid fa-heart text-rose-500"></i> المفضلة
                     </h2>
-                    <p class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 mt-0.5">تتبع الأسعار للمنتجات والعروض المحفوظة</p>
+                    <p class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 mt-0.5">تتبع أسعار المنتجات المحفوظة</p>
                 </div>
                 <button onclick="clearAllFavorites()" class="bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-950 border border-rose-200 dark:border-rose-800/50 text-rose-600 dark:text-rose-400 text-xs font-bold px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl transition">
                     مسح الكل
@@ -308,6 +309,9 @@
                     <button onclick="handleLogout()" class="bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-900/50 border border-rose-200 dark:border-rose-800/50 text-rose-600 dark:text-rose-400 font-bold text-xs px-6 py-3 rounded-xl transition">
                         تسجيل الخروج
                     </button>
+                    <button onclick="handleDeleteAccount()" class="bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs px-6 py-3 rounded-xl transition shadow">
+                        حذف الحساب نهائياً
+                    </button>
                 </div>
             </div>
         </section>
@@ -319,6 +323,12 @@
                     <h2 class="text-xl font-black text-slate-900 dark:text-white">الشروط والأحكام</h2>
                     <button onclick="switchView('hero-view')" class="text-xs text-sky-600 dark:text-sky-400 hover:underline"><i class="fa-solid fa-arrow-right ml-1"></i> العودة للرئيسية</button>
                 </div>
+                <div class="space-y-6 text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
+                    <div>
+                        <h3 class="font-bold text-slate-900 dark:text-white text-base mb-2">1️⃣ شروط إخلاء المسؤولية عن الأسعار</h3>
+                        <p class="text-slate-600 dark:text-slate-400">التطبيق هو محرك بحث ومقارنة فقط، والأسعار المعروضة يتم تحديثها دورياً من التطبيقات والمتاجر.</p>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -328,6 +338,12 @@
                 <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4">
                     <h2 class="text-xl font-black text-slate-900 dark:text-white">سياسة الخصوصية</h2>
                     <button onclick="switchView('hero-view')" class="text-xs text-sky-600 dark:text-sky-400 hover:underline"><i class="fa-solid fa-arrow-right ml-1"></i> العودة للرئيسية</button>
+                </div>
+                <div class="space-y-6 text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
+                    <div>
+                        <h3 class="font-bold text-slate-900 dark:text-white text-base mb-2">1. حماية البيانات</h3>
+                        <p class="text-slate-600 dark:text-slate-400">نلتزم بحماية خصوصيتك وعدم مشاركة بياناتك مع أي أطراف خارجية.</p>
+                    </div>
                 </div>
             </div>
         </section>
@@ -430,6 +446,10 @@
             try { await signInWithPopup(auth, googleProvider); showToast("تم تسجيل الدخول بنجاح!"); closeAuthModal(); } catch (err) { showToast("خطأ في تسجيل الدخول"); }
         };
         window.handleLogout = async () => { await signOut(auth); showToast("تم تسجيل الخروج"); switchView('hero-view'); };
+        window.handleDeleteAccount = async () => {
+            if (!currentUser || !confirm("هل أنت متأكد من حذف الحساب نهائياً؟")) return;
+            try { await deleteUser(currentUser); showToast("تم حذف الحساب بنجاح"); switchView('hero-view'); } catch (err) { showToast("يرجى إعادة تسجيل الدخول لتأكيد الحذف"); }
+        };
 
         window.toggleFavorite = async function(id) {
             if (!currentUser) { showToast("يجب تسجيل الدخول للمفضلة!"); openAuthModal(); return; }
@@ -469,13 +489,14 @@
         window.favorites = [];
         window.currentD4DFilter = 'الكل';
         window.currentCouponFilter = 'الكل';
+        let liveCouponsCache = [];
 
-        // دالة جلب عروض D4D والأسواق الكبرى من السيرفر بناءً على المدينة
+        // دالة جلب عروض مقارن ماركت الحيَّة بناءً على المدينة والبحث
         async function fetchD4DOffersFromServer(query = '') {
             const city = document.getElementById('city-select').value;
             const grid = document.getElementById('d4d-products-grid');
             if (grid) {
-                grid.innerHTML = `<div class="col-span-full py-12 text-center text-emerald-500 font-bold"><i class="fa-solid fa-spinner fa-spin text-2xl mb-2"></i> جاري سحب أحدث العروض والأسعار للمدينة من D4D...</div>`;
+                grid.innerHTML = `<div class="col-span-full py-12 text-center text-emerald-500 font-bold"><i class="fa-solid fa-spinner fa-spin text-2xl mb-2"></i> جاري سحب الأسعار والعروض من الهايبرماركت (${city.toUpperCase()})...</div>`;
             }
             try {
                 const res = await fetch(`/api/market-search?city=${city}&q=${encodeURIComponent(query)}`);
@@ -484,7 +505,7 @@
                 renderD4DOffers(window.currentD4DFilter);
             } catch (err) {
                 console.error(err);
-                if (grid) grid.innerHTML = `<div class="col-span-full py-12 text-center text-rose-500">تعذر الاتصال بالسيرفر وجلب العروض</div>`;
+                if (grid) grid.innerHTML = `<div class="col-span-full py-12 text-center text-rose-500">تعذر الاتصال بالسيرفر وجلب العروض الحية</div>`;
             }
         }
 
@@ -533,7 +554,7 @@
         window.filterD4DStore = function(storeName) {
             window.currentD4DFilter = storeName;
             document.querySelectorAll('.d4d-filter-btn').forEach(btn => {
-                btn.className = "d4d-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 hover:bg-slate-700 shrink-0 transition shadow-sm";
+                btn.className = "d4d-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 transition shadow-sm";
             });
             const activeBtn = document.getElementById(`d4d-filter-${storeName}`);
             if (activeBtn) activeBtn.className = "d4d-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-500 text-white shrink-0 transition shadow-sm";
@@ -551,21 +572,23 @@
             fetchD4DOffersFromServer(query);
         }
 
-        // أكواد الخصم الصحيحة والحصرية الفعالة 100%
-        const allCouponsData = [
-            { id: 1, store: 'نون', source: 'الموفر', title: 'خصم 15% على كافة المنتجات والإلكترونيات', code: 'NUON10', desc: 'ساري على جميع الأقسام عند الطلب عبر التطبيق.' },
-            { id: 2, store: 'نون', source: 'قسيمة', title: 'تخفيض 50 ريال على الطلبات فوق 200 ريال', code: 'NOON50', desc: 'كود خصم فعال للعملاء الجدد والحاليين.' },
-            { id: 3, store: 'أمازون', source: 'صحصح', title: 'تخفيض 20 ريال على الطلب الأول', code: 'AMZN20', desc: 'كود حصري للعملاء الجدد على جميع أقسام الموقع.' },
-            { id: 4, store: 'أمازون', source: 'الكوبون', title: 'شحن مجاني على كافة المنتجات المحلية', code: 'AMZNFS', desc: 'استمتع بشحن سريع مجاني بدون أدنى حد للطلب.' },
-            { id: 5, store: 'شي إن', source: 'قسيمة', title: 'خصم 18% إضافي على الأزياء والملابس', code: 'SHN99', desc: 'استخدم الكود عند الدفع للحصول على خصم إضافي فوري.' },
-            { id: 6, store: 'تيمو', source: 'الكوبون', title: 'حزمة خصومات بقيمة 300 ريال', code: 'TEMU300', desc: 'قسائم تخفيض مقسمة على طلباتك الكبرى عبر تطبيق تيمو.' },
-            { id: 7, store: 'جرير', source: 'المتسوق', title: 'خصم على الإكسسوارات التقنية والحواسب', code: 'JARIR50', desc: 'وفر عند شراء حمايات الشاشات والسماعات الأصلية.' }
-        ];
-
-        function renderCoupons(filterStore = 'الكل') {
+        // دالة جلب وعرض الكوبونات الحقيقية من السيرفر بطريقتك الخاصة
+        async function renderCoupons(filterStore = 'الكل') {
             const grid = document.getElementById('coupons-grid');
             if (!grid) return;
-            const filtered = filterStore === 'الكل' ? allCouponsData : allCouponsData.filter(c => c.store === filterStore);
+
+            if (liveCouponsCache.length === 0) {
+                grid.innerHTML = `<div class="col-span-full py-12 text-center text-amber-500 font-bold"><i class="fa-solid fa-spinner fa-spin text-2xl mb-2"></i> جاري سحب أحدث أكواد الخصم الفعالة...</div>`;
+                try {
+                    const res = await fetch('/api/coupons');
+                    liveCouponsCache = await res.json();
+                } catch (e) {
+                    grid.innerHTML = `<div class="col-span-full py-12 text-center text-rose-500">تعذر جلب الكوبونات حالياً</div>`;
+                    return;
+                }
+            }
+
+            const filtered = filterStore === 'الكل' ? liveCouponsCache : liveCouponsCache.filter(c => c.store === filterStore);
             grid.innerHTML = filtered.length === 0 ? `
                 <div class="col-span-full py-12 text-center text-slate-500">
                     <i class="fa-solid fa-ticket text-4xl mb-3 opacity-30"></i>
@@ -576,7 +599,7 @@
                     <div class="space-y-3">
                         <div class="flex items-center justify-between">
                             <span class="bg-sky-500/10 text-sky-600 dark:text-sky-400 text-xs font-bold px-2.5 py-1 rounded-lg border border-sky-500/25">${c.store}</span>
-                            <span class="text-[11px] text-slate-400">مصدر: ${c.source}</span>
+                            <span class="text-[11px] text-slate-400">موقع موثق: ${c.source}</span>
                         </div>
                         <h3 class="text-base font-black text-slate-900 dark:text-white">${c.title}</h3>
                         <p class="text-xs text-slate-500 dark:text-slate-400">${c.desc}</p>
@@ -594,7 +617,7 @@
         window.filterCoupons = function(storeName) {
             window.currentCouponFilter = storeName;
             document.querySelectorAll('.coupon-filter-btn').forEach(btn => {
-                btn.className = "coupon-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 hover:bg-slate-700 shrink-0 transition shadow-sm";
+                btn.className = "coupon-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 transition shadow-sm";
             });
             const activeBtn = document.getElementById(`coupon-filter-${storeName}`);
             if (activeBtn) activeBtn.className = "coupon-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-500 text-white shrink-0 transition shadow-sm";
