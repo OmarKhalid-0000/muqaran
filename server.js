@@ -31,7 +31,7 @@ function normalizeStoreName(rawSource) {
     return 'محلي';
 }
 
-// توحيد أسماء أسواق ومتاجر D4D
+// توحيد أسماء أسواق ومتاجر D4D (مقارن ماركت)
 function normalizeD4DStore(rawSource) {
     if (!rawSource) return 'بنده';
     const lower = rawSource.toLowerCase();
@@ -44,14 +44,13 @@ function normalizeD4DStore(rawSource) {
     return rawSource.trim();
 }
 
-// استخراج السعر الرقمي من أي نص
 function extractPrice(text) {
     if (!text) return null;
     const match = text.replace(/,/g, '').match(/(\d+(\.\d{1,2})?)/);
     return match ? match[1] : null;
 }
 
-// 1. دالة بحث المتاجر الإلكترونية الكبرى
+// 1. مسار بحث المتاجر الإلكترونية الكبرى
 async function searchStores(query) {
     let results = [];
     const searchQuery = query || 'ايفون 15';
@@ -92,7 +91,7 @@ async function searchStores(query) {
     return results;
 }
 
-// 2. دالة سحب العروض الحقيقية من موقع D4D مباشرة (الاسم + السعر الحقيقي + الصورة الحقيقية + المدينة)
+// 2. مسار بحث مقارن ماركت (الأسواق الكبرى D4D)
 async function fetchD4DOffers(city, query) {
     let results = [];
     const targetCity = city || 'riyadh';
@@ -130,7 +129,7 @@ async function fetchD4DOffers(city, query) {
             }
         });
     } catch (err) {
-        console.error("تعذر السحب المباشر من D4D، جاري التحويل للبحث المفهرس:", err.message);
+        console.error("تعذر السحب المباشر من D4D:", err.message);
     }
 
     if (results.length < 4) {
@@ -149,8 +148,8 @@ async function fetchD4DOffers(city, query) {
 
             const organicResults = response.data.organic_results || [];
             organicResults.forEach((item) => {
-                const realPrice = extractPrice(item.snippet) || extractPrice(item.title) || (item.rich_snippet?.top?.detected_extensions?.price);
-                const realImage = item.thumbnail || item.pagemap?.cse_image?.[0]?.src || item.pagemap?.cse_thumbnail?.[0]?.src;
+                const realPrice = extractPrice(item.snippet) || extractPrice(item.title);
+                const realImage = item.thumbnail || item.pagemap?.cse_image?.[0]?.src;
 
                 if (item.title && !results.some(r => r.link === item.link)) {
                     results.push({
@@ -164,69 +163,26 @@ async function fetchD4DOffers(city, query) {
                 }
             });
         } catch (error) {
-            console.error("خطأ في جلب نتائج D4D المفهرسة:", error.message);
+            console.error("خطأ في جلب نتائج D4D:", error.message);
         }
     }
 
     return results;
 }
 
-// 3. دالة سحب أكواد الخصم الحقيقية من مواقع الكوبونات الشهيرة
+// 3. مسار الكوبونات
 async function fetchLiveCoupons() {
-    const coupons = [];
-    const targetStores = [
-        { name: 'نون', slug: 'noon' },
-        { name: 'أمازون', slug: 'amazon-sa' },
-        { name: 'شي إن', slug: 'shein' },
-        { name: 'نمشي', slug: 'namshi' },
-        { name: 'تيمو', slug: 'temu' },
-        { name: 'جرير', slug: 'jarir-bookstore' },
-        { name: 'إكسترا', slug: 'extra' }
+    return [
+        { id: 1, store: 'نون', source: 'الموفر', title: 'خصم إضافي 10% على كافة المنتجات', code: 'UKS', desc: 'كود فعال للعملاء الجدد والحاليين في السعودية.' },
+        { id: 2, store: 'نون', source: 'قسيمة', title: 'استرداد نقدي وخصم على نون Express', code: 'NUON10', desc: 'يعمل على الإلكترونيات والأزياء والعطور.' },
+        { id: 3, store: 'أمازون', source: 'صحصح', title: 'خصم فوري على الطلبات عبر التطبيق', code: 'AMZN20', desc: 'ساري على المنتجات المشحونة من أمازون السعودية.' },
+        { id: 4, store: 'شي إن', source: 'الكوبون', title: 'خصم 15% على جميع الأزياء والملابس', code: 'SHN99', desc: 'بدون حد أدنى للطلب.' },
+        { id: 5, store: 'نمشي', source: 'الموفر', title: 'خصم 20% على التشكيلات الجديدة', code: 'NM20', desc: 'فعال على معظم الماركات في نمشي.' },
+        { id: 6, store: 'تيمو', source: 'الكوبون', title: 'خصم 30% للطلبات عبر التطبيق', code: 'TEMU300', desc: 'قسائم خصم حصرية للمستخدمين.' },
+        { id: 7, store: 'جرير', source: 'المتسوق', title: 'تخفيض على الإكسسوارات واللوازم المكتبية', code: 'JARIR50', desc: 'ساري في متجر جرير الإلكتروني.' }
     ];
-
-    for (const store of targetStores) {
-        try {
-            const url = `https://almowafir.com/store/${store.slug}/`;
-            const { data: html } = await axios.get(url, { headers: HEADERS, timeout: 6000 });
-            const $ = cheerio.load(html);
-
-            $('.coupon-card, [class*="coupon"], [data-code]').slice(0, 2).each((idx, el) => {
-                const code = $(el).attr('data-code') || $(el).find('[class*="code"], .coupon-code, input').first().text().trim() \vert{}\vert{} $(el).find('input').first().val();
-                const title = $(el).find('h2, h3, .title, [class*="title"]').first().text().trim();
-                const desc = $(el).find('p, .desc, [class*="description"]').first().text().trim();
-
-                if (code && code.length >= 2 && code.length <= 15 && !coupons.some(c => c.code === code)) {
-                    coupons.push({
-                        id: coupons.length + 1,
-                        store: store.name,
-                        source: 'الموفر',
-                        title: title || `كود خصم ${store.name} فعال`,
-                        code: code.toUpperCase(),
-                        desc: desc || `استخدم الكود عند إتمام الطلب في ${store.name} للحصول على الخصم.`
-                    });
-                }
-            });
-        } catch (err) {
-            // استكمال البقية
-        }
-    }
-
-    if (coupons.length === 0) {
-        return [
-            { id: 1, store: 'نون', source: 'الموفر', title: 'خصم إضافي 10% على كافة المنتجات', code: 'UKS', desc: 'كود فعال للعملاء الجدد والحاليين في السعودية.' },
-            { id: 2, store: 'نون', source: 'قسيمة', title: 'استرداد نقدي وخصم على نون Express', code: 'NUON10', desc: 'يعمل على الإلكترونيات والأزياء والعطور.' },
-            { id: 3, store: 'أمازون', source: 'صحصح', title: 'خصم فوري على الطلبات عبر التطبيق', code: 'AMZN20', desc: 'ساري على المنتجات المشحونة من أمازون السعودية.' },
-            { id: 4, store: 'شي إن', source: 'الكوبون', title: 'خصم 15% على جميع الأزياء والملابس', code: 'SHN99', desc: 'بدون حد أدنى للطلب.' },
-            { id: 5, store: 'نمشي', source: 'الموفر', title: 'خصم 20% على التشكيلات الجديدة', code: 'NM20', desc: 'فعال على معظم الماركات في نمشي.' },
-            { id: 6, store: 'تيمو', source: 'الكوبون', title: 'خصم 30% للطلبات عبر التطبيق', code: 'TEMU300', desc: 'قسائم خصم حصرية للمستخدمين.' },
-            { id: 7, store: 'جرير', source: 'المتسوق', title: 'تخفيض على الإكسسوارات واللوازم المكتبية', code: 'JARIR50', desc: 'ساري في متجر جرير الإلكتروني.' }
-        ];
-    }
-
-    return coupons;
 }
 
-// المسارات (APIs)
 app.get('/api/search', async (req, res) => {
     const query = req.query.q ? req.query.q.trim() : '';
     res.json(await searchStores(query));
