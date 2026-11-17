@@ -57,7 +57,7 @@
 
                 <button onclick="switchView('market-view')" id="nav-market-view" class="nav-item border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white p-2 sm:px-3 sm:py-2 rounded-xl font-bold text-xs sm:text-sm transition flex items-center gap-1.5 relative shadow-sm shrink-0">
                     <i class="fa-solid fa-shop text-sm sm:text-base text-emerald-500"></i>
-                    <span>مقارن ماركت (D4D)</span>
+                    <span>مقارن ماركت</span>
                 </button>
 
                 <button onclick="switchView('coupons-view')" id="nav-coupons-view" class="nav-item border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white p-2 sm:px-3 sm:py-2 rounded-xl font-bold text-xs sm:text-sm transition flex items-center gap-1.5 relative shadow-sm shrink-0">
@@ -86,7 +86,7 @@
     <!-- MAIN CONTENT CONTAINER -->
     <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
 
-        <!-- HERO SECTION -->
+        <!-- HERO SECTION (بحث المتاجر الإلكترونية) -->
         <section id="hero-view" class="view-section active space-y-8 sm:space-y-12">
             <div class="relative overflow-hidden bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl sm:rounded-3xl p-6 sm:p-14 text-center sm:text-right shadow-2xl transition-colors duration-300">
                 <div class="max-w-2xl space-y-4 sm:space-y-6 relative z-10">
@@ -130,7 +130,11 @@
                         <button onclick="filterByStore('أمازون')" class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-[11px] sm:text-xs px-2.5 py-1 rounded-lg border border-slate-300 dark:border-slate-700 transition shadow-sm">أمازون</button>
                         <button onclick="filterByStore('شي إن')" class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-[11px] sm:text-xs px-2.5 py-1 rounded-lg border border-slate-300 dark:border-slate-700 transition shadow-sm">شي إن</button>
                         <button onclick="filterByStore('تيمو')" class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-[11px] sm:text-xs px-2.5 py-1 rounded-lg border border-slate-300 dark:border-slate-700 transition shadow-sm">تيمو</button>
+                        <button onclick="filterByStore('ترنديول')" class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-[11px] sm:text-xs px-2.5 py-1 rounded-lg border border-slate-300 dark:border-slate-700 transition shadow-sm">ترنديول</button>
+                        <button onclick="filterByStore('علي اكسبرس')" class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-[11px] sm:text-xs px-2.5 py-1 rounded-lg border border-slate-300 dark:border-slate-700 transition shadow-sm">علي اكسبرس</button>
+                        <button onclick="filterByStore('محلي')" class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-[11px] sm:text-xs px-2.5 py-1 rounded-lg border border-slate-300 dark:border-slate-700 transition shadow-sm">محلي</button>
                         <button onclick="filterByStore('جرير')" class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-[11px] sm:text-xs px-2.5 py-1 rounded-lg border border-slate-300 dark:border-slate-700 transition shadow-sm">جرير</button>
+                        <button onclick="filterByStore('إكسترا')" class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-[11px] sm:text-xs px-2.5 py-1 rounded-lg border border-slate-300 dark:border-slate-700 transition shadow-sm">إكسترا</button>
                     </div>
                 </div>
             </div>
@@ -208,13 +212,14 @@
                     <button onclick="filterCoupons('نمشي')" id="coupon-filter-نمشي" class="coupon-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 transition shadow-sm">نمشي</button>
                     <button onclick="filterCoupons('تيمو')" id="coupon-filter-تيمو" class="coupon-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 transition shadow-sm">تيمو</button>
                     <button onclick="filterCoupons('جرير')" id="coupon-filter-جرير" class="coupon-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 transition shadow-sm">جرير</button>
+                    <button onclick="filterCoupons('إكسترا')" id="coupon-filter-إكسترا" class="coupon-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 transition shadow-sm">إكسترا</button>
                 </div>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" id="coupons-grid"></div>
         </section>
 
-        <!-- SEARCH & PRODUCTS GRID VIEW -->
+        <!-- SEARCH & PRODUCTS GRID VIEW (نتائج بحث المتاجر الإلكترونية) -->
         <section id="search-view" class="view-section space-y-4 sm:space-y-6">
             <div class="flex flex-col lg:flex-row gap-6 items-start">
                 <aside class="w-full lg:w-64 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 sm:p-5 rounded-2xl space-y-4 sm:space-y-6 shrink-0 transition-colors duration-300">
@@ -241,7 +246,19 @@
                                 <input type="checkbox" value="تيمو" onchange="filterClientSide()" class="store-filter rounded bg-slate-100 dark:bg-slate-950 border-slate-300 dark:border-slate-700 text-sky-500 focus:ring-0" checked> تيمو
                             </label>
                             <label class="flex items-center gap-2 text-xs text-slate-700 dark:text-slate-300 cursor-pointer">
+                                <input type="checkbox" value="ترنديول" onchange="filterClientSide()" class="store-filter rounded bg-slate-100 dark:bg-slate-950 border-slate-300 dark:border-slate-700 text-sky-500 focus:ring-0" checked> ترنديول
+                            </label>
+                            <label class="flex items-center gap-2 text-xs text-slate-700 dark:text-slate-300 cursor-pointer">
+                                <input type="checkbox" value="علي اكسبرس" onchange="filterClientSide()" class="store-filter rounded bg-slate-100 dark:bg-slate-950 border-slate-300 dark:border-slate-700 text-sky-500 focus:ring-0" checked> علي اكسبرس
+                            </label>
+                            <label class="flex items-center gap-2 text-xs text-slate-700 dark:text-slate-300 cursor-pointer">
+                                <input type="checkbox" value="محلي" onchange="filterClientSide()" class="store-filter rounded bg-slate-100 dark:bg-slate-950 border-slate-300 dark:border-slate-700 text-sky-500 focus:ring-0" checked> محلي
+                            </label>
+                            <label class="flex items-center gap-2 text-xs text-slate-700 dark:text-slate-300 cursor-pointer">
                                 <input type="checkbox" value="جرير" onchange="filterClientSide()" class="store-filter rounded bg-slate-100 dark:bg-slate-950 border-slate-300 dark:border-slate-700 text-sky-500 focus:ring-0" checked> جرير
+                            </label>
+                            <label class="flex items-center gap-2 text-xs text-slate-700 dark:text-slate-300 cursor-pointer">
+                                <input type="checkbox" value="إكسترا" onchange="filterClientSide()" class="store-filter rounded bg-slate-100 dark:bg-slate-950 border-slate-300 dark:border-slate-700 text-sky-500 focus:ring-0" checked> إكسترا
                             </label>
                         </div>
                     </div>
@@ -717,7 +734,7 @@
                         <div class="p-4 sm:p-5 space-y-2">
                             <h3 class="font-bold text-xs sm:text-sm text-slate-900 dark:text-white line-clamp-2 leading-snug">${title}</h3>
                             <div class="text-lg sm:text-xl font-extrabold text-sky-600 dark:text-sky-400 pt-1">
-                                ${Number(p.price).toLocaleString()} <span class="text-xs text-slate-500 dark:text-slate-400 font-normal">ر.س</span>
+                                ${isNaN(Number(p.price)) ? p.price : Number(p.price).toLocaleString()} <span class="text-xs text-slate-500 dark:text-slate-400 font-normal">${isNaN(Number(p.price)) ? '' : 'ر.س'}</span>
                             </div>
                         </div>
                     </div>
@@ -788,12 +805,14 @@
             else filterClientSide();
         }
 
+        // البحث في الصفحة الرئيسية يذهب لمقارنة المتاجر الإلكترونية فقط
         window.handleHeroSearch = function(e) {
             e.preventDefault();
             const query = document.getElementById('hero-search-input').value.trim();
-            switchView('market-view');
-            document.getElementById('market-search-input').value = query;
-            fetchD4DOffersFromServer(query);
+            switchView('search-view');
+            const gridSearchInput = document.getElementById('grid-search-input');
+            if (gridSearchInput) gridSearchInput.value = query;
+            fetchProductsFromServer(query);
         }
 
         window.handleGridSearch = function(e) {
@@ -843,7 +862,7 @@
             } else {
                 updateThemeIcon(true);
             }
-            const savedView = localStorage.getItem('muqaran_active_view') || 'market-view';
+            const savedView = localStorage.getItem('muqaran_active_view') || 'hero-view';
             switchView(savedView, false);
         };
     </script>
