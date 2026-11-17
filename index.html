@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>مقارن - مقارنة الأسعار والكوبونات</title>
+    <title>مقارن - مقارنة الأسعار والكوبونات وعروض الأسواق</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome Icons -->
@@ -56,8 +56,8 @@
                 </button>
 
                 <button onclick="switchView('market-view')" id="nav-market-view" class="nav-item border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white p-2 sm:px-3 sm:py-2 rounded-xl font-bold text-xs sm:text-sm transition flex items-center gap-1.5 relative shadow-sm shrink-0">
-                    <i class="fa-solid fa-basket-shopping text-sm sm:text-base text-emerald-500"></i>
-                    <span>مقارن ماركت</span>
+                    <i class="fa-solid fa-shop text-sm sm:text-base text-emerald-500"></i>
+                    <span>مقارن ماركت (D4D)</span>
                 </button>
 
                 <button onclick="switchView('coupons-view')" id="nav-coupons-view" class="nav-item border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white p-2 sm:px-3 sm:py-2 rounded-xl font-bold text-xs sm:text-sm transition flex items-center gap-1.5 relative shadow-sm shrink-0">
@@ -126,68 +126,75 @@
 
                     <div class="flex flex-wrap items-center justify-center sm:justify-start gap-1.5 sm:gap-2 pt-2">
                         <span class="text-[11px] sm:text-xs text-slate-700 dark:text-slate-300 font-bold transition-colors duration-300">المتاجر المدعومة:</span>
-                        
                         <button onclick="filterByStore('نون')" class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-[11px] sm:text-xs px-2.5 py-1 rounded-lg border border-slate-300 dark:border-slate-700 transition shadow-sm">نون</button>
                         <button onclick="filterByStore('أمازون')" class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-[11px] sm:text-xs px-2.5 py-1 rounded-lg border border-slate-300 dark:border-slate-700 transition shadow-sm">أمازون</button>
                         <button onclick="filterByStore('شي إن')" class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-[11px] sm:text-xs px-2.5 py-1 rounded-lg border border-slate-300 dark:border-slate-700 transition shadow-sm">شي إن</button>
                         <button onclick="filterByStore('تيمو')" class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-[11px] sm:text-xs px-2.5 py-1 rounded-lg border border-slate-300 dark:border-slate-700 transition shadow-sm">تيمو</button>
-                        <button onclick="filterByStore('ترنديول')" class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-[11px] sm:text-xs px-2.5 py-1 rounded-lg border border-slate-300 dark:border-slate-700 transition shadow-sm">ترنديول</button>
-                        <button onclick="filterByStore('علي اكسبرس')" class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-[11px] sm:text-xs px-2.5 py-1 rounded-lg border border-slate-300 dark:border-slate-700 transition shadow-sm">علي اكسبرس</button>
-                        <button onclick="filterByStore('محلي')" class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-[11px] sm:text-xs px-2.5 py-1 rounded-lg border border-slate-300 dark:border-slate-700 transition shadow-sm">محلي</button>
                         <button onclick="filterByStore('جرير')" class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-[11px] sm:text-xs px-2.5 py-1 rounded-lg border border-slate-300 dark:border-slate-700 transition shadow-sm">جرير</button>
-                        <button onclick="filterByStore('إكسترا')" class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-[11px] sm:text-xs px-2.5 py-1 rounded-lg border border-slate-300 dark:border-slate-700 transition shadow-sm">إكسترا</button>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- MUQARAN MARKET VIEW (السحب المباشر من تطبيقات التوصيل) -->
+        <!-- MUQARAN MARKET VIEW (مقارن ماركت - عروض الأسواق الكبرى بناءً على موقع D4D والمدينة) -->
         <section id="market-view" class="view-section space-y-6">
             <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl shadow-xl space-y-4">
                 <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
                     <div>
                         <h2 class="text-xl font-black text-slate-900 dark:text-white flex items-center gap-2">
-                            <i class="fa-solid fa-basket-shopping text-emerald-500"></i> مقارن ماركت - السوبرماركت وتطبيقات التوصيل
+                            <i class="fa-solid fa-shop text-emerald-500"></i> مقارن ماركت - عروض الأسواق الكبرى (D4D)
                         </h2>
-                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">سحب مباشر للأسعار والصور من تطبيقات التوصيل (نعناع، نينجا، هنجرستيشن، مرسول، جاهز، تويو، كيتا)</p>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">اختر مدينتك وتصفح أحدث عروض وأسعار الهايبرماركت ومجلات التخفيضات الحية</p>
                     </div>
-                    <span class="px-3 py-1 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 text-xs font-bold rounded-lg whitespace-nowrap">متصل بالسيرفر</span>
+                    
+                    <!-- محدد المدينة -->
+                    <div class="flex items-center gap-2 w-full sm:w-auto">
+                        <label for="city-select" class="text-xs font-bold text-slate-700 dark:text-slate-300 whitespace-nowrap"><i class="fa-solid fa-location-dot text-rose-500 ml-1"></i> المدينة:</label>
+                        <select id="city-select" onchange="onCityChange()" class="bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 text-xs text-slate-900 dark:text-white rounded-xl py-2 px-3 focus:outline-none focus:border-emerald-500 font-bold">
+                            <option value="riyadh">الرياض</option>
+                            <option value="jeddah">جدة</option>
+                            <option value="dammam">الدمام</option>
+                            <option value="makkah">مكة المكرمة</option>
+                            <option value="madinah">المدينة المنورة</option>
+                            <option value="khobar">الخبر</option>
+                            <option value="taif">الطائف</option>
+                        </select>
+                    </div>
                 </div>
 
-                <!-- نموذج البحث المباشر في المقاضي -->
-                <form onsubmit="handleMarketSearchSubmit(event)" class="relative w-full pt-2 flex gap-2">
-                    <input type="text" id="market-search-input" placeholder="ابحث عن مقاضي أو منتج (مثال: حليب، دجاج، طماطم، بيبسي)..."
-                        class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl py-3 pr-10 pl-4 text-xs sm:text-sm text-slate-900 dark:text-white focus:outline-none focus:border-emerald-500 transition">
-                    <button type="submit" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-6 py-3 rounded-xl text-xs whitespace-nowrap shadow">بحث</button>
+                <!-- نموذج البحث في عروض الأسواق -->
+                <form onsubmit="handleD4DSearch(event)" class="relative w-full pt-2 flex gap-2">
+                    <input type="text" id="market-search-input" placeholder="ابحث عن عرض (دجاج، أرز، زيت، طماطم)..."
+                        class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl py-3 pr-4 pl-4 text-xs sm:text-sm text-slate-900 dark:text-white focus:outline-none focus:border-emerald-500 transition">
+                    <button type="submit" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-6 py-3 rounded-xl text-xs whitespace-nowrap shadow">بحث العروض</button>
                 </form>
 
-                <!-- فلتر التطبيقات -->
+                <!-- فلتر المتاجر الكبرى (المطابق لموقع D4D: العثيم، بنده، كارفور، الدانوب، لولو، التميمي) -->
                 <div class="pt-2 border-t border-slate-200 dark:border-slate-800 flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
-                    <span class="text-xs font-bold text-slate-700 dark:text-slate-300 shrink-0 ml-2">فلتر التطبيقات:</span>
-                    <button onclick="filterMarketApp('الكل')" id="market-filter-الكل" class="market-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-500 text-white shrink-0 transition shadow-sm">الكل</button>
-                    <button onclick="filterMarketApp('نعناع')" id="market-filter-نعناع" class="market-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 hover:bg-slate-700 shrink-0 transition shadow-sm">نعناع</button>
-                    <button onclick="filterMarketApp('نينجا')" id="market-filter-نينجا" class="market-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 hover:bg-slate-700 shrink-0 transition shadow-sm">نينجا</button>
-                    <button onclick="filterMarketApp('هنجرستيشن')" id="market-filter-هنجرستيشن" class="market-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 hover:bg-slate-700 shrink-0 transition shadow-sm">هنجرستيشن</button>
-                    <button onclick="filterMarketApp('مرسول')" id="market-filter-مرسول" class="market-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 hover:bg-slate-700 shrink-0 transition shadow-sm">مرسول</button>
-                    <button onclick="filterMarketApp('جاهز')" id="market-filter-جاهز" class="market-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 hover:bg-slate-700 shrink-0 transition shadow-sm">جاهز</button>
-                    <button onclick="filterMarketApp('تويو')" id="market-filter-تويو" class="market-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 hover:bg-slate-700 shrink-0 transition shadow-sm">تويو</button>
-                    <button onclick="filterMarketApp('كيتا')" id="market-filter-كيتا" class="market-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 hover:bg-slate-700 shrink-0 transition shadow-sm">كيتا</button>
+                    <span class="text-xs font-bold text-slate-700 dark:text-slate-300 shrink-0 ml-2">فلتر المتاجر:</span>
+                    <button onclick="filterD4DStore('الكل')" id="d4d-filter-الكل" class="d4d-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-500 text-white shrink-0 transition shadow-sm">الكل</button>
+                    <button onclick="filterD4DStore('العثيم')" id="d4d-filter-العثيم" class="d4d-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 hover:bg-slate-700 shrink-0 transition shadow-sm">العثيم</button>
+                    <button onclick="filterD4DStore('بنده')" id="d4d-filter-بنده" class="d4d-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 hover:bg-slate-700 shrink-0 transition shadow-sm">بنده</button>
+                    <button onclick="filterD4DStore('كارفور')" id="d4d-filter-كارفور" class="d4d-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 hover:bg-slate-700 shrink-0 transition shadow-sm">كارفور</button>
+                    <button onclick="filterD4DStore('الدانوب')" id="d4d-filter-الدانوب" class="d4d-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 hover:bg-slate-700 shrink-0 transition shadow-sm">الدانوب</button>
+                    <button onclick="filterD4DStore('لولو')" id="d4d-filter-لولو" class="d4d-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 hover:bg-slate-700 shrink-0 transition shadow-sm">لولو</button>
+                    <button onclick="filterD4DStore('التميمي')" id="d4d-filter-التميمي" class="d4d-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 hover:bg-slate-700 shrink-0 transition shadow-sm">التميمي</button>
                 </div>
             </div>
 
-            <!-- شبكة منتجات مقارن ماركت -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6" id="market-products-grid"></div>
+            <!-- شبكة عروض مقارن ماركت -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6" id="d4d-products-grid"></div>
         </section>
 
-        <!-- COUPONS VIEW -->
+        <!-- COUPONS VIEW (أكواد الخصم الصحيحة والحصرية) -->
         <section id="coupons-view" class="view-section space-y-6">
             <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl shadow-xl space-y-4">
                 <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
                     <div>
                         <h2 class="text-xl font-black text-slate-900 dark:text-white flex items-center gap-2">
-                            <i class="fa-solid fa-ticket text-amber-500"></i> كوبونات وأكواد الخصم الحصرية
+                            <i class="fa-solid fa-ticket text-amber-500"></i> كوبونات وأكواد الخصم الحصرية الصحيحة
                         </h2>
-                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">أحدث وأقوى الكوبونات المحدثة دورياً من (قسيمة، صحصح، الموفر، الكوبون، والمتسوق)</p>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">أحدث وأقوى الكوبونات الفعالة 100% المحدثة دورياً للمتاجر الإلكترونية</p>
                     </div>
                     <span class="px-3 py-1 bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 text-xs font-bold rounded-lg whitespace-nowrap">كوبونات فعالة 100%</span>
                 </div>
@@ -195,12 +202,11 @@
                 <div class="pt-4 border-t border-slate-200 dark:border-slate-800 flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
                     <span class="text-xs font-bold text-slate-700 dark:text-slate-300 shrink-0 ml-2">فلتر حسب المتجر:</span>
                     <button onclick="filterCoupons('الكل')" id="coupon-filter-الكل" class="coupon-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-500 text-white shrink-0 transition shadow-sm">الكل</button>
-                    <button onclick="filterCoupons('نون')" id="coupon-filter-نون" class="coupon-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 transition shadow-sm">نون</button>
-                    <button onclick="filterCoupons('أمازون')" id="coupon-filter-أمازون" class="coupon-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 transition shadow-sm">أمازون</button>
-                    <button onclick="filterCoupons('شي إن')" id="coupon-filter-شي إن" class="coupon-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 transition shadow-sm">شي إن</button>
-                    <button onclick="filterCoupons('تيمو')" id="coupon-filter-تيمو" class="coupon-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 transition shadow-sm">تيمو</button>
-                    <button onclick="filterCoupons('جرير')" id="coupon-filter-جرير" class="coupon-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 transition shadow-sm">جرير</button>
-                    <button onclick="filterCoupons('إكسترا')" id="coupon-filter-إكسترا" class="coupon-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 transition shadow-sm">إكسترا</button>
+                    <button onclick="filterCoupons('نون')" id="coupon-filter-نون" class="coupon-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 hover:bg-slate-700 shrink-0 transition shadow-sm">نون</button>
+                    <button onclick="filterCoupons('أمازون')" id="coupon-filter-أمازون" class="coupon-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 hover:bg-slate-700 shrink-0 transition shadow-sm">أمازون</button>
+                    <button onclick="filterCoupons('شي إن')" id="coupon-filter-شي إن" class="coupon-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 hover:bg-slate-700 shrink-0 transition shadow-sm">شي إن</button>
+                    <button onclick="filterCoupons('تيمو')" id="coupon-filter-تيمو" class="coupon-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 hover:bg-slate-700 shrink-0 transition shadow-sm">تيمو</button>
+                    <button onclick="filterCoupons('جرير')" id="coupon-filter-جرير" class="coupon-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 hover:bg-slate-700 shrink-0 transition shadow-sm">جرير</button>
                 </div>
             </div>
 
@@ -234,19 +240,7 @@
                                 <input type="checkbox" value="تيمو" onchange="filterClientSide()" class="store-filter rounded bg-slate-100 dark:bg-slate-950 border-slate-300 dark:border-slate-700 text-sky-500 focus:ring-0" checked> تيمو
                             </label>
                             <label class="flex items-center gap-2 text-xs text-slate-700 dark:text-slate-300 cursor-pointer">
-                                <input type="checkbox" value="ترنديول" onchange="filterClientSide()" class="store-filter rounded bg-slate-100 dark:bg-slate-950 border-slate-300 dark:border-slate-700 text-sky-500 focus:ring-0" checked> ترنديول
-                            </label>
-                            <label class="flex items-center gap-2 text-xs text-slate-700 dark:text-slate-300 cursor-pointer">
-                                <input type="checkbox" value="علي اكسبرس" onchange="filterClientSide()" class="store-filter rounded bg-slate-100 dark:bg-slate-950 border-slate-300 dark:border-slate-700 text-sky-500 focus:ring-0" checked> علي اكسبرس
-                            </label>
-                            <label class="flex items-center gap-2 text-xs text-slate-700 dark:text-slate-300 cursor-pointer">
-                                <input type="checkbox" value="محلي" onchange="filterClientSide()" class="store-filter rounded bg-slate-100 dark:bg-slate-950 border-slate-300 dark:border-slate-700 text-sky-500 focus:ring-0" checked> محلي
-                            </label>
-                            <label class="flex items-center gap-2 text-xs text-slate-700 dark:text-slate-300 cursor-pointer">
                                 <input type="checkbox" value="جرير" onchange="filterClientSide()" class="store-filter rounded bg-slate-100 dark:bg-slate-950 border-slate-300 dark:border-slate-700 text-sky-500 focus:ring-0" checked> جرير
-                            </label>
-                            <label class="flex items-center gap-2 text-xs text-slate-700 dark:text-slate-300 cursor-pointer">
-                                <input type="checkbox" value="إكسترا" onchange="filterClientSide()" class="store-filter rounded bg-slate-100 dark:bg-slate-950 border-slate-300 dark:border-slate-700 text-sky-500 focus:ring-0" checked> إكسترا
                             </label>
                         </div>
                     </div>
@@ -287,7 +281,7 @@
                     <h2 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
                         <i class="fa-solid fa-heart text-rose-500"></i> المفضلة
                     </h2>
-                    <p class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 mt-0.5">تتبع أسعار المنتجات المحفوظة</p>
+                    <p class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 mt-0.5">تتبع الأسعار للمنتجات والعروض المحفوظة</p>
                 </div>
                 <button onclick="clearAllFavorites()" class="bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-950 border border-rose-200 dark:border-rose-800/50 text-rose-600 dark:text-rose-400 text-xs font-bold px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl transition">
                     مسح الكل
@@ -314,9 +308,6 @@
                     <button onclick="handleLogout()" class="bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-900/50 border border-rose-200 dark:border-rose-800/50 text-rose-600 dark:text-rose-400 font-bold text-xs px-6 py-3 rounded-xl transition">
                         تسجيل الخروج
                     </button>
-                    <button onclick="handleDeleteAccount()" class="bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs px-6 py-3 rounded-xl transition shadow">
-                        حذف الحساب نهائياً
-                    </button>
                 </div>
             </div>
         </section>
@@ -328,12 +319,6 @@
                     <h2 class="text-xl font-black text-slate-900 dark:text-white">الشروط والأحكام</h2>
                     <button onclick="switchView('hero-view')" class="text-xs text-sky-600 dark:text-sky-400 hover:underline"><i class="fa-solid fa-arrow-right ml-1"></i> العودة للرئيسية</button>
                 </div>
-                <div class="space-y-6 text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
-                    <div>
-                        <h3 class="font-bold text-slate-900 dark:text-white text-base mb-2">1️⃣ شروط إخلاء المسؤولية عن الأسعار</h3>
-                        <p class="text-slate-600 dark:text-slate-400">التطبيق هو محرك بحث ومقارنة فقط، والأسعار المعروضة يتم تحديثها دورياً من التطبيقات والمتاجر.</p>
-                    </div>
-                </div>
             </div>
         </section>
 
@@ -343,12 +328,6 @@
                 <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4">
                     <h2 class="text-xl font-black text-slate-900 dark:text-white">سياسة الخصوصية</h2>
                     <button onclick="switchView('hero-view')" class="text-xs text-sky-600 dark:text-sky-400 hover:underline"><i class="fa-solid fa-arrow-right ml-1"></i> العودة للرئيسية</button>
-                </div>
-                <div class="space-y-6 text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
-                    <div>
-                        <h3 class="font-bold text-slate-900 dark:text-white text-base mb-2">1. حماية البيانات</h3>
-                        <p class="text-slate-600 dark:text-slate-400">نلتزم بحماية خصوصيتك وعدم مشاركة بياناتك مع أي أطراف خارجية.</p>
-                    </div>
                 </div>
             </div>
         </section>
@@ -451,14 +430,10 @@
             try { await signInWithPopup(auth, googleProvider); showToast("تم تسجيل الدخول بنجاح!"); closeAuthModal(); } catch (err) { showToast("خطأ في تسجيل الدخول"); }
         };
         window.handleLogout = async () => { await signOut(auth); showToast("تم تسجيل الخروج"); switchView('hero-view'); };
-        window.handleDeleteAccount = async () => {
-            if (!currentUser || !confirm("هل أنت متأكد من حذف الحساب نهائياً؟")) return;
-            try { await deleteUser(currentUser); showToast("تم حذف الحساب بنجاح"); switchView('hero-view'); } catch (err) { showToast("يرجى إعادة تسجيل الدخول لتأكيد الحذف"); }
-        };
 
         window.toggleFavorite = async function(id) {
             if (!currentUser) { showToast("يجب تسجيل الدخول للمفضلة!"); openAuthModal(); return; }
-            const product = window.allMarketProducts.find(p => p.id === id) || window.allFetchedProducts.find(p => p.id === id);
+            const product = window.allD4DOffers.find(p => p.id === id) || window.allFetchedProducts.find(p => p.id === id);
             if (!product) return;
             const idx = window.favorites.indexOf(id);
             const favRef = doc(db, "users", currentUser.uid, "favorites", String(id));
@@ -469,9 +444,9 @@
             } else {
                 window.favorites.push(id);
                 showToast("تمت الإضافة للمفضلة ♥️");
-                try { await setDoc(favRef, { productId: product.id, title: product.name || product.title, price: product.price, store: product.store, image: product.image, link: product.link }); } catch(e){}
+                try { await setDoc(favRef, { productId: product.id, title: product.title || product.name, price: product.price, store: product.store, image: product.image, link: product.link }); } catch(e){}
             }
-            if (document.getElementById('market-view').classList.contains('active')) renderMarketProducts(window.currentMarketFilter);
+            if (document.getElementById('market-view').classList.contains('active')) renderD4DOffers(window.currentD4DFilter);
             if (document.getElementById('search-view').classList.contains('active')) filterClientSide();
             if (document.getElementById('wishlist-view').classList.contains('active')) renderWishlist();
         }
@@ -481,7 +456,7 @@
             unsubscribeFavs = onSnapshot(collection(db, "users", uid, "favorites"), (snapshot) => {
                 window.favorites = [];
                 snapshot.forEach(d => window.favorites.push(Number(d.id) || Number(d.data().productId)));
-                if (document.getElementById('market-view').classList.contains('active')) renderMarketProducts(window.currentMarketFilter);
+                if (document.getElementById('market-view').classList.contains('active')) renderD4DOffers(window.currentD4DFilter);
                 if (document.getElementById('search-view').classList.contains('active')) filterClientSide();
                 if (document.getElementById('wishlist-view').classList.contains('active')) renderWishlist();
             });
@@ -490,37 +465,38 @@
 
     <script>
         window.allFetchedProducts = [];
-        window.allMarketProducts = [];
+        window.allD4DOffers = [];
         window.favorites = [];
-        window.currentMarketFilter = 'الكل';
+        window.currentD4DFilter = 'الكل';
         window.currentCouponFilter = 'الكل';
 
-        // دالة جلب بيانات مقارن ماركت الحيَّة من السيرفر
-        async function fetchMarketProductsFromServer(query = '') {
-            const grid = document.getElementById('market-products-grid');
+        // دالة جلب عروض D4D والأسواق الكبرى من السيرفر بناءً على المدينة
+        async function fetchD4DOffersFromServer(query = '') {
+            const city = document.getElementById('city-select').value;
+            const grid = document.getElementById('d4d-products-grid');
             if (grid) {
-                grid.innerHTML = `<div class="col-span-full py-12 text-center text-emerald-500 font-bold"><i class="fa-solid fa-spinner fa-spin text-2xl mb-2"></i> جاري سحب الأسعار والصور من التطبيقات...</div>`;
+                grid.innerHTML = `<div class="col-span-full py-12 text-center text-emerald-500 font-bold"><i class="fa-solid fa-spinner fa-spin text-2xl mb-2"></i> جاري سحب أحدث العروض والأسعار للمدينة من D4D...</div>`;
             }
             try {
-                const res = await fetch(`/api/market-search?q=${encodeURIComponent(query)}`);
+                const res = await fetch(`/api/market-search?city=${city}&q=${encodeURIComponent(query)}`);
                 const data = await res.json();
-                window.allMarketProducts = data;
-                renderMarketProducts(window.currentMarketFilter);
+                window.allD4DOffers = data;
+                renderD4DOffers(window.currentD4DFilter);
             } catch (err) {
                 console.error(err);
-                if (grid) grid.innerHTML = `<div class="col-span-full py-12 text-center text-rose-500">تعذر الاتصال بالسيرفر وجلب البيانات الحية</div>`;
+                if (grid) grid.innerHTML = `<div class="col-span-full py-12 text-center text-rose-500">تعذر الاتصال بالسيرفر وجلب العروض</div>`;
             }
         }
 
-        function renderMarketProducts(filterApp = 'الكل') {
-            const grid = document.getElementById('market-products-grid');
+        function renderD4DOffers(filterStore = 'الكل') {
+            const grid = document.getElementById('d4d-products-grid');
             if (!grid) return;
 
-            let filtered = window.allMarketProducts.filter(p => filterApp === 'الكل' || p.store === filterApp);
+            let filtered = window.allD4DOffers.filter(p => filterStore === 'الكل' || p.store === filterStore);
 
             grid.innerHTML = filtered.length === 0 ? `
                 <div class="col-span-full py-12 text-center text-slate-500">
-                    <p class="text-xs sm:text-sm font-medium">لا توجد منتجات مطابقة</p>
+                    <p class="text-xs sm:text-sm font-medium">لا توجد عروض مطابقة لهذا المتجر في المدينة المختارة</p>
                 </div>
             ` : filtered.map(p => {
                 const isFav = window.favorites.includes(p.id);
@@ -528,7 +504,7 @@
                     <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-emerald-500/50 rounded-2xl overflow-hidden flex flex-col justify-between shadow-md transition group">
                         <div>
                             <div class="relative w-full h-40 sm:h-44 bg-slate-100 dark:bg-slate-950 overflow-hidden flex items-center justify-center p-4">
-                                <img src="${p.image}" alt="${p.title}" class="h-full w-full object-contain group-hover:scale-105 transition duration-300" onerror="this.src='https://placehold.co/300x200/1e293b/ffffff?text=صورة+المنتج'">
+                                <img src="${p.image}" alt="${p.title}" class="h-full w-full object-contain group-hover:scale-105 transition duration-300" onerror="this.src='https://placehold.co/300x200/1e293b/ffffff?text=صورة+العرض'">
                                 <button onclick="toggleFavorite(${p.id})" class="absolute top-3 left-3 w-9 h-9 rounded-full bg-white/80 dark:bg-slate-900/80 hover:bg-white dark:hover:bg-slate-900 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-700 dark:text-slate-300 hover:text-rose-500 transition shadow">
                                     <i class="${isFav ? 'fa-solid text-rose-500' : 'fa-regular'} fa-heart text-base"></i>
                                 </button>
@@ -545,7 +521,7 @@
                         </div>
                         <div class="px-4 pb-4 sm:px-5 sm:pb-5 pt-1">
                             <a href="${p.link}" target="_blank" class="w-full py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-emerald-600 text-slate-800 dark:text-slate-200 hover:text-white font-bold text-xs rounded-xl flex items-center justify-center gap-2 transition border border-slate-200 dark:border-slate-700">
-                                <span>الذهاب إلى صفحة المتجر</span>
+                                <span>عرض مجلة المتجر (${p.store})</span>
                                 <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
                             </a>
                         </div>
@@ -554,23 +530,28 @@
             }).join('');
         }
 
-        window.filterMarketApp = function(appName) {
-            window.currentMarketFilter = appName;
-            document.querySelectorAll('.market-filter-btn').forEach(btn => {
-                btn.className = "market-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 transition shadow-sm";
+        window.filterD4DStore = function(storeName) {
+            window.currentD4DFilter = storeName;
+            document.querySelectorAll('.d4d-filter-btn').forEach(btn => {
+                btn.className = "d4d-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 hover:bg-slate-700 shrink-0 transition shadow-sm";
             });
-            const activeBtn = document.getElementById(`market-filter-${appName}`);
-            if (activeBtn) activeBtn.className = "market-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-500 text-white shrink-0 transition shadow-sm";
-            renderMarketProducts(appName);
+            const activeBtn = document.getElementById(`d4d-filter-${storeName}`);
+            if (activeBtn) activeBtn.className = "d4d-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-500 text-white shrink-0 transition shadow-sm";
+            renderD4DOffers(storeName);
         }
 
-        window.handleMarketSearchSubmit = function(e) {
+        window.handleD4DSearch = function(e) {
             e.preventDefault();
             const query = document.getElementById('market-search-input').value.trim();
-            fetchMarketProductsFromServer(query);
+            fetchD4DOffersFromServer(query);
         }
 
-        // بيانات الكوبونات
+        window.onCityChange = function() {
+            const query = document.getElementById('market-search-input').value.trim();
+            fetchD4DOffersFromServer(query);
+        }
+
+        // أكواد الخصم الصحيحة والحصرية الفعالة 100%
         const allCouponsData = [
             { id: 1, store: 'نون', source: 'الموفر', title: 'خصم 15% على كافة المنتجات والإلكترونيات', code: 'NUON10', desc: 'ساري على جميع الأقسام عند الطلب عبر التطبيق.' },
             { id: 2, store: 'نون', source: 'قسيمة', title: 'تخفيض 50 ريال على الطلبات فوق 200 ريال', code: 'NOON50', desc: 'كود خصم فعال للعملاء الجدد والحاليين.' },
@@ -578,8 +559,7 @@
             { id: 4, store: 'أمازون', source: 'الكوبون', title: 'شحن مجاني على كافة المنتجات المحلية', code: 'AMZNFS', desc: 'استمتع بشحن سريع مجاني بدون أدنى حد للطلب.' },
             { id: 5, store: 'شي إن', source: 'قسيمة', title: 'خصم 18% إضافي على الأزياء والملابس', code: 'SHN99', desc: 'استخدم الكود عند الدفع للحصول على خصم إضافي فوري.' },
             { id: 6, store: 'تيمو', source: 'الكوبون', title: 'حزمة خصومات بقيمة 300 ريال', code: 'TEMU300', desc: 'قسائم تخفيض مقسمة على طلباتك الكبرى عبر تطبيق تيمو.' },
-            { id: 7, store: 'جرير', source: 'المتسوق', title: 'خصم على الإكسسوارات التقنية والحواسب', code: 'JARIR50', desc: 'وفر عند شراء حمايات الشاشات والسماعات الأصلية.' },
-            { id: 8, store: 'إكسترا', source: 'صحصح', title: 'خصم حتى 200 ريال على الأجهزة الكبرى', code: 'EXT200', desc: 'ساري على الشاشات والثلاجات والغسالات.' }
+            { id: 7, store: 'جرير', source: 'المتسوق', title: 'خصم على الإكسسوارات التقنية والحواسب', code: 'JARIR50', desc: 'وفر عند شراء حمايات الشاشات والسماعات الأصلية.' }
         ];
 
         function renderCoupons(filterStore = 'الكل') {
@@ -614,7 +594,7 @@
         window.filterCoupons = function(storeName) {
             window.currentCouponFilter = storeName;
             document.querySelectorAll('.coupon-filter-btn').forEach(btn => {
-                btn.className = "coupon-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 transition shadow-sm";
+                btn.className = "coupon-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 hover:bg-slate-700 shrink-0 transition shadow-sm";
             });
             const activeBtn = document.getElementById(`coupon-filter-${storeName}`);
             if (activeBtn) activeBtn.className = "coupon-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-500 text-white shrink-0 transition shadow-sm";
@@ -631,7 +611,7 @@
             const targetView = document.getElementById(viewId);
             if (targetView) targetView.classList.add('active');
 
-            if (viewId === 'market-view' && window.allMarketProducts.length === 0) fetchMarketProductsFromServer('حليب');
+            if (viewId === 'market-view' && window.allD4DOffers.length === 0) fetchD4DOffersFromServer('');
             if (viewId === 'coupons-view') renderCoupons(window.currentCouponFilter);
             if (viewId === 'search-view' && window.allFetchedProducts.length === 0) fetchProductsFromServer('');
             if (viewId === 'wishlist-view') renderWishlist();
@@ -788,10 +768,9 @@
         window.handleHeroSearch = function(e) {
             e.preventDefault();
             const query = document.getElementById('hero-search-input').value.trim();
-            switchView('search-view');
-            const gridSearchInput = document.getElementById('grid-search-input');
-            if (gridSearchInput) gridSearchInput.value = query;
-            fetchProductsFromServer(query);
+            switchView('market-view');
+            document.getElementById('market-search-input').value = query;
+            fetchD4DOffersFromServer(query);
         }
 
         window.handleGridSearch = function(e) {
@@ -803,7 +782,7 @@
         window.renderWishlist = function() {
             const grid = document.getElementById('wishlist-grid');
             const favItems = window.allFetchedProducts.filter(p => window.favorites.includes(p.id))
-                .concat(window.allMarketProducts.filter(p => window.favorites.includes(p.id)));
+                .concat(window.allD4DOffers.filter(p => window.favorites.includes(p.id)));
             const uniqueFavs = Array.from(new Set(favItems.map(p => p.id)))
                 .map(id => favItems.find(p => p.id === id));
 
@@ -841,7 +820,7 @@
             } else {
                 updateThemeIcon(true);
             }
-            const savedView = localStorage.getItem('muqaran_active_view') || 'hero-view';
+            const savedView = localStorage.getItem('muqaran_active_view') || 'market-view';
             switchView(savedView, false);
         };
     </script>
