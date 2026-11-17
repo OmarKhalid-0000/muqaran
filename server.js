@@ -51,7 +51,7 @@ function extractPrice(text) {
     return match ? match[1] : null;
 }
 
-// 1. دالة بحث المتاجر الإلكترونية الكبرى (كما هي)
+// 1. دالة بحث المتاجر الإلكترونية الكبرى
 async function searchStores(query) {
     let results = [];
     const searchQuery = query || 'ايفون 15';
@@ -98,7 +98,6 @@ async function fetchD4DOffers(city, query) {
     const targetCity = city || 'riyadh';
     const searchQuery = query ? query.trim() : '';
 
-    // المحاولة الأولى: السحب المباشر من صفحة منتجات/عروض D4D للمدينة المختارة
     try {
         const d4dUrl = searchQuery
             ? `https://d4donline.com/ar/saudi-arabia/${targetCity}/products?q=${encodeURIComponent(searchQuery)}`
@@ -107,7 +106,6 @@ async function fetchD4DOffers(city, query) {
         const { data: html } = await axios.get(d4dUrl, { headers: HEADERS, timeout: 8000 });
         const $ = cheerio.load(html);
 
-        // قراءة بطاقات المنتجات والعروض من DOM الخاص بموقع D4D
         $('.product-card, .offer-card, [class*="product"], [class*="offer"]').each((index, el) => {
             const title = $(el).find('h2, h3, h4, .title, [class*="title"], [class*="name"]').first().text().trim();
             const rawPrice = $(el).find('.price, [class*="price"], .amount').first().text().trim();
@@ -135,7 +133,6 @@ async function fetchD4DOffers(city, query) {
         console.error("تعذر السحب المباشر من D4D، جاري التحويل للبحث المفهرس:", err.message);
     }
 
-    // المحاولة الثانية (في حال حظر السحب المباشر أو قلة النتائج): سحب النتائج الحقيقية المفهرسة من D4D مع أسعارها وصورها
     if (results.length < 4) {
         try {
             const apiKey = process.env.API_KEY || "8bddfe6d364e5710991f9c72daf937aace4bc5ad978b0811d9b2a7421def93aa";
@@ -152,7 +149,6 @@ async function fetchD4DOffers(city, query) {
 
             const organicResults = response.data.organic_results || [];
             organicResults.forEach((item) => {
-                // استخراج السعر الحقيقي من النص أو المقتطف
                 const realPrice = extractPrice(item.snippet) || extractPrice(item.title) || (item.rich_snippet?.top?.detected_extensions?.price);
                 const realImage = item.thumbnail || item.pagemap?.cse_image?.[0]?.src || item.pagemap?.cse_thumbnail?.[0]?.src;
 
@@ -190,13 +186,12 @@ async function fetchLiveCoupons() {
 
     for (const store of targetStores) {
         try {
-            // السحب المباشر من موقع الموفر (Almowafir)
             const url = `https://almowafir.com/store/${store.slug}/`;
             const { data: html } = await axios.get(url, { headers: HEADERS, timeout: 6000 });
             const $ = cheerio.load(html);
 
             $('.coupon-card, [class*="coupon"], [data-code]').slice(0, 2).each((idx, el) => {
-                const code = $(el).attr('data-code') || $(el).find('[class*="code"], .coupon-code, input').first().text().trim() || $(el).find('input').first().val();
+                const code = $(el).attr('data-code') || $(el).find('[class*="code"], .coupon-code, input').first().text().trim() \vert{}\vert{} $(el).find('input').first().val();
                 const title = $(el).find('h2, h3, .title, [class*="title"]').first().text().trim();
                 const desc = $(el).find('p, .desc, [class*="description"]').first().text().trim();
 
@@ -212,11 +207,10 @@ async function fetchLiveCoupons() {
                 }
             });
         } catch (err) {
-            // تجاهل خطأ متجر واحد واستكمال البقية
+            // استكمال البقية
         }
     }
 
-    // أكواد احتياطية حقيقية وموثقة في حال حظر السيرفر الخارجي
     if (coupons.length === 0) {
         return [
             { id: 1, store: 'نون', source: 'الموفر', title: 'خصم إضافي 10% على كافة المنتجات', code: 'UKS', desc: 'كود فعال للعملاء الجدد والحاليين في السعودية.' },
