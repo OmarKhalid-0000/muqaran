@@ -34,7 +34,6 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 antialiased transition-colors duration-300" id="body-root">
 
-    <!-- Global Toast Container -->
     <div id="toast-container" class="fixed top-20 left-4 right-4 z-50 flex flex-col gap-2 pointer-events-none sm:left-6 sm:right-auto sm:max-w-sm"></div>
 
     <!-- RESPONSIVE HEADER -->
@@ -86,7 +85,7 @@
     <!-- MAIN CONTENT CONTAINER -->
     <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
 
-        <!-- HERO SECTION (بحث المتاجر الإلكترونية) -->
+        <!-- HERO SECTION (محرك بحث المتاجر الإلكترونية: نون، أمازون، الخ) -->
         <section id="hero-view" class="view-section active space-y-8 sm:space-y-12">
             <div class="relative overflow-hidden bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl sm:rounded-3xl p-6 sm:p-14 text-center sm:text-right shadow-2xl transition-colors duration-300">
                 <div class="max-w-2xl space-y-4 sm:space-y-6 relative z-10">
@@ -140,7 +139,7 @@
             </div>
         </section>
 
-        <!-- MUQARAN MARKET VIEW (مقارن ماركت - عروض الأسواق الكبرى بناءً على D4D والمدينة) -->
+        <!-- MUQARAN MARKET VIEW (مقارن ماركت المستقل - عروض الأسواق والمدينة) -->
         <section id="market-view" class="view-section space-y-6">
             <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl shadow-xl space-y-4">
                 <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -166,14 +165,14 @@
                     </div>
                 </div>
 
-                <!-- نموذج البحث في عروض الأسواق -->
+                <!-- نموذج البحث الخاص بمقارن ماركت حصرياً -->
                 <form onsubmit="handleD4DSearch(event)" class="relative w-full pt-2 flex gap-2">
                     <input type="text" id="market-search-input" placeholder="ابحث عن عرض (دجاج، أرز، زيت، طماطم)..."
                         class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl py-3 pr-4 pl-4 text-xs sm:text-sm text-slate-900 dark:text-white focus:outline-none focus:border-emerald-500 transition">
                     <button type="submit" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-6 py-3 rounded-xl text-xs whitespace-nowrap shadow">بحث العروض</button>
                 </form>
 
-                <!-- فلتر المتاجر الكبرى (العثيم، بنده، كارفور، الدانوب، لولو، التميمي) -->
+                <!-- فلتر المتاجر الكبرى -->
                 <div class="pt-2 border-t border-slate-200 dark:border-slate-800 flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
                     <span class="text-xs font-bold text-slate-700 dark:text-slate-300 shrink-0 ml-2">فلتر المتاجر:</span>
                     <button onclick="filterD4DStore('الكل')" id="d4d-filter-الكل" class="d4d-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-500 text-white shrink-0 transition shadow-sm">الكل</button>
@@ -186,11 +185,10 @@
                 </div>
             </div>
 
-            <!-- شبكة عروض مقارن ماركت -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6" id="d4d-products-grid"></div>
         </section>
 
-        <!-- COUPONS VIEW (أكواد الخصم الحقيقية المأخوذة من مواقع الكوبونات الشهيرة) -->
+        <!-- COUPONS VIEW -->
         <section id="coupons-view" class="view-section space-y-6">
             <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl shadow-xl space-y-4">
                 <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -206,20 +204,20 @@
                 <div class="pt-4 border-t border-slate-200 dark:border-slate-800 flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
                     <span class="text-xs font-bold text-slate-700 dark:text-slate-300 shrink-0 ml-2">فلتر حسب المتجر:</span>
                     <button onclick="filterCoupons('الكل')" id="coupon-filter-الكل" class="coupon-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-500 text-white shrink-0 transition shadow-sm">الكل</button>
-                    <button onclick="filterCoupons('نون')" id="coupon-filter-نون" class="coupon-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 transition shadow-sm">نون</button>
-                    <button onclick="filterCoupons('أمازون')" id="coupon-filter-أمازون" class="coupon-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 transition shadow-sm">أمازون</button>
-                    <button onclick="filterCoupons('شي إن')" id="coupon-filter-شي إن" class="coupon-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 transition shadow-sm">شي إن</button>
-                    <button onclick="filterCoupons('نمشي')" id="coupon-filter-نمشي" class="coupon-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 transition shadow-sm">نمشي</button>
-                    <button onclick="filterCoupons('تيمو')" id="coupon-filter-تيمو" class="coupon-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 transition shadow-sm">تيمو</button>
-                    <button onclick="filterCoupons('جرير')" id="coupon-filter-جرير" class="coupon-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 transition shadow-sm">جرير</button>
-                    <button onclick="filterCoupons('إكسترا')" id="coupon-filter-إكسترا" class="coupon-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 transition shadow-sm">إكسترا</button>
+                    <button onclick="filterCoupons('نون')" id="coupon-filter-نون" class="coupon-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 hover:bg-slate-700 shrink-0 transition shadow-sm">نون</button>
+                    <button onclick="filterCoupons('أمازون')" id="coupon-filter-أمازون" class="coupon-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 hover:bg-slate-700 shrink-0 transition shadow-sm">أمازون</button>
+                    <button onclick="filterCoupons('شي إن')" id="coupon-filter-شي إن" class="coupon-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 hover:bg-slate-700 shrink-0 transition shadow-sm">شي إن</button>
+                    <button onclick="filterCoupons('نمشي')" id="coupon-filter-نمشي" class="coupon-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 hover:bg-slate-700 shrink-0 transition shadow-sm">نمشي</button>
+                    <button onclick="filterCoupons('تيمو')" id="coupon-filter-تيمو" class="coupon-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 hover:bg-slate-700 shrink-0 transition shadow-sm">تيمو</button>
+                    <button onclick="filterCoupons('جرير')" id="coupon-filter-جرير" class="coupon-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 hover:bg-slate-700 shrink-0 transition shadow-sm">جرير</button>
+                    <button onclick="filterCoupons('إكسترا')" id="coupon-filter-إكسترا" class="coupon-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 hover:bg-slate-700 shrink-0 transition shadow-sm">إكسترا</button>
                 </div>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" id="coupons-grid"></div>
         </section>
 
-        <!-- SEARCH & PRODUCTS GRID VIEW (نتائج بحث المتاجر الإلكترونية) -->
+        <!-- SEARCH & PRODUCTS GRID VIEW (عرض نتائج المتاجر الإلكترونية) -->
         <section id="search-view" class="view-section space-y-4 sm:space-y-6">
             <div class="flex flex-col lg:flex-row gap-6 items-start">
                 <aside class="w-full lg:w-64 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 sm:p-5 rounded-2xl space-y-4 sm:space-y-6 shrink-0 transition-colors duration-300">
@@ -508,7 +506,7 @@
         window.currentCouponFilter = 'الكل';
         let liveCouponsCache = [];
 
-        // دالة جلب عروض مقارن ماركت الحيَّة بناءً على المدينة والبحث
+        // 1. دوال مقارن ماركت (D4D والأسواق الكبرى)
         async function fetchD4DOffersFromServer(query = '') {
             const city = document.getElementById('city-select').value;
             const grid = document.getElementById('d4d-products-grid');
@@ -571,13 +569,14 @@
         window.filterD4DStore = function(storeName) {
             window.currentD4DFilter = storeName;
             document.querySelectorAll('.d4d-filter-btn').forEach(btn => {
-                btn.className = "d4d-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 transition shadow-sm";
+                btn.className = "d4d-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 hover:bg-slate-700 shrink-0 transition shadow-sm";
             });
             const activeBtn = document.getElementById(`d4d-filter-${storeName}`);
             if (activeBtn) activeBtn.className = "d4d-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-500 text-white shrink-0 transition shadow-sm";
             renderD4DOffers(storeName);
         }
 
+        // بحث مقارن ماركت حصرياً
         window.handleD4DSearch = function(e) {
             e.preventDefault();
             const query = document.getElementById('market-search-input').value.trim();
@@ -589,7 +588,113 @@
             fetchD4DOffersFromServer(query);
         }
 
-        // دالة جلب وعرض الكوبونات الحقيقية من السيرفر بطريقتك الخاصة
+        // 2. دوال بحث المتاجر الإلكترونية الكبرى (نون، أمازون، الخ)
+        window.handleHeroSearch = function(e) {
+            e.preventDefault();
+            const query = document.getElementById('hero-search-input').value.trim();
+            // توجيه حصري لصفحة المتاجر الإلكترونية
+            switchView('search-view');
+            const gridSearchInput = document.getElementById('grid-search-input');
+            if (gridSearchInput) gridSearchInput.value = query;
+            fetchProductsFromServer(query);
+        }
+
+        window.handleGridSearch = function(e) {
+            e.preventDefault();
+            const query = document.getElementById('grid-search-input').value.trim();
+            fetchProductsFromServer(query);
+        }
+
+        async function fetchProductsFromServer(query) {
+            const grid = document.getElementById('main-products-grid');
+            const titleLabel = document.getElementById('search-title');
+            if (titleLabel) titleLabel.textContent = query ? `نتائج البحث عن: "${query}"` : 'جميع المنتجات';
+            if (grid) {
+                grid.innerHTML = `
+                    <div class="col-span-full py-12 text-center text-sky-500 dark:text-sky-400">
+                        <i class="fa-solid fa-spinner fa-spin text-3xl mb-3"></i>
+                        <p class="text-xs sm:text-sm font-bold">جاري البحث في المتاجر ومقارنة الأسعار...</p>
+                    </div>
+                `;
+            }
+            try {
+                const response = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+                const products = await response.json();
+                window.allFetchedProducts = products;
+                filterClientSide();
+            } catch (err) {
+                console.error(err);
+                if (grid) grid.innerHTML = '<div class="col-span-full py-12 text-center text-rose-500">حدث خطأ أثناء الاتصال بالسيرفر</div>';
+            }
+        }
+
+        window.filterClientSide = function() {
+            const selectedStores = Array.from(document.querySelectorAll('.store-filter:checked')).map(cb => cb.value);
+            const sortVal = document.getElementById('sort-select')?.value || 'default';
+            let filtered = window.allFetchedProducts.filter(p => selectedStores.some(s => (p.store || '').includes(s)));
+            if (sortVal === 'price-asc') filtered.sort((a, b) => Number(a.price) - Number(b.price));
+            if (sortVal === 'price-desc') filtered.sort((a, b) => Number(b.price) - Number(a.price));
+
+            const grid = document.getElementById('main-products-grid');
+            const countLabel = document.getElementById('search-count');
+            if (countLabel) countLabel.textContent = `تم العثور على ${filtered.length} منتج`;
+            if (grid) {
+                grid.innerHTML = filtered.length === 0 ? `
+                    <div class="col-span-full py-12 text-center text-slate-500">
+                        <i class="fa-solid fa-box-open text-4xl mb-3 opacity-40"></i>
+                        <p class="text-xs sm:text-sm font-medium">لا توجد منتجات مطابقة لخيارات الفلترة</p>
+                    </div>
+                ` : filtered.map(createProductCardHTML).join('');
+            }
+        }
+
+        window.resetFilters = function() {
+            document.querySelectorAll('.store-filter').forEach(cb => cb.checked = true);
+            const sortSelect = document.getElementById('sort-select');
+            if (sortSelect) sortSelect.value = 'default';
+            filterClientSide();
+        }
+
+        window.filterByStore = function(storeName) {
+            switchView('search-view');
+            document.querySelectorAll('.store-filter').forEach(cb => cb.checked = (cb.value === storeName));
+            if (window.allFetchedProducts.length === 0) fetchProductsFromServer('');
+            else filterClientSide();
+        }
+
+        function createProductCardHTML(p) {
+            const isFav = window.favorites.includes(p.id);
+            const title = p.name || p.title;
+            return `
+                <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 rounded-2xl overflow-hidden flex flex-col justify-between shadow-md transition group">
+                    <div>
+                        <div class="relative w-full h-44 sm:h-48 bg-slate-100 dark:bg-slate-950 overflow-hidden flex items-center justify-center p-4">
+                            <img src="${p.image}" alt="${title}" class="h-full w-full object-contain group-hover:scale-105 transition duration-300" onerror="this.src='https://placehold.co/300x200/1e293b/ffffff?text=صورة+المنتج'">
+                            <button onclick="toggleFavorite(${p.id})" class="absolute top-3 left-3 w-9 h-9 rounded-full bg-white/80 dark:bg-slate-900/80 hover:bg-white dark:hover:bg-slate-900 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-700 dark:text-slate-300 hover:text-rose-500 transition shadow">
+                                <i class="${isFav ? 'fa-solid text-rose-500' : 'fa-regular'} fa-heart text-base"></i>
+                            </button>
+                            <span class="absolute top-3 right-3 bg-white/90 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-300 text-[11px] font-bold px-2.5 py-1 rounded-lg">
+                                ${p.store}
+                            </span>
+                        </div>
+                        <div class="p-4 sm:p-5 space-y-2">
+                            <h3 class="font-bold text-xs sm:text-sm text-slate-900 dark:text-white line-clamp-2 leading-snug">${title}</h3>
+                            <div class="text-lg sm:text-xl font-extrabold text-sky-600 dark:text-sky-400 pt-1">
+                                ${isNaN(Number(p.price)) ? p.price : Number(p.price).toLocaleString()} <span class="text-xs text-slate-500 dark:text-slate-400 font-normal">${isNaN(Number(p.price)) ? '' : 'ر.س'}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="px-4 pb-4 sm:px-5 sm:pb-5 pt-1">
+                        <a href="${p.link}" target="_blank" class="w-full py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-sky-600 dark:hover:bg-sky-600 text-slate-800 dark:text-slate-200 hover:text-white font-bold text-xs rounded-xl flex items-center justify-center gap-2 transition border border-slate-200 dark:border-slate-700">
+                            <span>الذهاب للمتجر</span>
+                            <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 3. دوال الكوبونات
         async function renderCoupons(filterStore = 'الكل') {
             const grid = document.getElementById('coupons-grid');
             if (!grid) return;
@@ -634,7 +739,7 @@
         window.filterCoupons = function(storeName) {
             window.currentCouponFilter = storeName;
             document.querySelectorAll('.coupon-filter-btn').forEach(btn => {
-                btn.className = "coupon-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 transition shadow-sm";
+                btn.className = "coupon-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 hover:bg-slate-700 shrink-0 transition shadow-sm";
             });
             const activeBtn = document.getElementById(`coupon-filter-${storeName}`);
             if (activeBtn) activeBtn.className = "coupon-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-500 text-white shrink-0 transition shadow-sm";
@@ -714,111 +819,6 @@
             document.getElementById('image-preview-container').classList.remove('flex');
             document.getElementById('image-preview-container').classList.add('hidden');
             showToast("تم إزالة الصورة");
-        }
-
-        function createProductCardHTML(p) {
-            const isFav = window.favorites.includes(p.id);
-            const title = p.name || p.title;
-            return `
-                <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 rounded-2xl overflow-hidden flex flex-col justify-between shadow-md transition group">
-                    <div>
-                        <div class="relative w-full h-44 sm:h-48 bg-slate-100 dark:bg-slate-950 overflow-hidden flex items-center justify-center p-4">
-                            <img src="${p.image}" alt="${title}" class="h-full w-full object-contain group-hover:scale-105 transition duration-300" onerror="this.src='https://placehold.co/300x200/1e293b/ffffff?text=صورة+المنتج'">
-                            <button onclick="toggleFavorite(${p.id})" class="absolute top-3 left-3 w-9 h-9 rounded-full bg-white/80 dark:bg-slate-900/80 hover:bg-white dark:hover:bg-slate-900 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-700 dark:text-slate-300 hover:text-rose-500 transition shadow">
-                                <i class="${isFav ? 'fa-solid text-rose-500' : 'fa-regular'} fa-heart text-base"></i>
-                            </button>
-                            <span class="absolute top-3 right-3 bg-white/90 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-300 text-[11px] font-bold px-2.5 py-1 rounded-lg">
-                                ${p.store}
-                            </span>
-                        </div>
-                        <div class="p-4 sm:p-5 space-y-2">
-                            <h3 class="font-bold text-xs sm:text-sm text-slate-900 dark:text-white line-clamp-2 leading-snug">${title}</h3>
-                            <div class="text-lg sm:text-xl font-extrabold text-sky-600 dark:text-sky-400 pt-1">
-                                ${isNaN(Number(p.price)) ? p.price : Number(p.price).toLocaleString()} <span class="text-xs text-slate-500 dark:text-slate-400 font-normal">${isNaN(Number(p.price)) ? '' : 'ر.س'}</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="px-4 pb-4 sm:px-5 sm:pb-5 pt-1">
-                        <a href="${p.link}" target="_blank" class="w-full py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-sky-600 dark:hover:bg-sky-600 text-slate-800 dark:text-slate-200 hover:text-white font-bold text-xs rounded-xl flex items-center justify-center gap-2 transition border border-slate-200 dark:border-slate-700">
-                            <span>الذهاب للمتجر</span>
-                            <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
-                        </a>
-                    </div>
-                </div>
-            `;
-        }
-
-        async function fetchProductsFromServer(query) {
-            const grid = document.getElementById('main-products-grid');
-            const titleLabel = document.getElementById('search-title');
-            if (titleLabel) titleLabel.textContent = query ? `نتائج البحث عن: "${query}"` : 'جميع المنتجات';
-            if (grid) {
-                grid.innerHTML = `
-                    <div class="col-span-full py-12 text-center text-sky-500 dark:text-sky-400">
-                        <i class="fa-solid fa-spinner fa-spin text-3xl mb-3"></i>
-                        <p class="text-xs sm:text-sm font-bold">جاري البحث في المتاجر ومقارنة الأسعار...</p>
-                    </div>
-                `;
-            }
-            try {
-                const response = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
-                const products = await response.json();
-                window.allFetchedProducts = products;
-                filterClientSide();
-            } catch (err) {
-                console.error(err);
-                if (grid) grid.innerHTML = '<div class="col-span-full py-12 text-center text-rose-500">حدث خطأ أثناء الاتصال بالسيرفر</div>';
-            }
-        }
-
-        window.filterClientSide = function() {
-            const selectedStores = Array.from(document.querySelectorAll('.store-filter:checked')).map(cb => cb.value);
-            const sortVal = document.getElementById('sort-select')?.value || 'default';
-            let filtered = window.allFetchedProducts.filter(p => selectedStores.some(s => (p.store || '').includes(s)));
-            if (sortVal === 'price-asc') filtered.sort((a, b) => Number(a.price) - Number(b.price));
-            if (sortVal === 'price-desc') filtered.sort((a, b) => Number(b.price) - Number(a.price));
-
-            const grid = document.getElementById('main-products-grid');
-            const countLabel = document.getElementById('search-count');
-            if (countLabel) countLabel.textContent = `تم العثور على ${filtered.length} منتج`;
-            if (grid) {
-                grid.innerHTML = filtered.length === 0 ? `
-                    <div class="col-span-full py-12 text-center text-slate-500">
-                        <i class="fa-solid fa-box-open text-4xl mb-3 opacity-40"></i>
-                        <p class="text-xs sm:text-sm font-medium">لا توجد منتجات مطابقة لخيارات الفلترة</p>
-                    </div>
-                ` : filtered.map(createProductCardHTML).join('');
-            }
-        }
-
-        window.resetFilters = function() {
-            document.querySelectorAll('.store-filter').forEach(cb => cb.checked = true);
-            const sortSelect = document.getElementById('sort-select');
-            if (sortSelect) sortSelect.value = 'default';
-            filterClientSide();
-        }
-
-        window.filterByStore = function(storeName) {
-            switchView('search-view');
-            document.querySelectorAll('.store-filter').forEach(cb => cb.checked = (cb.value === storeName));
-            if (window.allFetchedProducts.length === 0) fetchProductsFromServer('');
-            else filterClientSide();
-        }
-
-        // البحث في الصفحة الرئيسية يذهب لمقارنة المتاجر الإلكترونية فقط
-        window.handleHeroSearch = function(e) {
-            e.preventDefault();
-            const query = document.getElementById('hero-search-input').value.trim();
-            switchView('search-view');
-            const gridSearchInput = document.getElementById('grid-search-input');
-            if (gridSearchInput) gridSearchInput.value = query;
-            fetchProductsFromServer(query);
-        }
-
-        window.handleGridSearch = function(e) {
-            e.preventDefault();
-            const query = document.getElementById('grid-search-input').value.trim();
-            fetchProductsFromServer(query);
         }
 
         window.renderWishlist = function() {
