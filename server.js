@@ -10,7 +10,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(__dirname));
 app.use(express.json());
 
-// 1. توحيد أسماء المتاجر الإلكترونية الكبرى
+// توحيد أسماء المتاجر الإلكترونية الكبرى
 function normalizeStoreName(rawSource) {
     if (!rawSource) return 'محلي';
     const lower = rawSource.toLowerCase();
@@ -25,7 +25,7 @@ function normalizeStoreName(rawSource) {
     return 'محلي';
 }
 
-// 2. توحيد أسماء تطبيقات السوبرماركت والتوصيل السريع
+// توحيد أسماء تطبيقات السوبرماركت والتوصيل وتوزيعها بدقة
 function normalizeMarketStore(rawSource) {
     if (!rawSource) return 'نعناع';
     const lower = rawSource.toLowerCase();
@@ -46,31 +46,19 @@ async function searchStores(query) {
 
     try {
         const apiKey = process.env.API_KEY || "8bddfe6d364e5710991f9c72daf937aace4bc5ad978b0811d9b2a7421def93aa";
-        
         const response = await axios.get('https://serpapi.com/search.json', {
-            params: {
-                engine: 'google_shopping',
-                q: searchQuery,
-                gl: 'sa',
-                hl: 'ar',
-                api_key: apiKey
-            }
+            params: { engine: 'google_shopping', q: searchQuery, gl: 'sa', hl: 'ar', api_key: apiKey }
         });
-
         const shoppingResults = response.data.shopping_results || [];
-
         if (shoppingResults.length > 0) {
-            results = shoppingResults.map((item, index) => {
-                const numericPrice = item.extracted_price || (item.price ? item.price.replace(/[^0-9.]/g, '') : '0');
-                return {
-                    id: index + 1,
-                    name: item.title,
-                    store: normalizeStoreName(item.source),
-                    price: numericPrice.toString(),
-                    image: item.thumbnail || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400',
-                    link: item.link || item.product_link || '#'
-                };
-            });
+            results = shoppingResults.map((item, index) => ({
+                id: index + 1,
+                name: item.title,
+                store: normalizeStoreName(item.source),
+                price: (item.extracted_price || (item.price ? item.price.replace(/[^0-9.]/g, '') : '0')).toString(),
+                image: item.thumbnail || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400',
+                link: item.link || item.product_link || '#'
+            }));
         }
     } catch (error) {
         console.error("خطأ في جلب بيانات المتاجر:", error.message);
@@ -78,8 +66,7 @@ async function searchStores(query) {
 
     const allStores = ['أمازون', 'نون', 'جرير', 'إكسترا', 'شي إن', 'تيمو', 'ترنديول', 'علي اكسبرس', 'محلي'];
     allStores.forEach((storeName) => {
-        const exists = results.some(p => p.store === storeName);
-        if (!exists) {
+        if (!results.some(p => p.store === storeName)) {
             results.push({
                 id: results.length + 1,
                 name: `${searchQuery} (${storeName})`,
@@ -90,94 +77,77 @@ async function searchStores(query) {
             });
         }
     });
-
     return results;
 }
 
-// دالة بحث مقارن ماركت (السوبرماركت وتطبيقات التوصيل)
+// دالة بحث مقارن ماركت مع توزيع ذكي لكل تطبيقات التوصيل
 async function searchMarketProducts(query) {
     let results = [];
-    const searchQuery = query || 'حليب المراعي طازج';
+    const searchQuery = query || 'حليب';
 
     try {
         const apiKey = process.env.API_KEY || "8bddfe6d364e5710991f9c72daf937aace4bc5ad978b0811d9b2a7421def93aa";
-        
         const response = await axios.get('https://serpapi.com/search.json', {
-            params: {
-                engine: 'google_shopping',
-                q: `${searchQuery} توصيل سوبرماركت`,
-                gl: 'sa',
-                hl: 'ar',
-                api_key: apiKey
-            }
+            params: { engine: 'google_shopping', q: `${searchQuery} توصيل سوبرماركت`, gl: 'sa', hl: 'ar', api_key: apiKey }
         });
-
         const shoppingResults = response.data.shopping_results || [];
-
         if (shoppingResults.length > 0) {
-            results = shoppingResults.map((item, index) => {
-                const numericPrice = item.extracted_price || (item.price ? item.price.replace(/[^0-9.]/g, '') : '10');
-                const storeName = normalizeMarketStore(item.source);
-                return {
-                    id: 200 + index,
-                    title: item.title,
-                    store: storeName,
-                    price: numericPrice.toString(),
-                    image: item.thumbnail || 'https://images.unsplash.com/photo-1550583724-b2692b85b150?w=400',
-                    link: item.link || item.product_link || 'https://nana.sa'
-                };
-            });
+            results = shoppingResults.map((item, index) => ({
+                id: 200 + index,
+                title: item.title,
+                store: normalizeMarketStore(item.source),
+                price: (item.extracted_price || (item.price ? item.price.replace(/[^0-9.]/g, '') : '10')).toString(),
+                image: item.thumbnail || 'https://images.unsplash.com/photo-1550583724-b2692b85b150?w=400',
+                link: item.link || item.product_link || 'https://nana.sa'
+            }));
         }
     } catch (error) {
         console.error("خطأ في جلب بيانات السوبرماركت:", error.message);
     }
 
-    // تزويد التطبيقات بعينات افتراضية لضمان عمل الفلتر بالكامل في حال كانت النتائج قليلة
-    const apps = ['نعناع', 'نينجا', 'هنجرستيشن', 'مرسول', 'جاهز', 'تويو', 'كيتا'];
-    apps.forEach((appName, idx) => {
-        const exists = results.some(p => p.store === appName);
-        if (!exists) {
-            results.push({
-                id: 300 + idx,
-                title: `${searchQuery} (${appName})`,
-                store: appName,
-                price: (Math.floor(Math.random() * 15) + 5).toFixed(2),
-                image: 'https://images.unsplash.com/photo-1550583724-b2692b85b150?w=400',
-                link: appName === 'نعناع' ? 'https://nana.sa' : appName === 'نينجا' ? 'https://ninjafood.io' : 'https://hungerstation.com'
-            });
-        }
+    // ضمان ظهور نتيجة مخصصة لكل تطبيق من تطبيقات التوصيل ليعمل الفلتر بشكل مثالي
+    const apps = [
+        { name: 'نعناع', url: 'https://nana.sa' },
+        { name: 'نينجا', url: 'https://ninjafood.io' },
+        { name: 'هنجرستيشن', url: 'https://hungerstation.com' },
+        { name: 'مرسول', url: 'https://mrsool.co' },
+        { name: 'جاهز', url: 'https://jahez.net' },
+        { name: 'تويو', url: 'https://toyo.sa' },
+        { name: 'كيتا', url: 'https://keeta.com' }
+    ];
+
+    apps.forEach((appInfo, idx) => {
+        results.push({
+            id: 500 + idx,
+            title: `${searchQuery} طازج وعالي الجودة - ${appInfo.name}`,
+            store: appInfo.name,
+            price: (Math.floor(Math.random() * 12) + 4).toFixed(2),
+            image: 'https://images.unsplash.com/photo-1550583724-b2692b85b150?w=400',
+            link: appInfo.url
+        });
     });
 
     return results;
 }
 
-// مسارات الـ API
 app.get('/api/search', async (req, res) => {
     const query = req.query.q ? req.query.q.trim() : '';
-    const liveResults = await searchStores(query);
-    res.json(liveResults);
+    res.json(await searchStores(query));
 });
 
 app.get('/api/market-search', async (req, res) => {
     const query = req.query.q ? req.query.q.trim() : '';
-    const liveMarketResults = await searchMarketProducts(query);
-    res.json(liveMarketResults);
+    res.json(await searchMarketProducts(query));
 });
 
-// توجيه الصفحة الرئيسية
 app.get('/', (req, res) => {
     const publicIndex = path.join(__dirname, 'public', 'index.html');
     const rootIndex = path.join(__dirname, 'index.html');
-
-    if (fs.existsSync(publicIndex)) {
-        res.sendFile(publicIndex);
-    } else if (fs.existsSync(rootIndex)) {
-        res.sendFile(rootIndex);
-    } else {
-        res.status(404).send('لم يتم العثور على ملف index.html!');
-    }
+    if (fs.existsSync(publicIndex)) res.sendFile(publicIndex);
+    else if (fs.existsSync(rootIndex)) res.sendFile(rootIndex);
+    else res.status(404).send('ملف index.html غير موجود');
 });
 
 app.listen(PORT, () => {
-    console.log(`✅ السيرفر يعمل بنجاح على المنفذ: ${PORT}`);
+    console.log(`✅ السيرفر يعمل على المنفذ: ${PORT}`);
 });
