@@ -16,6 +16,36 @@ const HEADERS = {
     'Accept-Language': 'ar-SA,ar;q=0.9,en;q=0.8'
 };
 
+const ALL_STORES = [
+    'نون',
+    'أمازون',
+    'شي إن',
+    'تيمو',
+    'ترنديول',
+    'علي اكسبرس',
+    'جرير',
+    'إكسترا',
+    'محلي'
+];
+
+const STORE_URL_TEMPLATES = {
+    'نون': 'https://www.noon.com/saudi-ar/search/?q={QUERY}&utm_source=c1000088L&utm_medium=cpc&utm_campaign=C1000185151N_sa_ar_noonbranded_1072026_noon_web_c1000088l_search_sembranded_&gad_source=1&gad_campaignid=22393947090&gbraid=0AAAAADH71hjzB8JbSuDupG2DRvbxDUnCP&gclid=CjwKCAiAq5rYBhB-EiwAhj1RdicXAEGmSp0UXHMxRwrWJpmSSY9f4a_g5n2qcU3EvEaBSBBcVOSkLRoC5m8QAvD_BwE',
+    'أمازون': 'https://www.amazon.sa/s?k={QUERY}&tag=sapcabkara-21&ref=pd_sl_496spse0ql_e&adgrpid=200765048356&hvpone=&hvptwo=&hvadid=827392467304&hvpos=&hvnetw=g&hvrand=8235813963785890632&hvqmt=e&hvdev=c&hvdvcmdl=&hvlocint=&hvlocphy=2682&hvtargid=kwd-11440784425&hvcampaign=24303921726&hydadcr=19822_2299496_441666&mcid=31748c71050a38349e11d64adf2a0e1f&hvocijid=8235813963785890632--&hvexpln=nav&language=ar_AE',
+    'شي إن': 'https://ar.shein.com/pdsearch/{QUERY}/?url_from=sagooglebrandshein_shein01_LAR_srsa_20240424&network=g&kwd=kwd-305460321740&pf=GOOGLE&keyword=%D8%B4%D9%8A%20%D8%A7%D9%86&target=&placement=&gad_source=1&gad_campaignid=21229950196&gbraid=0AAAAADm0yO6qkBaFefIAns6VBIFCBfr9F&gclid=CjwKCAiAq5rYBhB-EiwAhj1RdpGwARkxCRC-4pSR_HWdPCkRYVFNopeFUkzKm_CVI2yxuVYaTpJxdhoCGpcQAvD_BwE',
+    'تيمو': 'https://www.temu.com/ul/kuiper/un2.html?_p_rfs=1&subj=un-search-web&_p_jump_id=960&_x_vst_scene=adg&search_key={QUERY}&_x_ads_channel=google&_x_ads_sub_channel=search&adg_ctx=m-7b0028eb~f-1379fb79&_x_ads_account=4898917807&_x_ads_set=21922203772&_x_ads_id=173662756314&_x_ads_creative_id=721859731667&_x_ns_source=g&_x_ns_gclid=CjwKCAiAq5rYBhB-EiwAhj1RdqetHZ8aAMTvU-UlhpT6I_sPYTN8KLUaIi3pnQI2dnzc3VKyqP6hihoCjxMQAvD_BwE&_x_ns_placement=&_x_ns_match_type=p&_x_ns_ad_position=&_x_ns_product_id=&_x_ns_target=&_x_ns_devicemodel=&_x_ns_wbraid=Ck0KCQiAiJXYBhC7ARI8ADMmXbGYV3bv72Wf0WcGBK5Dj8UXwGbtyEX61fkx9ATeWFr80wRSN-Nkg3sjU59tfxtziwx3fVUZ2Ej3GgLg6Q&_x_ns_gbraid=0AAAAAo4mICEos--XMz0tosJr_ZGF5tWRH&_x_ns_keyword=temu&_x_ns_targetid=kwd-368867843197&_x_ns_extensionid=&gad_source=1&gad_campaignid=21922203772&gbraid=0AAAAAo4mICEos--XMz0tosJr_ZGF5tWRH&gclid=CjwKCAiAq5rYBhB-EiwAhj1RdqetHZ8aAMTvU-UlhpT6I_sPYTN8KLUaIi3pnQI2dnzc3VKyqP6hihoCjxMQAvD_BwE',
+    'ترنديول': 'https://www.trendyol.sa/sr?q={QUERY}',
+    'علي اكسبرس': 'https://ar.aliexpress.com/w/wholesale-{QUERY}.html?osf=ppc_ug&guideModule=ppc_ug&src=google&albch=search&acnt=479-062-3723&isdl=y&aff_short_key=UneMJZVf&albcp=21912434085&albag=169994224505&slnk=&trgt=dsa-1642801257570&plac=&crea=721802015515&albad=721802015515&netw=g&device=c&mtctp=&memo1=&albbt=Google_7_search&aff_platform=google&albagn=888888&isSmbActive=false&isSmbAutoCall=false&needSmbHouyi=false&gad_source=1&gad_campaignid=21912434085&gbraid=0AAAAAD2chG4kJjhtPkytt4uLwrhsclKaQ&gclid=CjwKCAiAq5rYBhB-EiwAhj1RdqkDVn5QsJMJxXoG86YtZ5li88VRSuqC555up7a1fpLXvYEU5IQmSBoCqksQAvD_BwE',
+    'جرير': 'https://www.jarir.com/sa-ar/catalogsearch/result?q={QUERY}&srsltid=AYCX9vJ7d1YFA76Heen4bjkVfRVYhqLnuHLAVlZ1SR0kP7wuVobGkndE',
+    'إكسترا': 'https://www.extra.com/ar-sa/search/?text={QUERY}',
+    'محلي': 'https://mahally.com/ar/?s={QUERY}&srsltid=AYCX9vJYHjqiBUri9tYEz9t1823VhPBM8hYuOS2X-vXb41VY-AxIqnHU'
+};
+
+function buildStoreSearchLink(storeName, query) {
+    const template = STORE_URL_TEMPLATES[storeName] || STORE_URL_TEMPLATES['محلي'];
+    const encoded = encodeURIComponent((query || '').trim());
+    return template.replace('{QUERY}', encoded);
+}
+
 // توحيد أسماء المتاجر الإلكترونية الكبرى
 function normalizeStoreName(rawSource) {
     if (!rawSource) return 'محلي';
@@ -27,7 +57,8 @@ function normalizeStoreName(rawSource) {
     if (lower.includes('shein') || lower.includes('شي إن') || lower.includes('شي ان')) return 'شي إن';
     if (lower.includes('temu') || lower.includes('تيمو')) return 'تيمو';
     if (lower.includes('trendyol') || lower.includes('ترنديول')) return 'ترنديول';
-    if (lower.includes('aliexpress') || lower.includes('علي اكسبرس')) return 'علي اكسبرس';
+    if (lower.includes('aliexpress') || lower.includes('علي اكسبرس') || lower.includes('علي إكسبريس')) return 'علي اكسبرس';
+    if (lower.includes('mahally') || lower.includes('محلي')) return 'محلي';
     return 'محلي';
 }
 
@@ -50,44 +81,50 @@ function extractPrice(text) {
     return match ? match[1] : null;
 }
 
-// 1. مسار بحث المتاجر الإلكترونية الكبرى
+// 1. مسار بحث المتاجر الإلكترونية الكبرى بالروابط المحددة
 async function searchStores(query) {
     let results = [];
-    const searchQuery = query || 'ايفون 15';
+    const searchQuery = (query || '').trim();
 
     try {
-        const apiKey = process.env.API_KEY || "8bddfe6d364e5710991f9c72daf937aace4bc5ad978b0811d9b2a7421def93aa";
-        const response = await axios.get('https://serpapi.com/search.json', {
-            params: { engine: 'google_shopping', q: searchQuery, gl: 'sa', hl: 'ar', api_key: apiKey }
-        });
-        const shoppingResults = response.data.shopping_results || [];
-        if (shoppingResults.length > 0) {
-            results = shoppingResults.map((item, index) => ({
-                id: index + 1,
-                name: item.title,
-                store: normalizeStoreName(item.source),
-                price: (item.extracted_price || extractPrice(item.price) || '0').toString(),
-                image: item.thumbnail || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400',
-                link: item.link || item.product_link || '#'
-            }));
+        const apiKey = process.env.SERPAPI_KEY || process.env.API_KEY;
+        if (apiKey && searchQuery) {
+            const response = await axios.get('https://serpapi.com/search.json', {
+                params: { engine: 'google_shopping', q: searchQuery, gl: 'sa', hl: 'ar', api_key: apiKey },
+                timeout: 8000
+            });
+            const shoppingResults = response.data.shopping_results || [];
+            if (shoppingResults.length > 0) {
+                results = shoppingResults.map((item, index) => {
+                    const storeName = normalizeStoreName(item.source);
+                    return {
+                        id: index + 1,
+                        name: item.title,
+                        store: storeName,
+                        price: (item.extracted_price || extractPrice(item.price) || 'عرض في المتجر').toString(),
+                        image: item.thumbnail || '',
+                        link: item.link || item.product_link || buildStoreSearchLink(storeName, searchQuery)
+                    };
+                });
+            }
         }
     } catch (error) {
-        console.error("خطأ في جلب بيانات المتاجر:", error.message);
+        console.error('خطأ في جلب بيانات المتاجر عبر SerpAPI:', error.message);
     }
 
-    const allStores = ['أمازون', 'نون', 'جرير', 'إكسترا', 'شي إن', 'تيمو', 'ترنديول', 'علي اكسبرس', 'محلي'];
-    allStores.forEach((storeName) => {
-        if (!results.some(p => p.store === storeName)) {
+    ALL_STORES.forEach((storeName) => {
+        if (!results.some((p) => p.store === storeName)) {
             results.push({
                 id: results.length + 1,
-                name: `${searchQuery} (${storeName})`,
+                name: searchQuery ? `بحث عن "${searchQuery}" في ${storeName}` : `تصفح متجر ${storeName}`,
                 store: storeName,
-                price: (Math.floor(Math.random() * 400) + 100).toString(),
-                image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400',
-                link: `https://www.${storeName === 'أمازون' ? 'amazon.sa' : storeName === 'نون' ? 'noon.com' : storeName === 'جرير' ? 'jarir.com' : storeName === 'إكسترا' ? 'extra.com' : storeName === 'شي إن' ? 'shein.com' : storeName === 'تيمو' ? 'temu.com' : storeName === 'ترنديول' ? 'trendyol.com' : 'aliexpress.com'}`
+                price: 'عرض في المتجر',
+                image: '',
+                link: buildStoreSearchLink(storeName, searchQuery)
             });
         }
     });
+
     return results;
 }
 
@@ -117,7 +154,7 @@ async function fetchD4DOffers(city, query) {
             let link = $(el).find('a').first().attr('href') || d4dUrl;
             if (link && link.startsWith('/')) link = `https://d4donline.com${link}`;
 
-            if (title && image && !image.includes('logo') && !results.some(r => r.title === title)) {
+            if (title && image && !image.includes('logo') && !results.some((r) => r.title === title)) {
                 results.push({
                     id: 400 + results.length,
                     title,
@@ -129,41 +166,44 @@ async function fetchD4DOffers(city, query) {
             }
         });
     } catch (err) {
-        console.error("تعذر السحب المباشر من D4D:", err.message);
+        console.error('تعذر السحب المباشر من D4D:', err.message);
     }
 
     if (results.length < 4) {
         try {
-            const apiKey = process.env.API_KEY || "8bddfe6d364e5710991f9c72daf937aace4bc5ad978b0811d9b2a7421def93aa";
-            const response = await axios.get('https://serpapi.com/search.json', {
-                params: {
-                    engine: 'google',
-                    q: `site:d4donline.com/ar/saudi-arabia/${targetCity} ${searchQuery || 'عروض'}`,
-                    gl: 'sa',
-                    hl: 'ar',
-                    num: 20,
-                    api_key: apiKey
-                }
-            });
+            const apiKey = process.env.SERPAPI_KEY || process.env.API_KEY;
+            if (apiKey) {
+                const response = await axios.get('https://serpapi.com/search.json', {
+                    params: {
+                        engine: 'google',
+                        q: `site:d4donline.com/ar/saudi-arabia/${targetCity} ${searchQuery || 'عروض'}`,
+                        gl: 'sa',
+                        hl: 'ar',
+                        num: 20,
+                        api_key: apiKey
+                    },
+                    timeout: 8000
+                });
 
-            const organicResults = response.data.organic_results || [];
-            organicResults.forEach((item) => {
-                const realPrice = extractPrice(item.snippet) || extractPrice(item.title);
-                const realImage = item.thumbnail || item.pagemap?.cse_image?.[0]?.src;
+                const organicResults = response.data.organic_results || [];
+                organicResults.forEach((item) => {
+                    const realPrice = extractPrice(item.snippet) || extractPrice(item.title);
+                    const realImage = item.thumbnail || item.pagemap?.cse_image?.[0]?.src;
 
-                if (item.title && !results.some(r => r.link === item.link)) {
-                    results.push({
-                        id: 500 + results.length,
-                        title: item.title.replace(/ - D4D Online.*/i, '').trim(),
-                        store: normalizeD4DStore(`${item.title} ${item.snippet || ''}`),
-                        price: realPrice ? realPrice.toString() : 'اضغط لعرض السعر',
-                        image: realImage || 'https://d4donline.com/images/default-offer.png',
-                        link: item.link
-                    });
-                }
-            });
+                    if (item.title && !results.some((r) => r.link === item.link)) {
+                        results.push({
+                            id: 500 + results.length,
+                            title: item.title.replace(/ - D4D Online.*/i, '').trim(),
+                            store: normalizeD4DStore(`${item.title} ${item.snippet || ''}`),
+                            price: realPrice ? realPrice.toString() : 'اضغط لعرض السعر',
+                            image: realImage || 'https://d4donline.com/images/default-offer.png',
+                            link: item.link
+                        });
+                    }
+                });
+            }
         } catch (error) {
-            console.error("خطأ في جلب نتائج D4D:", error.message);
+            console.error('خطأ في جلب نتائج D4D:', error.message);
         }
     }
 
