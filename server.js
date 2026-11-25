@@ -67,6 +67,31 @@ const STORE_ALLOWED_HOSTS = {
     'محلي': ['mahally.com']
 };
 
+const SYNONYM_GROUPS = [
+    ['ايفون', 'آيفون', 'iphone', 'ابل', 'apple'],
+    ['سماعة', 'سماعات', 'ايربودز', 'airpods', 'headphone', 'earbuds'],
+    ['لابتوب', 'لاب توب', 'laptop', 'ماك بوك', 'macbook'],
+    ['جوال', 'موبايل', 'هاتف', 'phone', 'smartphone'],
+    ['شاحن', 'باور بانك', 'charger', 'power bank']
+];
+
+const SEARCH_CACHE = new Map();
+const CACHE_TTL_MS = 12 * 60 * 1000;
+
+function getCached(key) {
+    const entry = SEARCH_CACHE.get(key);
+    if (!entry) return null;
+    if (Date.now() - entry.timestamp > CACHE_TTL_MS) {
+        SEARCH_CACHE.delete(key);
+        return null;
+    }
+    return entry.data;
+}
+
+function setCached(key, data) {
+    SEARCH_CACHE.set(key, { timestamp: Date.now(), data });
+}
+
 function getSerpApiKey() {
     return (process.env.SERPAPI_KEY || process.env.API_KEY || DEFAULT_SERPAPI_KEY).trim();
 }
@@ -122,10 +147,17 @@ function normalizeD4DStore(rawSource) {
     return rawSource.trim();
 }
 
-function extractPrice(text) {
+function extractPrice(text, requireCurrency = false) {
     if (!text) return null;
-    const match = String(text).replace(/,/g, '').match(/(\d+(\.\d{1,2})?)/);
-    return match ? match[1] : null;
+    const raw = String(text).replace(/,/g, '');
+    if (requireCurrency && !/(ر\.س|SAR|ريال|SR|\$|USD)/i.test(raw)) {
+        return null;
+    }
+    const match = raw.match(/(\d+(?:\.\d{1,2})?)/);
+    if (!match) return null;
+    const num = parseFloat(match[1]);
+    if (Number.isNaN(num) || num <= 0) return null;
+    return match[1];
 }
 
 function normalizeUrl(rawUrl, baseUrl) {
@@ -137,26 +169,76 @@ function normalizeUrl(rawUrl, baseUrl) {
     }
 }
 
+function expandTokenVariants(token) {
+    const lower = token.toLowerCase();
+    for (const group of SYNONYM_GROUPS) {
+        if (group.includes(lower)) return group;
+    }
+    return [lower];
+}
+
+function scoreMatch(name, query) {
+    const cleanName = String(name || '').toLowerCase();
+    const tokens = String(query || '').toLowerCase().split(/\s+/).filter(Boolean);
+    if (tokens.length === 0) return 0;
+    let score = 0;
+    for (const token of tokens) {
+        const variants = expandTokenVariants(token);
+        if (variants.some((v) => cleanName.includes(v))) {
+            score += 2;
+        }
+    }
+    return score;
+}
+
 async function fetchFromGoogleShopping(searchQuery, apiKey) {
     if (!apiKey || !searchQuery) return [];
     try {
         const { data } = await axios.get('https://serpapi.com/search.json', {
-            params: { engine: 'google_shopping', q: searchQuery, gl: 'sa', hl: 'ar', api_key: apiKey },
-            timeout: 9000
+            params: {
+                engine: 'google_shopping',
+                q: searchQuery,
+                location: 'Saudi Arabia',
+                gl: 'sa',
+                hl: 'ar',
+                api_key: apiKey
+            },
+            timeout: 12000
         });
-        return (data.shopping_results || []).map((item, idx) => {
+
+        const rawItems = [
+            ...(Array.isArray(data.shopping_results) ? data.shopping_results : []),
+            ...(Array.isArray(data.inline_shopping_results) ? data.inline_shopping_results : [])
+        ];
+
+        const seen = new Set();
+        const mapped = [];
+
+        for (const item of rawItems) {
+            if (!item || !item.title) continue;
             const candidateLink = item.link || item.product_link || '';
             const storeName = normalizeStoreName(item.source, candidateLink);
-            const price = item.extracted_price || extractPrice(item.price);
-            return {
-                id: idx + 1,
-                name: item.title,
+            const directLink = resolveDirectStoreLink(storeName, candidateLink, searchQuery);
+            const dedupKey = `${item.title.trim().toLowerCase()}|${storeName}|${directLink}`;
+            if (seen.has(dedupKey)) continue;
+            seen.add(dedupKey);
+
+            const price = item.extracted_price || extractPrice(item.price, false);
+            const hasImage = Boolean(item.thumbnail);
+            const hasPrice = Boolean(price);
+
+            mapped.push({
+                name: item.title.trim(),
                 store: storeName,
                 price: price ? price.toString() : 'عرض في المتجر',
                 image: item.thumbnail || '',
-                link: resolveDirectStoreLink(storeName, candidateLink, searchQuery)
-            };
-        }).filter((p) => p.name);
+                link: directLink,
+                _score: scoreMatch(item.title, searchQuery) + (hasImage ? 2 : 0) + (hasPrice ? 2 : 0)
+            });
+        }
+
+        mapped.sort((a, b) => b._score - a._score);
+        return mapped.map(({ _score, ...rest }) => rest);
     } catch (e) {
         console.error('Google Shopping error:', e.message);
         return [];
@@ -171,18 +253,27 @@ async function fetchMissingStoresViaGoogle(missingStores, searchQuery, apiKey) {
         if (!domain) return;
         try {
             const { data } = await axios.get('https://serpapi.com/search.json', {
-                params: { engine: 'google', q: `site:${domain} ${searchQuery}`, gl: 'sa', hl: 'ar', num: 5, api_key: apiKey },
-                timeout: 8000
+                params: {
+                    engine: 'google',
+                    q: `site:${domain} ${searchQuery}`,
+                    location: 'Saudi Arabia',
+                    gl: 'sa',
+                    hl: 'ar',
+                    num: 5,
+                    api_key: apiKey
+                },
+                timeout: 10000
             });
-            const first = (data.organic_results || [])[0];
-            if (first && first.title) {
-                const price = extractPrice(first.snippet) || extractPrice(first.title);
+            const candidates = data.organic_results || [];
+            const best = candidates.find((c) => c && c.title && (c.thumbnail || extractPrice(c.snippet, true))) || candidates[0];
+            if (best && best.title) {
+                const price = extractPrice(best.snippet, true);
                 found.push({
-                    name: first.title.trim(),
+                    name: best.title.trim(),
                     store: storeName,
                     price: price ? price.toString() : 'عرض في المتجر',
-                    image: first.thumbnail || first.pagemap?.cse_image?.[0]?.src || '',
-                    link: resolveDirectStoreLink(storeName, first.link, searchQuery)
+                    image: best.thumbnail || best.pagemap?.cse_image?.[0]?.src || '',
+                    link: resolveDirectStoreLink(storeName, best.link, searchQuery)
                 });
             }
         } catch (e) {}
@@ -193,7 +284,7 @@ async function fetchMissingStoresViaGoogle(missingStores, searchQuery, apiKey) {
 async function scrapeStoreDirect(storeName, searchQuery) {
     const targetUrl = buildStoreSearchLink(storeName, searchQuery);
     try {
-        const { data: html } = await axios.get(targetUrl, { headers: HEADERS, timeout: 8000 });
+        const { data: html } = await axios.get(targetUrl, { headers: HEADERS, timeout: 9000 });
         const $ = cheerio.load(html);
 
         let ldItem = null;
@@ -210,7 +301,7 @@ async function scrapeStoreDirect(storeName, searchQuery) {
                         const offer = Array.isArray(firstProd.offers) ? firstProd.offers[0] : (firstProd.offers || firstProd);
                         const name = firstProd.name;
                         const rawImg = Array.isArray(firstProd.image) ? firstProd.image[0] : (firstProd.image?.url || firstProd.image);
-                        const price = offer?.price || offer?.lowPrice || extractPrice(offer?.priceSpecification?.price);
+                        const price = offer?.price || offer?.lowPrice || extractPrice(offer?.priceSpecification?.price, false);
                         const rawLink = normalizeUrl(offer?.url || firstProd.url, targetUrl);
                         if (name) {
                             ldItem = {
@@ -232,7 +323,7 @@ async function scrapeStoreDirect(storeName, searchQuery) {
         $('.product-card, .product-item, .s-result-item, [data-testid*="product"], [class*="product"]').each((_, el) => {
             if (domItem) return;
             const title = $(el).find('h2, h3, h4, .title, [class*="title"], [class*="name"]').first().text().trim();
-            const price = extractPrice($(el).find('.price, [class*="price"]').first().text().trim());
+            const price = extractPrice($(el).find('.price, [class*="price"]').first().text().trim(), false);
             const imgEl = $(el).find('img').first();
             const image = normalizeUrl(imgEl.attr('data-src') || imgEl.attr('src'), targetUrl);
             const rawLink = normalizeUrl($(el).find('a').first().attr('href'), targetUrl);
@@ -250,7 +341,7 @@ async function scrapeStoreDirect(storeName, searchQuery) {
 
         const ogTitle = $('meta[property="og:title"]').attr('content')?.trim();
         const ogImage = normalizeUrl($('meta[property="og:image"]').attr('content'), targetUrl);
-        const ogPrice = extractPrice($('meta[property="product:price:amount"]').attr('content'));
+        const ogPrice = extractPrice($('meta[property="product:price:amount"]').attr('content'), false);
         if (ogTitle && (ogImage || ogPrice)) {
             return {
                 name: ogTitle,
@@ -266,6 +357,10 @@ async function scrapeStoreDirect(storeName, searchQuery) {
 
 async function searchStores(query) {
     const searchQuery = (query || '').trim();
+    const cacheKey = `stores:${searchQuery.toLowerCase()}`;
+    const cached = getCached(cacheKey);
+    if (cached) return cached;
+
     const apiKey = getSerpApiKey();
     let results = await fetchFromGoogleShopping(searchQuery, apiKey);
 
@@ -291,25 +386,31 @@ async function searchStores(query) {
         }
     });
 
-    return results.map((item, idx) => ({ ...item, id: idx + 1 }));
+    const finalResults = results.map((item, idx) => ({ ...item, id: idx + 1 }));
+    setCached(cacheKey, finalResults);
+    return finalResults;
 }
 
 async function fetchD4DOffers(city, query) {
-    let results = [];
     const targetCity = city || 'riyadh';
     const searchQuery = query ? query.trim() : '';
+    const cacheKey = `d4d:${targetCity}:${searchQuery.toLowerCase()}`;
+    const cached = getCached(cacheKey);
+    if (cached) return cached;
+
+    let results = [];
 
     try {
         const d4dUrl = searchQuery
             ? `https://d4donline.com/ar/saudi-arabia/${targetCity}/products?q=${encodeURIComponent(searchQuery)}`
             : `https://d4donline.com/ar/saudi-arabia/${targetCity}/offers`;
 
-        const { data: html } = await axios.get(d4dUrl, { headers: HEADERS, timeout: 8000 });
+        const { data: html } = await axios.get(d4dUrl, { headers: HEADERS, timeout: 9000 });
         const $ = cheerio.load(html);
 
         $('.product-card, .offer-card, [class*="product"], [class*="offer"]').each((_, el) => {
             const title = $(el).find('h2, h3, h4, .title, [class*="title"], [class*="name"]').first().text().trim();
-            const price = extractPrice($(el).find('.price, [class*="price"], .amount').first().text().trim());
+            const price = extractPrice($(el).find('.price, [class*="price"], .amount').first().text().trim(), false);
             const imgEl = $(el).find('img').first();
             const image = normalizeUrl(imgEl.attr('data-src') || imgEl.attr('src'), 'https://d4donline.com');
             const rawStore = $(el).find('.store, .retailer, [class*="store"], [class*="brand"]').first().text().trim() || title;
@@ -338,16 +439,17 @@ async function fetchD4DOffers(city, query) {
                     params: {
                         engine: 'google',
                         q: `site:d4donline.com/ar/saudi-arabia/${targetCity} ${searchQuery || 'عروض'}`,
+                        location: 'Saudi Arabia',
                         gl: 'sa',
                         hl: 'ar',
                         num: 20,
                         api_key: apiKey
                     },
-                    timeout: 8000
+                    timeout: 10000
                 });
 
                 (data.organic_results || []).forEach((item) => {
-                    const realPrice = extractPrice(item.snippet) || extractPrice(item.title);
+                    const realPrice = extractPrice(item.snippet, true);
                     const realImage = item.thumbnail || item.pagemap?.cse_image?.[0]?.src || '';
 
                     if (item.title && !results.some((r) => r.link === item.link)) {
@@ -367,6 +469,7 @@ async function fetchD4DOffers(city, query) {
         }
     }
 
+    setCached(cacheKey, results);
     return results;
 }
 
