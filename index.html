@@ -30,7 +30,11 @@
         select::-webkit-outer-spin-button,
         select::-webkit-inner-spin-button {
             -webkit-appearance: none;
+            appearance: none;
             margin: 0;
+        }
+        button, a {
+            overflow: visible;
         }
         .brand-logo-text {
             user-select: none;
@@ -173,7 +177,10 @@
                             <i class="fa-solid fa-sliders text-sky-500"></i>
                             <span>تصفية النتائج</span>
                         </h3>
-                        <button type="button" onclick="resetFilters()" class="text-xs font-bold text-zinc-500 hover:text-zinc-900 dark:hover:text-white whitespace-nowrap shrink-0">إعادة ضبط</button>
+                        <button type="button" onclick="resetFilters()" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-stone-50 dark:bg-zinc-950 text-xs font-bold text-zinc-600 dark:text-zinc-300 hover:border-sky-500/60 hover:text-sky-500 dark:hover:text-sky-400 transition whitespace-nowrap shrink-0">
+                            <i class="fa-solid fa-rotate-right text-[11px]"></i>
+                            <span>إعادة ضبط</span>
+                        </button>
                     </div>
 
                     <div class="space-y-2.5">
