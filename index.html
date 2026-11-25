@@ -74,10 +74,11 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-8 h-16 sm:h-20 flex items-center justify-between gap-3">
             <!-- شعار الموقع أعلى يمين -->
             <div class="flex items-center shrink-0">
-                <button type="button" onclick="switchView('hero-view')" class="brand-logo-text flex items-center gap-2.5 text-right focus:outline-none">
-                    <img src="logo.png" alt="شعار مقارن" onerror="this.style.display='none'; document.getElementById('header-logo-fallback').classList.remove('hidden');" class="h-10 sm:h-12 w-auto rounded-xl object-cover border border-zinc-200 dark:border-zinc-800">
-                    <span id="header-logo-fallback" class="hidden font-black text-2xl sm:text-3xl tracking-tight text-sky-500">مُقَارِن</span>
-                </button>
+                <a href="#hero-view" onclick="switchView('hero-view'); return false;" translate="no" class="brand-logo-text flex items-center gap-2 text-right focus:outline-none select-none">
+                    <span class="inline-flex items-center justify-center px-3.5 py-1.5 rounded-xl bg-blue-900 text-white font-black text-xl sm:text-2xl tracking-tight border border-blue-700/60 shadow-sm">
+                        مقارن
+                    </span>
+                </a>
             </div>
 
             <nav class="flex items-center gap-2 overflow-x-auto py-1.5">
@@ -176,12 +177,12 @@
         <section id="search-view" class="view-panel space-y-6">
             <div class="flex flex-col lg:flex-row gap-6 items-start">
                 <aside class="w-full lg:w-64 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5 space-y-6 shrink-0">
-                    <div class="flex items-center justify-between gap-2 border-b border-zinc-200 dark:border-zinc-800 pb-3">
+                    <div class="flex items-center justify-between gap-3 border-b border-zinc-200 dark:border-zinc-800 pb-3">
                         <h3 class="text-sm font-extrabold flex items-center gap-2 shrink-0">
                             <i class="fa-solid fa-sliders text-sky-500"></i>
                             <span>تصفية النتائج</span>
                         </h3>
-                        <button type="button" onclick="resetFilters()" class="text-xs font-bold text-zinc-500 hover:text-zinc-900 dark:hover:text-white whitespace-nowrap shrink-0">إعادة ضبط</button>
+                        <button type="button" onclick="resetFilters()" translate="no" class="px-2.5 py-1 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition whitespace-nowrap shrink-0">إعادة ضبط</button>
                     </div>
 
                     <div class="space-y-2.5">
