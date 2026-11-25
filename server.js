@@ -6,6 +6,7 @@ const cheerio = require('cheerio');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const DEFAULT_SERPAPI_KEY = '8bddfe6d364e5710991f9c72daf937aace4bc5ad978b0811d9b2a7421def93aa';
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(__dirname));
@@ -40,13 +41,16 @@ const STORE_URL_TEMPLATES = {
     'محلي': 'https://mahally.com/ar/?s={QUERY}&srsltid=AYCX9vJYHjqiBUri9tYEz9t1823VhPBM8hYuOS2X-vXb41VY-AxIqnHU'
 };
 
+function getSerpApiKey() {
+    return (process.env.SERPAPI_KEY || process.env.API_KEY || DEFAULT_SERPAPI_KEY).trim();
+}
+
 function buildStoreSearchLink(storeName, query) {
     const template = STORE_URL_TEMPLATES[storeName] || STORE_URL_TEMPLATES['محلي'];
     const encoded = encodeURIComponent((query || '').trim());
     return template.replace('{QUERY}', encoded);
 }
 
-// توحيد أسماء المتاجر الإلكترونية الكبرى
 function normalizeStoreName(rawSource) {
     if (!rawSource) return 'محلي';
     const lower = rawSource.toLowerCase();
@@ -62,7 +66,6 @@ function normalizeStoreName(rawSource) {
     return 'محلي';
 }
 
-// توحيد أسماء أسواق ومتاجر D4D (مقارن ماركت)
 function normalizeD4DStore(rawSource) {
     if (!rawSource) return 'بنده';
     const lower = rawSource.toLowerCase();
@@ -81,27 +84,34 @@ function extractPrice(text) {
     return match ? match[1] : null;
 }
 
-// 1. مسار بحث المتاجر الإلكترونية الكبرى بالروابط المحددة
+// 1. مسار بحث المتاجر الإلكترونية الكبرى
 async function searchStores(query) {
     let results = [];
     const searchQuery = (query || '').trim();
+    const apiKey = getSerpApiKey();
 
     try {
-        const apiKey = process.env.SERPAPI_KEY || process.env.API_KEY;
         if (apiKey && searchQuery) {
             const response = await axios.get('https://serpapi.com/search.json', {
-                params: { engine: 'google_shopping', q: searchQuery, gl: 'sa', hl: 'ar', api_key: apiKey },
-                timeout: 8000
+                params: {
+                    engine: 'google_shopping',
+                    q: searchQuery,
+                    gl: 'sa',
+                    hl: 'ar',
+                    api_key: apiKey
+                },
+                timeout: 9000
             });
             const shoppingResults = response.data.shopping_results || [];
             if (shoppingResults.length > 0) {
                 results = shoppingResults.map((item, index) => {
                     const storeName = normalizeStoreName(item.source);
+                    const numericPrice = item.extracted_price || extractPrice(item.price);
                     return {
                         id: index + 1,
                         name: item.title,
                         store: storeName,
-                        price: (item.extracted_price || extractPrice(item.price) || 'عرض في المتجر').toString(),
+                        price: numericPrice ? numericPrice.toString() : 'عرض في المتجر',
                         image: item.thumbnail || '',
                         link: item.link || item.product_link || buildStoreSearchLink(storeName, searchQuery)
                     };
@@ -171,7 +181,7 @@ async function fetchD4DOffers(city, query) {
 
     if (results.length < 4) {
         try {
-            const apiKey = process.env.SERPAPI_KEY || process.env.API_KEY;
+            const apiKey = getSerpApiKey();
             if (apiKey) {
                 const response = await axios.get('https://serpapi.com/search.json', {
                     params: {
@@ -196,7 +206,7 @@ async function fetchD4DOffers(city, query) {
                             title: item.title.replace(/ - D4D Online.*/i, '').trim(),
                             store: normalizeD4DStore(`${item.title} ${item.snippet || ''}`),
                             price: realPrice ? realPrice.toString() : 'اضغط لعرض السعر',
-                            image: realImage || 'https://d4donline.com/images/default-offer.png',
+                            image: realImage || '',
                             link: item.link
                         });
                     }
