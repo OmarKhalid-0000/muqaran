@@ -13,8 +13,10 @@ app.use(express.static(__dirname));
 app.use(express.json());
 
 const HEADERS = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
-    'Accept-Language': 'ar-SA,ar;q=0.9,en;q=0.8'
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+    'Accept-Language': 'ar-SA,ar;q=0.9,en-US;q=0.8,en;q=0.7',
+    'Cache-Control': 'no-cache'
 };
 
 const ALL_STORES = [
@@ -41,6 +43,18 @@ const STORE_URL_TEMPLATES = {
     'محلي': 'https://mahally.com/ar/?s={QUERY}&srsltid=AYCX9vJYHjqiBUri9tYEz9t1823VhPBM8hYuOS2X-vXb41VY-AxIqnHU'
 };
 
+const STORE_SITE_DOMAINS = {
+    'نون': 'noon.com/saudi-ar',
+    'أمازون': 'amazon.sa',
+    'شي إن': 'ar.shein.com',
+    'تيمو': 'temu.com',
+    'ترنديول': 'trendyol.sa',
+    'علي اكسبرس': 'ar.aliexpress.com',
+    'جرير': 'jarir.com',
+    'إكسترا': 'extra.com',
+    'محلي': 'mahally.com'
+};
+
 function getSerpApiKey() {
     return (process.env.SERPAPI_KEY || process.env.API_KEY || DEFAULT_SERPAPI_KEY).trim();
 }
@@ -53,7 +67,7 @@ function buildStoreSearchLink(storeName, query) {
 
 function normalizeStoreName(rawSource) {
     if (!rawSource) return 'محلي';
-    const lower = rawSource.toLowerCase();
+    const lower = String(rawSource).toLowerCase();
     if (lower.includes('amazon') || lower.includes('أمازون')) return 'أمازون';
     if (lower.includes('noon') || lower.includes('نون')) return 'نون';
     if (lower.includes('jarir') || lower.includes('جرير')) return 'جرير';
@@ -68,7 +82,7 @@ function normalizeStoreName(rawSource) {
 
 function normalizeD4DStore(rawSource) {
     if (!rawSource) return 'بنده';
-    const lower = rawSource.toLowerCase();
+    const lower = String(rawSource).toLowerCase();
     if (lower.includes('othaim') || lower.includes('العثيم')) return 'العثيم';
     if (lower.includes('panda') || lower.includes('بنده')) return 'بنده';
     if (lower.includes('carrefour') || lower.includes('كارفور')) return 'كارفور';
@@ -80,52 +94,168 @@ function normalizeD4DStore(rawSource) {
 
 function extractPrice(text) {
     if (!text) return null;
-    const match = text.replace(/,/g, '').match(/(\d+(\.\d{1,2})?)/);
+    const match = String(text).replace(/,/g, '').match(/(\d+(\.\d{1,2})?)/);
     return match ? match[1] : null;
 }
 
-// 1. مسار بحث المتاجر الإلكترونية الكبرى
-async function searchStores(query) {
-    let results = [];
-    const searchQuery = (query || '').trim();
-    const apiKey = getSerpApiKey();
-
+function normalizeUrl(rawUrl, baseUrl) {
+    if (!rawUrl) return '';
     try {
-        if (apiKey && searchQuery) {
-            const response = await axios.get('https://serpapi.com/search.json', {
-                params: {
-                    engine: 'google_shopping',
-                    q: searchQuery,
-                    gl: 'sa',
-                    hl: 'ar',
-                    api_key: apiKey
-                },
-                timeout: 9000
+        return new URL(rawUrl, baseUrl).href;
+    } catch {
+        return '';
+    }
+}
+
+// الطبقة 1: Google Shopping عبر SerpAPI
+async function fetchFromGoogleShopping(searchQuery, apiKey) {
+    if (!apiKey || !searchQuery) return [];
+    try {
+        const { data } = await axios.get('https://serpapi.com/search.json', {
+            params: { engine: 'google_shopping', q: searchQuery, gl: 'sa', hl: 'ar', api_key: apiKey },
+            timeout: 9000
+        });
+        return (data.shopping_results || []).map((item, idx) => {
+            const storeName = normalizeStoreName(item.source);
+            const price = item.extracted_price || extractPrice(item.price);
+            return {
+                id: idx + 1,
+                name: item.title,
+                store: storeName,
+                price: price ? price.toString() : 'عرض في المتجر',
+                image: item.thumbnail || '',
+                link: item.link || item.product_link || buildStoreSearchLink(storeName, searchQuery)
+            };
+        }).filter((p) => p.name);
+    } catch (e) {
+        console.error('Google Shopping error:', e.message);
+        return [];
+    }
+}
+
+// الطبقة 1B: بحث Google لكل متجر عبر SerpAPI عند غياب نتيجته
+async function fetchMissingStoresViaGoogle(missingStores, searchQuery, apiKey) {
+    if (!apiKey || !searchQuery || missingStores.length === 0) return [];
+    const found = [];
+    await Promise.all(missingStores.map(async (storeName) => {
+        const domain = STORE_SITE_DOMAINS[storeName];
+        if (!domain) return;
+        try {
+            const { data } = await axios.get('https://serpapi.com/search.json', {
+                params: { engine: 'google', q: `site:${domain} ${searchQuery}`, gl: 'sa', hl: 'ar', num: 5, api_key: apiKey },
+                timeout: 8000
             });
-            const shoppingResults = response.data.shopping_results || [];
-            if (shoppingResults.length > 0) {
-                results = shoppingResults.map((item, index) => {
-                    const storeName = normalizeStoreName(item.source);
-                    const numericPrice = item.extracted_price || extractPrice(item.price);
-                    return {
-                        id: index + 1,
-                        name: item.title,
-                        store: storeName,
-                        price: numericPrice ? numericPrice.toString() : 'عرض في المتجر',
-                        image: item.thumbnail || '',
-                        link: item.link || item.product_link || buildStoreSearchLink(storeName, searchQuery)
-                    };
+            const first = (data.organic_results || [])[0];
+            if (first && first.title) {
+                const price = extractPrice(first.snippet) || extractPrice(first.title);
+                found.push({
+                    name: first.title.trim(),
+                    store: storeName,
+                    price: price ? price.toString() : 'عرض في المتجر',
+                    image: first.thumbnail || first.pagemap?.cse_image?.[0]?.src || '',
+                    link: first.link || buildStoreSearchLink(storeName, searchQuery)
                 });
             }
+        } catch (e) {}
+    }));
+    return found;
+}
+
+// الطبقة 2 و 3: سحب مباشر عبر Cheerio و JSON-LD / OpenGraph
+async function scrapeStoreDirect(storeName, searchQuery) {
+    const targetUrl = buildStoreSearchLink(storeName, searchQuery);
+    try {
+        const { data: html } = await axios.get(targetUrl, { headers: HEADERS, timeout: 8000 });
+        const $ = cheerio.load(html);
+
+        // الطبقة 3: JSON-LD
+        let ldItem = null;
+        $('script[type="application/ld+json"]').each((_, el) => {
+            if (ldItem) return;
+            try {
+                const json = JSON.parse($(el).html() || '{}');
+                const nodes = Array.isArray(json) ? json : [json, ...(json['@graph'] || [])];
+                for (const node of nodes) {
+                    if (!node) continue;
+                    const type = Array.isArray(node['@type']) ? node['@type'].join(',') : (node['@type'] || '');
+                    if (/Product|Offer|ItemList/i.test(type)) {
+                        const firstProd = node.itemListElement?.[0]?.item || node;
+                        const offer = Array.isArray(firstProd.offers) ? firstProd.offers[0] : (firstProd.offers || firstProd);
+                        const name = firstProd.name;
+                        const rawImg = Array.isArray(firstProd.image) ? firstProd.image[0] : (firstProd.image?.url || firstProd.image);
+                        const price = offer?.price || offer?.lowPrice || extractPrice(offer?.priceSpecification?.price);
+                        if (name) {
+                            ldItem = {
+                                name: String(name).trim(),
+                                store: storeName,
+                                price: price ? String(price) : 'عرض في المتجر',
+                                image: normalizeUrl(rawImg, targetUrl),
+                                link: normalizeUrl(offer?.url || firstProd.url, targetUrl) || targetUrl
+                            };
+                            break;
+                        }
+                    }
+                }
+            } catch (_) {}
+        });
+        if (ldItem && (ldItem.image || ldItem.price !== 'عرض في المتجر')) return ldItem;
+
+        // الطبقة 2: عناصر DOM
+        let domItem = null;
+        $('.product-card, .product-item, .s-result-item, [data-testid*="product"], [class*="product"]').each((_, el) => {
+            if (domItem) return;
+            const title = $(el).find('h2, h3, h4, .title, [class*="title"], [class*="name"]').first().text().trim();
+            const price = extractPrice($(el).find('.price, [class*="price"]').first().text().trim());
+            const imgEl = $(el).find('img').first();
+            const image = normalizeUrl(imgEl.attr('data-src') || imgEl.attr('src'), targetUrl);
+            const link = normalizeUrl($(el).find('a').first().attr('href'), targetUrl) || targetUrl;
+            if (title && (image || price)) {
+                domItem = {
+                    name: title,
+                    store: storeName,
+                    price: price ? String(price) : 'عرض في المتجر',
+                    image,
+                    link
+                };
+            }
+        });
+        if (domItem) return domItem;
+
+        // الطبقة 3B: OpenGraph meta
+        const ogTitle = $('meta[property="og:title"]').attr('content')?.trim();
+        const ogImage = normalizeUrl($('meta[property="og:image"]').attr('content'), targetUrl);
+        const ogPrice = extractPrice($('meta[property="product:price:amount"]').attr('content'));
+        if (ogTitle && (ogImage || ogPrice)) {
+            return {
+                name: ogTitle,
+                store: storeName,
+                price: ogPrice ? String(ogPrice) : 'عرض في المتجر',
+                image: ogImage,
+                link: targetUrl
+            };
         }
-    } catch (error) {
-        console.error('خطأ في جلب بيانات المتاجر عبر SerpAPI:', error.message);
+    } catch (_) {}
+    return null;
+}
+
+async function searchStores(query) {
+    const searchQuery = (query || '').trim();
+    const apiKey = getSerpApiKey();
+    let results = await fetchFromGoogleShopping(searchQuery, apiKey);
+
+    if (searchQuery) {
+        const missing = ALL_STORES.filter((s) => !results.some((r) => r.store === s));
+        const googleExtra = await fetchMissingStoresViaGoogle(missing, searchQuery, apiKey);
+        results.push(...googleExtra);
+
+        const stillMissing = ALL_STORES.filter((s) => !results.some((r) => r.store === s));
+        const scraped = await Promise.all(stillMissing.map((s) => scrapeStoreDirect(s, searchQuery)));
+        results.push(...scraped.filter(Boolean));
     }
 
     ALL_STORES.forEach((storeName) => {
         if (!results.some((p) => p.store === storeName)) {
             results.push({
-                id: results.length + 1,
                 name: searchQuery ? `بحث عن "${searchQuery}" في ${storeName}` : `تصفح متجر ${storeName}`,
                 store: storeName,
                 price: 'عرض في المتجر',
@@ -135,10 +265,9 @@ async function searchStores(query) {
         }
     });
 
-    return results;
+    return results.map((item, idx) => ({ ...item, id: idx + 1 }));
 }
 
-// 2. مسار بحث مقارن ماركت (الأسواق الكبرى D4D)
 async function fetchD4DOffers(city, query) {
     let results = [];
     const targetCity = city || 'riyadh';
@@ -152,17 +281,13 @@ async function fetchD4DOffers(city, query) {
         const { data: html } = await axios.get(d4dUrl, { headers: HEADERS, timeout: 8000 });
         const $ = cheerio.load(html);
 
-        $('.product-card, .offer-card, [class*="product"], [class*="offer"]').each((index, el) => {
+        $('.product-card, .offer-card, [class*="product"], [class*="offer"]').each((_, el) => {
             const title = $(el).find('h2, h3, h4, .title, [class*="title"], [class*="name"]').first().text().trim();
-            const rawPrice = $(el).find('.price, [class*="price"], .amount').first().text().trim();
-            const price = extractPrice(rawPrice);
+            const price = extractPrice($(el).find('.price, [class*="price"], .amount').first().text().trim());
             const imgEl = $(el).find('img').first();
-            let image = imgEl.attr('data-src') || imgEl.attr('src') || '';
-            if (image && image.startsWith('/')) image = `https://d4donline.com${image}`;
-
+            const image = normalizeUrl(imgEl.attr('data-src') || imgEl.attr('src'), 'https://d4donline.com');
             const rawStore = $(el).find('.store, .retailer, [class*="store"], [class*="brand"]').first().text().trim() || title;
-            let link = $(el).find('a').first().attr('href') || d4dUrl;
-            if (link && link.startsWith('/')) link = `https://d4donline.com${link}`;
+            const link = normalizeUrl($(el).find('a').first().attr('href'), 'https://d4donline.com') || d4dUrl;
 
             if (title && image && !image.includes('logo') && !results.some((r) => r.title === title)) {
                 results.push({
@@ -183,7 +308,7 @@ async function fetchD4DOffers(city, query) {
         try {
             const apiKey = getSerpApiKey();
             if (apiKey) {
-                const response = await axios.get('https://serpapi.com/search.json', {
+                const { data } = await axios.get('https://serpapi.com/search.json', {
                     params: {
                         engine: 'google',
                         q: `site:d4donline.com/ar/saudi-arabia/${targetCity} ${searchQuery || 'عروض'}`,
@@ -195,10 +320,9 @@ async function fetchD4DOffers(city, query) {
                     timeout: 8000
                 });
 
-                const organicResults = response.data.organic_results || [];
-                organicResults.forEach((item) => {
+                (data.organic_results || []).forEach((item) => {
                     const realPrice = extractPrice(item.snippet) || extractPrice(item.title);
-                    const realImage = item.thumbnail || item.pagemap?.cse_image?.[0]?.src;
+                    const realImage = item.thumbnail || item.pagemap?.cse_image?.[0]?.src || '';
 
                     if (item.title && !results.some((r) => r.link === item.link)) {
                         results.push({
@@ -206,7 +330,7 @@ async function fetchD4DOffers(city, query) {
                             title: item.title.replace(/ - D4D Online.*/i, '').trim(),
                             store: normalizeD4DStore(`${item.title} ${item.snippet || ''}`),
                             price: realPrice ? realPrice.toString() : 'اضغط لعرض السعر',
-                            image: realImage || '',
+                            image: realImage,
                             link: item.link
                         });
                     }
@@ -220,7 +344,6 @@ async function fetchD4DOffers(city, query) {
     return results;
 }
 
-// 3. مسار الكوبونات
 async function fetchLiveCoupons() {
     return [
         { id: 1, store: 'نون', source: 'الموفر', title: 'خصم إضافي 10% على كافة المنتجات', code: 'UKS', desc: 'كود فعال للعملاء الجدد والحاليين في السعودية.' },
