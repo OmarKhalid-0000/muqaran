@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مُقارِن</title>
+    <title>مُقَارِن — مقارنة الأسعار عبر المتاجر</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
@@ -20,15 +20,6 @@
         };
     </script>
     <style>
-        /* إذا كان لديك ملف خط Lafet محلي أو رابط استضافة خاص، ضعه هنا:
-        @font-face {
-            font-family: 'lafet';
-            src: url('/fonts/Lafet-Regular.woff2') format('woff2');
-            font-weight: 400;
-            font-style: normal;
-            font-display: swap;
-        }
-        */
         body, button, input, select, textarea {
             font-family: 'lafet', 'Lafet', 'Tajawal', sans-serif;
             overflow-x: hidden;
@@ -177,12 +168,12 @@
         <section id="search-view" class="view-panel space-y-6">
             <div class="flex flex-col lg:flex-row gap-6 items-start">
                 <aside class="w-full lg:w-64 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5 space-y-6 shrink-0">
-                    <div class="flex items-center justify-between gap-3 border-b border-zinc-200 dark:border-zinc-800 pb-3">
+                    <div class="flex items-center justify-between gap-2 border-b border-zinc-200 dark:border-zinc-800 pb-3">
                         <h3 class="text-sm font-extrabold flex items-center gap-2 shrink-0">
                             <i class="fa-solid fa-sliders text-sky-500"></i>
                             <span>تصفية النتائج</span>
                         </h3>
-                        <button type="button" onclick="resetFilters()" translate="no" class="px-2.5 py-1 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition whitespace-nowrap shrink-0">إعادة ضبط</button>
+                        <button type="button" onclick="resetFilters()" class="text-xs font-bold text-zinc-500 hover:text-zinc-900 dark:hover:text-white whitespace-nowrap shrink-0">إعادة ضبط</button>
                     </div>
 
                     <div class="space-y-2.5">
@@ -574,6 +565,31 @@
     <script>
         window.allFetchedProducts = [];
         window.favorites = [];
+        window.lastSearchQuery = '';
+
+        const STORE_SEARCH_LINKS = {
+            'نون': 'https://www.noon.com/saudi-ar/search/?q={QUERY}&utm_source=c1000088L&utm_medium=cpc&utm_campaign=C1000185151N_sa_ar_noonbranded_1072026_noon_web_c1000088l_search_sembranded_&gad_source=1&gad_campaignid=22393947090&gbraid=0AAAAADH71hjzB8JbSuDupG2DRvbxDUnCP&gclid=CjwKCAiAq5rYBhB-EiwAhj1RdicXAEGmSp0UXHMxRwrWJpmSSY9f4a_g5n2qcU3EvEaBSBBcVOSkLRoC5m8QAvD_BwE',
+            'أمازون': 'https://www.amazon.sa/s?k={QUERY}&tag=sapcabkara-21&ref=pd_sl_496spse0ql_e&adgrpid=200765048356&hvpone=&hvptwo=&hvadid=827392467304&hvpos=&hvnetw=g&hvrand=8235813963785890632&hvqmt=e&hvdev=c&hvdvcmdl=&hvlocint=&hvlocphy=2682&hvtargid=kwd-11440784425&hvcampaign=24303921726&hydadcr=19822_2299496_441666&mcid=31748c71050a38349e11d64adf2a0e1f&hvocijid=8235813963785890632--&hvexpln=nav&language=ar_AE',
+            'شي إن': 'https://ar.shein.com/pdsearch/{QUERY}/?url_from=sagooglebrandshein_shein01_LAR_srsa_20240424&network=g&kwd=kwd-305460321740&pf=GOOGLE&keyword=%D8%B4%D9%8A%20%D8%A7%D9%86&target=&placement=&gad_source=1&gad_campaignid=21229950196&gbraid=0AAAAADm0yO6qkBaFefIAns6VBIFCBfr9F&gclid=CjwKCAiAq5rYBhB-EiwAhj1RdpGwARkxCRC-4pSR_HWdPCkRYVFNopeFUkzKm_CVI2yxuVYaTpJxdhoCGpcQAvD_BwE',
+            'تيمو': 'https://www.temu.com/ul/kuiper/un2.html?_p_rfs=1&subj=un-search-web&_p_jump_id=960&_x_vst_scene=adg&search_key={QUERY}&_x_ads_channel=google&_x_ads_sub_channel=search&adg_ctx=m-7b0028eb~f-1379fb79&_x_ads_account=4898917807&_x_ads_set=21922203772&_x_ads_id=173662756314&_x_ads_creative_id=721859731667&_x_ns_source=g&_x_ns_gclid=CjwKCAiAq5rYBhB-EiwAhj1RdqetHZ8aAMTvU-UlhpT6I_sPYTN8KLUaIi3pnQI2dnzc3VKyqP6hihoCjxMQAvD_BwE&_x_ns_placement=&_x_ns_match_type=p&_x_ns_ad_position=&_x_ns_product_id=&_x_ns_target=&_x_ns_devicemodel=&_x_ns_wbraid=Ck0KCQiAiJXYBhC7ARI8ADMmXbGYV3bv72Wf0WcGBK5Dj8UXwGbtyEX61fkx9ATeWFr80wRSN-Nkg3sjU59tfxtziwx3fVUZ2Ej3GgLg6Q&_x_ns_gbraid=0AAAAAo4mICEos--XMz0tosJr_ZGF5tWRH&_x_ns_keyword=temu&_x_ns_targetid=kwd-368867843197&_x_ns_extensionid=&gad_source=1&gad_campaignid=21922203772&gbraid=0AAAAAo4mICEos--XMz0tosJr_ZGF5tWRH&gclid=CjwKCAiAq5rYBhB-EiwAhj1RdqetHZ8aAMTvU-UlhpT6I_sPYTN8KLUaIi3pnQI2dnzc3VKyqP6hihoCjxMQAvD_BwE',
+            'ترنديول': 'https://www.trendyol.sa/sr?q={QUERY}',
+            'علي اكسبرس': 'https://ar.aliexpress.com/w/wholesale-{QUERY}.html?osf=ppc_ug&guideModule=ppc_ug&src=google&albch=search&acnt=479-062-3723&isdl=y&aff_short_key=UneMJZVf&albcp=21912434085&albag=169994224505&slnk=&trgt=dsa-1642801257570&plac=&crea=721802015515&albad=721802015515&netw=g&device=c&mtctp=&memo1=&albbt=Google_7_search&aff_platform=google&albagn=888888&isSmbActive=false&isSmbAutoCall=false&needSmbHouyi=false&gad_source=1&gad_campaignid=21912434085&gbraid=0AAAAAD2chG4kJjhtPkytt4uLwrhsclKaQ&gclid=CjwKCAiAq5rYBhB-EiwAhj1RdqkDVn5QsJMJxXoG86YtZ5li88VRSuqC555up7a1fpLXvYEU5IQmSBoCqksQAvD_BwE',
+            'جرير': 'https://www.jarir.com/sa-ar/catalogsearch/result?q={QUERY}&srsltid=AYCX9vJ7d1YFA76Heen4bjkVfRVYhqLnuHLAVlZ1SR0kP7wuVobGkndE',
+            'إكسترا': 'https://www.extra.com/ar-sa/search/?text={QUERY}',
+            'محلي': 'https://mahally.com/ar/?s={QUERY}&srsltid=AYCX9vJYHjqiBUri9tYEz9t1823VhPBM8hYuOS2X-vXb41VY-AxIqnHU'
+        };
+
+        const STORE_HOSTS = {
+            'نون': ['noon.com'],
+            'أمازون': ['amazon.sa', 'amazon.com'],
+            'شي إن': ['shein.com'],
+            'تيمو': ['temu.com'],
+            'ترنديول': ['trendyol.sa', 'trendyol.com'],
+            'علي اكسبرس': ['aliexpress.com'],
+            'جرير': ['jarir.com'],
+            'إكسترا': ['extra.com'],
+            'محلي': ['mahally.com']
+        };
 
         const FALLBACK_IMAGE = 'data:image/svg+xml;utf8,' + encodeURIComponent(`
             <svg xmlns="http://www.w3.org/2000/svg" width="240" height="160" viewBox="0 0 240 160">
@@ -585,6 +601,29 @@
             </svg>
         `);
 
+        function getStoreSearchUrl(store, query) {
+            const q = encodeURIComponent((query || window.lastSearchQuery || '').trim());
+            const tpl = STORE_SEARCH_LINKS[store] || STORE_SEARCH_LINKS['محلي'];
+            return tpl.replace('{QUERY}', q);
+        }
+
+        function getDirectStoreLink(product) {
+            const raw = (product && product.link) ? String(product.link).trim() : '';
+            const fallback = getStoreSearchUrl(product?.store, window.lastSearchQuery);
+            if (!raw || raw === '#') return fallback;
+            try {
+                const u = new URL(raw);
+                const host = u.hostname.toLowerCase();
+                if (host.includes('google.com') || host.includes('serpapi.com')) return fallback;
+                const allowed = STORE_HOSTS[product?.store];
+                if (!allowed) return raw;
+                const ok = allowed.some((d) => host === d || host.endsWith('.' + d));
+                return ok ? raw : fallback;
+            } catch {
+                return fallback;
+            }
+        }
+
         window.showSoonAlert = function(name) {
             showToast(`قسم "${name}" — قريباً`);
         };
@@ -595,14 +634,16 @@
             const title = p.name || p.title || 'منتج';
             const numericPrice = p.price !== undefined && p.price !== null && p.price !== '' && !isNaN(Number(p.price)) && Number(p.price) > 0;
 
-            document.getElementById('modal-product-img').src = p.image || FALLBACK_IMAGE;
-            document.getElementById('modal-product-img').alt = title;
+            const imgEl = document.getElementById('modal-product-img');
+            imgEl.onerror = () => { imgEl.onerror = null; imgEl.src = FALLBACK_IMAGE; };
+            imgEl.src = p.image || FALLBACK_IMAGE;
+            imgEl.alt = title;
             document.getElementById('modal-product-store').textContent = p.store || 'متجر';
             document.getElementById('modal-product-title').textContent = title;
             document.getElementById('modal-product-price').innerHTML = numericPrice
                 ? `${Number(p.price).toLocaleString()} <span class="text-xs font-normal text-zinc-500 dark:text-zinc-400">ر.س</span>`
                 : `<span class="text-sm font-bold text-zinc-600 dark:text-zinc-300">${p.price || 'تحقق من السعر في المتجر'}</span>`;
-            document.getElementById('modal-product-link').href = p.link || '#';
+            document.getElementById('modal-product-link').href = getDirectStoreLink(p);
 
             const favBtn = document.getElementById('modal-fav-btn');
             favBtn.onclick = () => {
@@ -624,6 +665,11 @@
         window.handleHeroSearch = function(e) {
             e.preventDefault();
             const q = document.getElementById('hero-search-input').value.trim();
+            if (!q) {
+                showToast('الرجاء إدخال اسم المنتج قبل البحث');
+                document.getElementById('hero-search-input').focus();
+                return;
+            }
             switchView('search-view');
             const gridInput = document.getElementById('grid-search-input');
             if (gridInput) gridInput.value = q;
@@ -633,13 +679,24 @@
         window.handleGridSearch = function(e) {
             e.preventDefault();
             const q = document.getElementById('grid-search-input').value.trim();
+            if (!q) {
+                showToast('الرجاء إدخال اسم المنتج قبل البحث');
+                document.getElementById('grid-search-input').focus();
+                return;
+            }
             fetchProductsFromServer(q);
         };
 
         async function fetchProductsFromServer(query) {
+            const cleanQuery = (query || '').trim();
+            if (!cleanQuery) {
+                showToast('الرجاء إدخال اسم المنتج قبل البحث');
+                return;
+            }
+            window.lastSearchQuery = cleanQuery;
             const grid = document.getElementById('main-products-grid');
             const titleEl = document.getElementById('search-title');
-            if (titleEl) titleEl.textContent = query ? `نتائج البحث عن "${query}"` : 'جميع المنتجات';
+            if (titleEl) titleEl.textContent = `نتائج البحث عن "${cleanQuery}"`;
             if (grid) {
                 grid.innerHTML = `
                     <div class="col-span-full py-14 text-center text-zinc-500">
@@ -649,15 +706,17 @@
                 `;
             }
             try {
-                const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
-                if (!res.ok) throw new Error('HTTP error');
+                const res = await fetch(`/api/search?q=${encodeURIComponent(cleanQuery)}`);
                 const data = await res.json();
+                if (!res.ok) {
+                    throw new Error(data?.error || 'HTTP error');
+                }
                 window.allFetchedProducts = Array.isArray(data) ? data : [];
                 filterClientSide();
             } catch (err) {
                 window.allFetchedProducts = [];
                 if (grid) {
-                    grid.innerHTML = '<div class="col-span-full py-14 text-center text-rose-500 text-xs sm:text-sm font-bold">تعذر الاتصال بالسيرفر حالياً</div>';
+                    grid.innerHTML = `<div class="col-span-full py-14 text-center text-rose-500 text-xs sm:text-sm font-bold">${err.message || 'تعذر الاتصال بالسيرفر حالياً'}</div>`;
                 }
             }
         }
@@ -694,8 +753,7 @@
         window.filterByStore = function(storeName) {
             switchView('search-view');
             document.querySelectorAll('.store-filter').forEach((el) => { el.checked = el.value === storeName; });
-            if (window.allFetchedProducts.length === 0) fetchProductsFromServer('');
-            else filterClientSide();
+            if (window.allFetchedProducts.length > 0) filterClientSide();
         };
 
         function createProductCardHTML(p) {
@@ -706,6 +764,7 @@
                 ? `${Number(p.price).toLocaleString()} <span class="text-xs font-normal text-zinc-500 dark:text-zinc-400">ر.س</span>`
                 : `<span class="text-xs sm:text-sm font-bold text-zinc-600 dark:text-zinc-300">${p.price || 'تحقق من السعر في المتجر'}</span>`;
             const imgSrc = p.image || FALLBACK_IMAGE;
+            const storeLink = getDirectStoreLink(p);
 
             return `
                 <article class="product-card-interactive rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 overflow-hidden flex flex-col justify-between hover:border-zinc-400 dark:hover:border-zinc-600">
@@ -730,7 +789,7 @@
                         <button type="button" onclick="openPreviewModal(${p.id})" class="py-2.5 px-3 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-stone-50 dark:bg-zinc-950 hover:border-zinc-400 text-xs font-bold transition">
                             معاينة
                         </button>
-                        <a href="${p.link}" target="_blank" rel="noopener noreferrer" class="flex-1 py-2.5 px-4 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-stone-50 dark:bg-zinc-950 hover:border-zinc-400 dark:hover:border-zinc-500 text-xs font-bold flex items-center justify-center gap-2 transition">
+                        <a href="${storeLink}" target="_blank" rel="noopener noreferrer" class="flex-1 py-2.5 px-4 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-stone-50 dark:bg-zinc-950 hover:border-zinc-400 dark:hover:border-zinc-500 text-xs font-bold flex items-center justify-center gap-2 transition">
                             <span>الذهاب للمتجر</span>
                             <i class="fa-solid fa-arrow-up-left text-[11px]"></i>
                         </a>
@@ -749,7 +808,6 @@
             const target = document.getElementById(viewId);
             if (target) target.classList.add('is-active');
 
-            if (viewId === 'search-view' && window.allFetchedProducts.length === 0) fetchProductsFromServer('');
             if (viewId === 'wishlist-view') renderWishlist();
 
             if (save) localStorage.setItem('muqaran_active_view', viewId);
@@ -852,7 +910,7 @@
             }
 
             const savedView = localStorage.getItem('muqaran_active_view') || 'hero-view';
-            switchView(savedView, false);
+            switchView(savedView === 'search-view' ? 'hero-view' : savedView, false);
         };
     </script>
 </body>
