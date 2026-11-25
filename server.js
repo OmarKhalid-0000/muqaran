@@ -55,6 +55,18 @@ const STORE_SITE_DOMAINS = {
     'محلي': 'mahally.com'
 };
 
+const STORE_ALLOWED_HOSTS = {
+    'نون': ['noon.com'],
+    'أمازون': ['amazon.sa', 'amazon.com'],
+    'شي إن': ['shein.com'],
+    'تيمو': ['temu.com'],
+    'ترنديول': ['trendyol.sa', 'trendyol.com'],
+    'علي اكسبرس': ['aliexpress.com'],
+    'جرير': ['jarir.com'],
+    'إكسترا': ['extra.com'],
+    'محلي': ['mahally.com']
+};
+
 function getSerpApiKey() {
     return (process.env.SERPAPI_KEY || process.env.API_KEY || DEFAULT_SERPAPI_KEY).trim();
 }
@@ -65,18 +77,36 @@ function buildStoreSearchLink(storeName, query) {
     return template.replace('{QUERY}', encoded);
 }
 
-function normalizeStoreName(rawSource) {
-    if (!rawSource) return 'محلي';
-    const lower = String(rawSource).toLowerCase();
-    if (lower.includes('amazon') || lower.includes('أمازون')) return 'أمازون';
-    if (lower.includes('noon') || lower.includes('نون')) return 'نون';
-    if (lower.includes('jarir') || lower.includes('جرير')) return 'جرير';
-    if (lower.includes('extra') || lower.includes('إكسترا') || lower.includes('اكسترا')) return 'إكسترا';
-    if (lower.includes('shein') || lower.includes('شي إن') || lower.includes('شي ان')) return 'شي إن';
-    if (lower.includes('temu') || lower.includes('تيمو')) return 'تيمو';
-    if (lower.includes('trendyol') || lower.includes('ترنديول')) return 'ترنديول';
-    if (lower.includes('aliexpress') || lower.includes('علي اكسبرس') || lower.includes('علي إكسبريس')) return 'علي اكسبرس';
-    if (lower.includes('mahally') || lower.includes('محلي')) return 'محلي';
+function resolveDirectStoreLink(storeName, rawLink, query) {
+    const fallbackLink = buildStoreSearchLink(storeName, query);
+    if (!rawLink) return fallbackLink;
+
+    try {
+        const parsed = new URL(rawLink);
+        const host = parsed.hostname.toLowerCase();
+        if (host.includes('google.com') || host.includes('serpapi.com')) {
+            return fallbackLink;
+        }
+        const allowed = STORE_ALLOWED_HOSTS[storeName];
+        if (!allowed) return rawLink;
+        const matchesStore = allowed.some((domain) => host === domain || host.endsWith('.' + domain));
+        return matchesStore ? rawLink : fallbackLink;
+    } catch {
+        return fallbackLink;
+    }
+}
+
+function normalizeStoreName(rawSource, rawLink = '') {
+    const combined = `${rawSource || ''} ${rawLink || ''}`.toLowerCase();
+    if (combined.includes('amazon') || combined.includes('أمازون')) return 'أمازون';
+    if (combined.includes('noon') || combined.includes('نون')) return 'نون';
+    if (combined.includes('jarir') || combined.includes('جرير')) return 'جرير';
+    if (combined.includes('extra') || combined.includes('إكسترا') || combined.includes('اكسترا')) return 'إكسترا';
+    if (combined.includes('shein') || combined.includes('شي إن') || combined.includes('شي ان')) return 'شي إن';
+    if (combined.includes('temu') || combined.includes('تيمو')) return 'تيمو';
+    if (combined.includes('trendyol') || combined.includes('ترنديول')) return 'ترنديول';
+    if (combined.includes('aliexpress') || combined.includes('علي اكسبرس') || combined.includes('علي إكسبريس')) return 'علي اكسبرس';
+    if (combined.includes('mahally') || combined.includes('محلي')) return 'محلي';
     return 'محلي';
 }
 
@@ -107,7 +137,6 @@ function normalizeUrl(rawUrl, baseUrl) {
     }
 }
 
-// الطبقة 1: Google Shopping عبر SerpAPI
 async function fetchFromGoogleShopping(searchQuery, apiKey) {
     if (!apiKey || !searchQuery) return [];
     try {
@@ -116,7 +145,8 @@ async function fetchFromGoogleShopping(searchQuery, apiKey) {
             timeout: 9000
         });
         return (data.shopping_results || []).map((item, idx) => {
-            const storeName = normalizeStoreName(item.source);
+            const candidateLink = item.link || item.product_link || '';
+            const storeName = normalizeStoreName(item.source, candidateLink);
             const price = item.extracted_price || extractPrice(item.price);
             return {
                 id: idx + 1,
@@ -124,7 +154,7 @@ async function fetchFromGoogleShopping(searchQuery, apiKey) {
                 store: storeName,
                 price: price ? price.toString() : 'عرض في المتجر',
                 image: item.thumbnail || '',
-                link: item.link || item.product_link || buildStoreSearchLink(storeName, searchQuery)
+                link: resolveDirectStoreLink(storeName, candidateLink, searchQuery)
             };
         }).filter((p) => p.name);
     } catch (e) {
@@ -133,7 +163,6 @@ async function fetchFromGoogleShopping(searchQuery, apiKey) {
     }
 }
 
-// الطبقة 1B: بحث Google لكل متجر عبر SerpAPI عند غياب نتيجته
 async function fetchMissingStoresViaGoogle(missingStores, searchQuery, apiKey) {
     if (!apiKey || !searchQuery || missingStores.length === 0) return [];
     const found = [];
@@ -153,7 +182,7 @@ async function fetchMissingStoresViaGoogle(missingStores, searchQuery, apiKey) {
                     store: storeName,
                     price: price ? price.toString() : 'عرض في المتجر',
                     image: first.thumbnail || first.pagemap?.cse_image?.[0]?.src || '',
-                    link: first.link || buildStoreSearchLink(storeName, searchQuery)
+                    link: resolveDirectStoreLink(storeName, first.link, searchQuery)
                 });
             }
         } catch (e) {}
@@ -161,14 +190,12 @@ async function fetchMissingStoresViaGoogle(missingStores, searchQuery, apiKey) {
     return found;
 }
 
-// الطبقة 2 و 3: سحب مباشر عبر Cheerio و JSON-LD / OpenGraph
 async function scrapeStoreDirect(storeName, searchQuery) {
     const targetUrl = buildStoreSearchLink(storeName, searchQuery);
     try {
         const { data: html } = await axios.get(targetUrl, { headers: HEADERS, timeout: 8000 });
         const $ = cheerio.load(html);
 
-        // الطبقة 3: JSON-LD
         let ldItem = null;
         $('script[type="application/ld+json"]').each((_, el) => {
             if (ldItem) return;
@@ -184,13 +211,14 @@ async function scrapeStoreDirect(storeName, searchQuery) {
                         const name = firstProd.name;
                         const rawImg = Array.isArray(firstProd.image) ? firstProd.image[0] : (firstProd.image?.url || firstProd.image);
                         const price = offer?.price || offer?.lowPrice || extractPrice(offer?.priceSpecification?.price);
+                        const rawLink = normalizeUrl(offer?.url || firstProd.url, targetUrl);
                         if (name) {
                             ldItem = {
                                 name: String(name).trim(),
                                 store: storeName,
                                 price: price ? String(price) : 'عرض في المتجر',
                                 image: normalizeUrl(rawImg, targetUrl),
-                                link: normalizeUrl(offer?.url || firstProd.url, targetUrl) || targetUrl
+                                link: resolveDirectStoreLink(storeName, rawLink, searchQuery)
                             };
                             break;
                         }
@@ -200,7 +228,6 @@ async function scrapeStoreDirect(storeName, searchQuery) {
         });
         if (ldItem && (ldItem.image || ldItem.price !== 'عرض في المتجر')) return ldItem;
 
-        // الطبقة 2: عناصر DOM
         let domItem = null;
         $('.product-card, .product-item, .s-result-item, [data-testid*="product"], [class*="product"]').each((_, el) => {
             if (domItem) return;
@@ -208,20 +235,19 @@ async function scrapeStoreDirect(storeName, searchQuery) {
             const price = extractPrice($(el).find('.price, [class*="price"]').first().text().trim());
             const imgEl = $(el).find('img').first();
             const image = normalizeUrl(imgEl.attr('data-src') || imgEl.attr('src'), targetUrl);
-            const link = normalizeUrl($(el).find('a').first().attr('href'), targetUrl) || targetUrl;
+            const rawLink = normalizeUrl($(el).find('a').first().attr('href'), targetUrl);
             if (title && (image || price)) {
                 domItem = {
                     name: title,
                     store: storeName,
                     price: price ? String(price) : 'عرض في المتجر',
                     image,
-                    link
+                    link: resolveDirectStoreLink(storeName, rawLink, searchQuery)
                 };
             }
         });
         if (domItem) return domItem;
 
-        // الطبقة 3B: OpenGraph meta
         const ogTitle = $('meta[property="og:title"]').attr('content')?.trim();
         const ogImage = normalizeUrl($('meta[property="og:image"]').attr('content'), targetUrl);
         const ogPrice = extractPrice($('meta[property="product:price:amount"]').attr('content'));
