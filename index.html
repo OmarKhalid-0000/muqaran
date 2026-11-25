@@ -1,80 +1,112 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl" class="h-full bg-slate-950 text-slate-100 dark" id="html-root">
+<html lang="ar" dir="rtl" class="dark" id="html-root">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>مقارن </title>
-    <!-- Tailwind CSS CDN -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مُقَارِن — مقارنة الأسعار عبر المتاجر</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Tajawal Arabic Font -->
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
             darkMode: 'class',
             theme: {
                 extend: {
-                    fontFamily: { sans: ['Tajawal', 'sans-serif'] },
-                    colors: {
-                        brand: { 50: '#f0f9ff', 500: '#0284c7', 600: '#0369a1', 900: '#0c4a6e' }
+                    fontFamily: {
+                        sans: ['lafet', 'Lafet', 'Tajawal', 'sans-serif']
                     }
                 }
             }
-        }
+        };
     </script>
     <style>
-        body { font-family: 'Tajawal', sans-serif; user-select: none; -webkit-tap-highlight-color: transparent; }
-        ::-webkit-scrollbar { width: 4px; height: 4px; }
-        ::-webkit-scrollbar-track { background: #090d16; }
-        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 9999px; }
-        .view-section { display: none; opacity: 0; transition: opacity 0.2s ease-in-out; }
-        .view-section.active { display: block; opacity: 1; }
+        /* إذا كان لديك ملف خط Lafet محلي أو رابط استضافة خاص، ضعه هنا:
+        @font-face {
+            font-family: 'lafet';
+            src: url('/fonts/Lafet-Regular.woff2') format('woff2');
+            font-weight: 400;
+            font-style: normal;
+            font-display: swap;
+        }
+        */
+        body, button, input, select, textarea {
+            font-family: 'lafet', 'Lafet', 'Tajawal', sans-serif;
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button,
+        select::-webkit-outer-spin-button,
+        select::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        .brand-logo-text {
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        .view-panel {
+            display: none;
+        }
+        .view-panel.is-active {
+            display: block;
+            animation: panelFade 0.2s ease-out;
+        }
+        @keyframes panelFade {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .product-card-interactive {
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+        .product-card-interactive:hover {
+            transform: translateY(-3px);
+        }
     </style>
 </head>
-<body class="min-h-screen flex flex-col justify-between bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 antialiased transition-colors duration-300" id="body-root">
+<body id="body-root" class="min-h-screen flex flex-col justify-between bg-stone-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 transition-colors duration-200">
 
+    <!-- Toast Notification Container -->
     <div id="toast-container" class="fixed top-20 left-4 right-4 z-50 flex flex-col gap-2 pointer-events-none sm:left-6 sm:right-auto sm:max-w-sm"></div>
 
-    <!-- RESPONSIVE HEADER -->
-    <header id="main-header" class="sticky top-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 shadow-sm dark:shadow-lg transition-colors duration-300">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-3">
-            
-            <div class="flex items-center gap-3 sm:gap-6">
-                <button onclick="switchView('hero-view')" class="flex items-center gap-2 group focus:outline-none">
-                    <div class="bg-gradient-to-tr from-sky-500 to-indigo-600 text-white font-black text-lg sm:text-2xl px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl sm:rounded-2xl shadow-md border border-slate-700">
-                        مُقَارِن
-                    </div>
+    <!-- Top Navigation Bar -->
+    <header class="sticky top-0 z-40 border-b border-zinc-200/90 dark:border-zinc-800/90 bg-white/90 dark:bg-zinc-950/90 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-8 h-16 sm:h-20 flex items-center justify-between gap-3">
+            <!-- شعار الموقع أعلى يمين -->
+            <div class="flex items-center shrink-0">
+                <button type="button" onclick="switchView('hero-view')" class="brand-logo-text flex items-center gap-2.5 text-right focus:outline-none">
+                    <img src="logo.png" alt="شعار مقارن" onerror="this.style.display='none'; document.getElementById('header-logo-fallback').classList.remove('hidden');" class="h-10 sm:h-12 w-auto rounded-xl object-cover border border-zinc-200 dark:border-zinc-800">
+                    <span id="header-logo-fallback" class="hidden font-black text-2xl sm:text-3xl tracking-tight text-sky-500">مُقَارِن</span>
                 </button>
             </div>
 
-            <nav class="flex items-center gap-2 sm:gap-3 overflow-x-auto py-2 scrollbar-none">
-                <button onclick="switchView('hero-view')" id="nav-hero-view" class="nav-item border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white p-2 sm:px-3 sm:py-2 rounded-xl font-bold text-xs sm:text-sm transition flex items-center gap-1.5 shadow-sm shrink-0">
-                    <i class="fa-solid fa-house text-sm sm:text-base"></i>
-                    <span class="hidden md:inline">الرئيسية</span>
+            <nav class="flex items-center gap-2 overflow-x-auto py-1.5">
+                <button type="button" onclick="switchView('hero-view')" class="px-3 py-2 rounded-xl text-xs sm:text-sm font-bold border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-zinc-400 dark:hover:border-zinc-600 transition flex items-center gap-1.5 shrink-0">
+                    <i class="fa-solid fa-house text-xs"></i>
+                    <span>الرئيسية</span>
                 </button>
 
-                <button onclick="showSoonAlert('مقارن ماركت')" id="nav-market-view" class="nav-item border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white p-2 sm:px-3 sm:py-2 rounded-xl font-bold text-xs sm:text-sm transition flex items-center gap-1.5 relative shadow-sm shrink-0">
-                    <i class="fa-solid fa-shop text-sm sm:text-base text-emerald-500"></i>
+                <button type="button" onclick="showSoonAlert('مقارن ماركت')" class="px-3 py-2 rounded-xl text-xs sm:text-sm font-bold border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-emerald-500/60 transition flex items-center gap-1.5 shrink-0">
+                    <i class="fa-solid fa-store text-xs text-emerald-500"></i>
                     <span>مقارن ماركت</span>
                 </button>
 
-                <button onclick="showSoonAlert('الكوبونات')" id="nav-coupons-view" class="nav-item border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white p-2 sm:px-3 sm:py-2 rounded-xl font-bold text-xs sm:text-sm transition flex items-center gap-1.5 relative shadow-sm shrink-0">
-                    <i class="fa-solid fa-ticket text-sm sm:text-base text-amber-500"></i>
+                <button type="button" onclick="showSoonAlert('الكوبونات')" class="px-3 py-2 rounded-xl text-xs sm:text-sm font-bold border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-amber-500/60 transition flex items-center gap-1.5 shrink-0">
+                    <i class="fa-solid fa-tag text-xs text-amber-500"></i>
                     <span>الكوبونات</span>
                 </button>
 
-                <button onclick="switchView('wishlist-view')" id="nav-wishlist-view" class="nav-item border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white p-2 sm:px-3 sm:py-2 rounded-xl font-bold text-xs sm:text-sm transition flex items-center gap-1.5 relative shadow-sm shrink-0">
-                    <i class="fa-solid fa-heart text-sm sm:text-base text-rose-500"></i>
+                <button type="button" onclick="switchView('wishlist-view')" class="px-3 py-2 rounded-xl text-xs sm:text-sm font-bold border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-rose-500/60 transition flex items-center gap-1.5 shrink-0">
+                    <i class="fa-solid fa-heart text-xs text-rose-500"></i>
                     <span>المفضلة</span>
                 </button>
 
-                <button onclick="toggleDarkMode()" id="theme-toggle-btn" class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-amber-400 border border-slate-300 dark:border-slate-700 flex items-center justify-center transition shadow-sm shrink-0" title="تبديل الوضع">
-                    <i class="text-sm sm:text-base" id="theme-icon"></i>
+                <button type="button" onclick="toggleDarkMode()" aria-label="تبديل المظهر" class="w-9 h-9 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-zinc-400 dark:hover:border-zinc-600 flex items-center justify-center transition shrink-0">
+                    <i id="theme-icon" class="fa-solid fa-sun text-sm text-amber-400"></i>
                 </button>
 
-                <div id="auth-controls" class="flex items-center shrink-0">
-                    <button onclick="openAuthModal()" class="border border-sky-600 bg-sky-600 hover:bg-sky-500 text-white px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-xl font-bold text-xs transition whitespace-nowrap shadow-sm">
+                <div id="auth-controls" class="shrink-0">
+                    <button type="button" onclick="openAuthModal()" class="bg-sky-600 hover:bg-sky-500 text-white px-4 py-2 rounded-xl font-bold text-xs sm:text-sm transition whitespace-nowrap">
                         تسجيل دخول
                     </button>
                 </div>
@@ -82,312 +114,332 @@
         </div>
     </header>
 
-    <!-- MAIN CONTENT CONTAINER -->
-    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
+    <!-- Main Content -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-8 py-6 sm:py-10 space-y-6">
 
-        <!-- HERO SECTION (محرك بحث المتاجر الإلكترونية: نون، أمازون، الخ) -->
-        <section id="hero-view" class="view-section active space-y-8 sm:space-y-12">
-            <div class="relative overflow-hidden bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl sm:rounded-3xl p-6 sm:p-14 text-center sm:text-right shadow-2xl transition-colors duration-300">
-                <div class="max-w-2xl space-y-4 sm:space-y-6 relative z-10">
-                    
-                    <h1 class="text-2xl sm:text-5xl font-black text-slate-900 dark:text-white leading-snug sm:leading-tight transition-colors duration-300">
-                        وفر وقتك وابحث عن السعر المناسب مع <span class="text-transparent bg-clip-text bg-gradient-to-l from-sky-500 to-indigo-600 dark:from-sky-400 dark:to-indigo-400">مقارن</span>
+        <!-- 1. HERO VIEW -->
+        <section id="hero-view" class="view-panel is-active space-y-10">
+            <div class="rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 sm:p-12 lg:p-14">
+                <div class="max-w-3xl space-y-6">
+                    <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-[1.2] text-zinc-950 dark:text-white">
+                        وفر وقتك وابحث عن السعر المناسب مع <span class="text-sky-500">مقارن</span>
                     </h1>
 
-                    <form onsubmit="handleHeroSearch(event)" class="flex flex-col sm:flex-row-reverse gap-2.5 pt-2">
-                        <button type="submit" class="bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-bold px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl sm:rounded-2xl text-xs sm:text-base shadow-lg transition border border-slate-700">
-                            ابحث الآن
-                        </button>
-                        
+                    <form onsubmit="handleHeroSearch(event)" class="flex flex-col sm:flex-row gap-3 pt-1">
                         <div class="relative flex-1 flex items-center">
-                            <input type="text" id="hero-search-input" placeholder="ابحث عن منتج (مثال: ايفون 15، سماعات سوني)..."
-                                class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 focus:border-sky-500 rounded-xl sm:rounded-2xl py-3.5 sm:py-4 pl-12 pr-12 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 text-xs sm:text-sm focus:outline-none shadow-inner transition-colors">
-                            
-                            <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 text-sm sm:text-lg"></i>
-
-                            <label for="image-upload-input" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-sky-500 cursor-pointer transition text-sm sm:text-lg" title="البحث باستخدام صورة">
-                                <i class="fa-solid fa-camera"></i>
+                            <i class="fa-solid fa-magnifying-glass absolute right-4 text-zinc-400 text-sm"></i>
+                            <input type="text" id="hero-search-input" placeholder="مثال: آيفون 15، سماعات سوني، كيبورد ميكانيكي..."
+                                class="w-full rounded-2xl border border-zinc-300 dark:border-zinc-700 bg-stone-50 dark:bg-zinc-950 py-3.5 sm:py-4 pr-11 pl-12 text-xs sm:text-sm text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:border-sky-500 transition">
+                            <label for="image-upload-input" title="البحث بالصورة" class="absolute left-3.5 text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 cursor-pointer p-1">
+                                <i class="fa-solid fa-camera text-base"></i>
                             </label>
                             <input type="file" id="image-upload-input" accept="image/*" class="hidden" onchange="handleImageSearch(event)">
                         </div>
+
+                        <button type="submit" class="bg-sky-600 hover:bg-sky-500 text-white font-extrabold px-7 py-3.5 sm:py-4 rounded-2xl text-xs sm:text-sm transition shrink-0">
+                            بحث
+                        </button>
                     </form>
 
-                    <div id="image-preview-container" class="hidden items-center gap-3 p-3 bg-slate-100 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">
-                        <img id="preview-img" src="" alt="معاينة الصورة" class="w-12 h-12 object-cover rounded-lg border border-slate-300 dark:border-slate-600">
-                        <div class="flex-1 text-right">
-                            <p class="text-xs font-bold text-slate-900 dark:text-white" id="image-name-label">تم إرفاق الصورة بنجاح</p>
-                            <p class="text-[10px] text-sky-500">جاري تحليل الصورة والبحث عن المنتج...</p>
+                    <!-- Image Search Preview -->
+                    <div id="image-preview-container" class="hidden items-center gap-3 p-3 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-stone-50 dark:bg-zinc-950">
+                        <img id="preview-img" src="" alt="معاينة الصورة" class="w-12 h-12 rounded-xl object-cover border border-zinc-300 dark:border-zinc-700">
+                        <div class="flex-1 min-w-0">
+                            <p id="image-name-label" class="text-xs font-bold truncate">صورة مرفقة</p>
+                            <p class="text-[11px] text-sky-500 font-medium">جاري تجهيز كلمة البحث...</p>
                         </div>
-                        <button type="button" onclick="clearImageSearch()" class="text-slate-400 hover:text-rose-500 text-xs p-1">
+                        <button type="button" onclick="clearImageSearch()" class="text-zinc-400 hover:text-rose-500 p-1.5 text-xs">
                             <i class="fa-solid fa-xmark"></i>
                         </button>
                     </div>
 
-                    <div class="flex flex-wrap items-center justify-center sm:justify-start gap-1.5 sm:gap-2 pt-2">
-                        <span class="text-[11px] sm:text-xs text-slate-700 dark:text-slate-300 font-bold transition-colors duration-300">المتاجر المدعومة:</span>
-                        <button onclick="filterByStore('نون')" class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-[11px] sm:text-xs px-2.5 py-1 rounded-lg border border-slate-300 dark:border-slate-700 transition shadow-sm">نون</button>
-                        <button onclick="filterByStore('أمازون')" class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-[11px] sm:text-xs px-2.5 py-1 rounded-lg border border-slate-300 dark:border-slate-700 transition shadow-sm">أمازون</button>
-                        <button onclick="filterByStore('شي إن')" class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-[11px] sm:text-xs px-2.5 py-1 rounded-lg border border-slate-300 dark:border-slate-700 transition shadow-sm">شي إن</button>
-                        <button onclick="filterByStore('تيمو')" class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-[11px] sm:text-xs px-2.5 py-1 rounded-lg border border-slate-300 dark:border-slate-700 transition shadow-sm">تيمو</button>
-                        <button onclick="filterByStore('ترنديول')" class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-[11px] sm:text-xs px-2.5 py-1 rounded-lg border border-slate-300 dark:border-slate-700 transition shadow-sm">ترنديول</button>
-                        <button onclick="filterByStore('علي اكسبرس')" class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-[11px] sm:text-xs px-2.5 py-1 rounded-lg border border-slate-300 dark:border-slate-700 transition shadow-sm">علي اكسبرس</button>
-                        <button onclick="filterByStore('محلي')" class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-[11px] sm:text-xs px-2.5 py-1 rounded-lg border border-slate-300 dark:border-slate-700 transition shadow-sm">محلي</button>
-                        <button onclick="filterByStore('جرير')" class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-[11px] sm:text-xs px-2.5 py-1 rounded-lg border border-slate-300 dark:border-slate-700 transition shadow-sm">جرير</button>
-                        <button onclick="filterByStore('إكسترا')" class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-[11px] sm:text-xs px-2.5 py-1 rounded-lg border border-slate-300 dark:border-slate-700 transition shadow-sm">إكسترا</button>
+                    <!-- Supported Stores -->
+                    <div class="pt-2 space-y-2.5">
+                        <span class="block text-xs font-bold text-zinc-500 dark:text-zinc-400">تصفية سريعة حسب المتجر</span>
+                        <div class="flex flex-wrap gap-2">
+                            <button type="button" onclick="filterByStore('نون')" class="px-3 py-1.5 rounded-xl text-xs font-bold border border-zinc-200 dark:border-zinc-800 bg-stone-50 dark:bg-zinc-950 hover:border-zinc-400 dark:hover:border-zinc-600 transition">نون</button>
+                            <button type="button" onclick="filterByStore('أمازون')" class="px-3 py-1.5 rounded-xl text-xs font-bold border border-zinc-200 dark:border-zinc-800 bg-stone-50 dark:bg-zinc-950 hover:border-zinc-400 dark:hover:border-zinc-600 transition">أمازون</button>
+                            <button type="button" onclick="filterByStore('شي إن')" class="px-3 py-1.5 rounded-xl text-xs font-bold border border-zinc-200 dark:border-zinc-800 bg-stone-50 dark:bg-zinc-950 hover:border-zinc-400 dark:hover:border-zinc-600 transition">شي إن</button>
+                            <button type="button" onclick="filterByStore('تيمو')" class="px-3 py-1.5 rounded-xl text-xs font-bold border border-zinc-200 dark:border-zinc-800 bg-stone-50 dark:bg-zinc-950 hover:border-zinc-400 dark:hover:border-zinc-600 transition">تيمو</button>
+                            <button type="button" onclick="filterByStore('ترنديول')" class="px-3 py-1.5 rounded-xl text-xs font-bold border border-zinc-200 dark:border-zinc-800 bg-stone-50 dark:bg-zinc-950 hover:border-zinc-400 dark:hover:border-zinc-600 transition">ترنديول</button>
+                            <button type="button" onclick="filterByStore('علي اكسبرس')" class="px-3 py-1.5 rounded-xl text-xs font-bold border border-zinc-200 dark:border-zinc-800 bg-stone-50 dark:bg-zinc-950 hover:border-zinc-400 dark:hover:border-zinc-600 transition">علي اكسبرس</button>
+                            <button type="button" onclick="filterByStore('جرير')" class="px-3 py-1.5 rounded-xl text-xs font-bold border border-zinc-200 dark:border-zinc-800 bg-stone-50 dark:bg-zinc-950 hover:border-zinc-400 dark:hover:border-zinc-600 transition">جرير</button>
+                            <button type="button" onclick="filterByStore('إكسترا')" class="px-3 py-1.5 rounded-xl text-xs font-bold border border-zinc-200 dark:border-zinc-800 bg-stone-50 dark:bg-zinc-950 hover:border-zinc-400 dark:hover:border-zinc-600 transition">إكسترا</button>
+                            <button type="button" onclick="filterByStore('محلي')" class="px-3 py-1.5 rounded-xl text-xs font-bold border border-zinc-200 dark:border-zinc-800 bg-stone-50 dark:bg-zinc-950 hover:border-zinc-400 dark:hover:border-zinc-600 transition">محلي</button>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- SEARCH & PRODUCTS GRID VIEW (عرض نتائج المتاجر الإلكترونية) -->
-        <section id="search-view" class="view-section space-y-4 sm:space-y-6">
+        <!-- 2. SEARCH & RESULTS VIEW -->
+        <section id="search-view" class="view-panel space-y-6">
             <div class="flex flex-col lg:flex-row gap-6 items-start">
-                <aside class="w-full lg:w-64 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 sm:p-5 rounded-2xl space-y-4 sm:space-y-6 shrink-0 transition-colors duration-300">
-                    <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
-                        <h3 class="font-bold text-slate-900 dark:text-white text-xs sm:text-sm flex items-center gap-2">
-                            <i class="fa-solid fa-sliders text-sky-500"></i> تصفية النتائج
+                <aside class="w-full lg:w-64 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5 space-y-6 shrink-0">
+                    <div class="flex items-center justify-between gap-2 border-b border-zinc-200 dark:border-zinc-800 pb-3">
+                        <h3 class="text-sm font-extrabold flex items-center gap-2 shrink-0">
+                            <i class="fa-solid fa-sliders text-sky-500"></i>
+                            <span>تصفية النتائج</span>
                         </h3>
-                        <button onclick="resetFilters()" class="text-[11px] text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">إعادة ضبط</button>
+                        <button type="button" onclick="resetFilters()" class="text-xs font-bold text-zinc-500 hover:text-zinc-900 dark:hover:text-white whitespace-nowrap shrink-0">إعادة ضبط</button>
                     </div>
 
-                    <div class="space-y-3">
-                        <label class="text-xs font-bold text-slate-700 dark:text-slate-300 block">المتاجر الإلكترونية</label>
+                    <div class="space-y-2.5">
+                        <span class="block text-xs font-bold text-zinc-600 dark:text-zinc-300">المتاجر</span>
                         <div class="grid grid-cols-2 sm:grid-cols-1 gap-2">
-                            <label class="flex items-center gap-2 text-xs text-slate-700 dark:text-slate-300 cursor-pointer">
-                                <input type="checkbox" value="أمازون" onchange="filterClientSide()" class="store-filter rounded bg-slate-100 dark:bg-slate-950 border-slate-300 dark:border-slate-700 text-sky-500 focus:ring-0" checked> أمازون
-                            </label>
-                            <label class="flex items-center gap-2 text-xs text-slate-700 dark:text-slate-300 cursor-pointer">
-                                <input type="checkbox" value="نون" onchange="filterClientSide()" class="store-filter rounded bg-slate-100 dark:bg-slate-950 border-slate-300 dark:border-slate-700 text-sky-500 focus:ring-0" checked> نون
-                            </label>
-                            <label class="flex items-center gap-2 text-xs text-slate-700 dark:text-slate-300 cursor-pointer">
-                                <input type="checkbox" value="شي إن" onchange="filterClientSide()" class="store-filter rounded bg-slate-100 dark:bg-slate-950 border-slate-300 dark:border-slate-700 text-sky-500 focus:ring-0" checked> شي إن
-                            </label>
-                            <label class="flex items-center gap-2 text-xs text-slate-700 dark:text-slate-300 cursor-pointer">
-                                <input type="checkbox" value="تيمو" onchange="filterClientSide()" class="store-filter rounded bg-slate-100 dark:bg-slate-950 border-slate-300 dark:border-slate-700 text-sky-500 focus:ring-0" checked> تيمو
-                            </label>
-                            <label class="flex items-center gap-2 text-xs text-slate-700 dark:text-slate-300 cursor-pointer">
-                                <input type="checkbox" value="ترنديول" onchange="filterClientSide()" class="store-filter rounded bg-slate-100 dark:bg-slate-950 border-slate-300 dark:border-slate-700 text-sky-500 focus:ring-0" checked> ترنديول
-                            </label>
-                            <label class="flex items-center gap-2 text-xs text-slate-700 dark:text-slate-300 cursor-pointer">
-                                <input type="checkbox" value="علي اكسبرس" onchange="filterClientSide()" class="store-filter rounded bg-slate-100 dark:bg-slate-950 border-slate-300 dark:border-slate-700 text-sky-500 focus:ring-0" checked> علي اكسبرس
-                            </label>
-                            <label class="flex items-center gap-2 text-xs text-slate-700 dark:text-slate-300 cursor-pointer">
-                                <input type="checkbox" value="محلي" onchange="filterClientSide()" class="store-filter rounded bg-slate-100 dark:bg-slate-950 border-slate-300 dark:border-slate-700 text-sky-500 focus:ring-0" checked> محلي
-                            </label>
-                            <label class="flex items-center gap-2 text-xs text-slate-700 dark:text-slate-300 cursor-pointer">
-                                <input type="checkbox" value="جرير" onchange="filterClientSide()" class="store-filter rounded bg-slate-100 dark:bg-slate-950 border-slate-300 dark:border-slate-700 text-sky-500 focus:ring-0" checked> جرير
-                            </label>
-                            <label class="flex items-center gap-2 text-xs text-slate-700 dark:text-slate-300 cursor-pointer">
-                                <input type="checkbox" value="إكسترا" onchange="filterClientSide()" class="store-filter rounded bg-slate-100 dark:bg-slate-950 border-slate-300 dark:border-slate-700 text-sky-500 focus:ring-0" checked> إكسترا
-                            </label>
+                            <label class="flex items-center gap-2 text-xs cursor-pointer"><input type="checkbox" value="أمازون" onchange="filterClientSide()" class="store-filter rounded border-zinc-300 dark:border-zinc-700" checked> أمازون</label>
+                            <label class="flex items-center gap-2 text-xs cursor-pointer"><input type="checkbox" value="نون" onchange="filterClientSide()" class="store-filter rounded border-zinc-300 dark:border-zinc-700" checked> نون</label>
+                            <label class="flex items-center gap-2 text-xs cursor-pointer"><input type="checkbox" value="شي إن" onchange="filterClientSide()" class="store-filter rounded border-zinc-300 dark:border-zinc-700" checked> شي إن</label>
+                            <label class="flex items-center gap-2 text-xs cursor-pointer"><input type="checkbox" value="تيمو" onchange="filterClientSide()" class="store-filter rounded border-zinc-300 dark:border-zinc-700" checked> تيمو</label>
+                            <label class="flex items-center gap-2 text-xs cursor-pointer"><input type="checkbox" value="ترنديول" onchange="filterClientSide()" class="store-filter rounded border-zinc-300 dark:border-zinc-700" checked> ترنديول</label>
+                            <label class="flex items-center gap-2 text-xs cursor-pointer"><input type="checkbox" value="علي اكسبرس" onchange="filterClientSide()" class="store-filter rounded border-zinc-300 dark:border-zinc-700" checked> علي اكسبرس</label>
+                            <label class="flex items-center gap-2 text-xs cursor-pointer"><input type="checkbox" value="جرير" onchange="filterClientSide()" class="store-filter rounded border-zinc-300 dark:border-zinc-700" checked> جرير</label>
+                            <label class="flex items-center gap-2 text-xs cursor-pointer"><input type="checkbox" value="إكسترا" onchange="filterClientSide()" class="store-filter rounded border-zinc-300 dark:border-zinc-700" checked> إكسترا</label>
+                            <label class="flex items-center gap-2 text-xs cursor-pointer"><input type="checkbox" value="محلي" onchange="filterClientSide()" class="store-filter rounded border-zinc-300 dark:border-zinc-700" checked> محلي</label>
                         </div>
                     </div>
 
-                    <div class="space-y-2 border-t border-slate-200 dark:border-slate-800 pt-4">
-                        <label class="text-xs font-bold text-slate-700 dark:text-slate-300 block">ترتيب حسب</label>
-                        <select id="sort-select" onchange="filterClientSide()" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-xs text-slate-900 dark:text-slate-200 rounded-xl p-2.5 focus:outline-none">
-                            <option value="default">الافتراضي</option>
-                            <option value="price-asc">الأقل سعراً أولاً</option>
-                            <option value="price-desc">الأعلى سعراً أولاً</option>
+                    <div class="space-y-2 border-t border-zinc-200 dark:border-zinc-800 pt-4">
+                        <label for="sort-select" class="block text-xs font-bold text-zinc-600 dark:text-zinc-300">الترتيب</label>
+                        <select id="sort-select" onchange="filterClientSide()" class="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-stone-50 dark:bg-zinc-950 p-2.5 text-xs focus:outline-none">
+                            <option value="default">الترتيب الافتراضي</option>
+                            <option value="price-asc">السعر: من الأقل إلى الأعلى</option>
+                            <option value="price-desc">السعر: من الأعلى إلى الأقل</option>
                         </select>
                     </div>
                 </aside>
 
-                <div class="flex-1 w-full space-y-4">
-                    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-3.5 sm:p-4 rounded-2xl flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 transition-colors duration-300">
+                <div class="flex-1 w-full space-y-5">
+                    <div class="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                         <div>
-                            <h2 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white" id="search-title">جميع المنتجات</h2>
-                            <p class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400" id="search-count">عرض النتائج المتاحة</p>
+                            <h2 id="search-title" class="text-lg sm:text-xl font-black">نتائج البحث</h2>
+                            <p id="search-count" class="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">بانتظار عرض النتائج</p>
                         </div>
-                        <form onsubmit="handleGridSearch(event)" class="relative w-full sm:w-64">
-                            <input type="text" id="grid-search-input" placeholder="ابحث عن منتج..."
-                                class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl py-2 pr-9 pl-3 text-xs text-slate-900 dark:text-slate-200 focus:outline-none">
-                            <button type="submit" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 hover:text-sky-500 text-xs">
+                        <form onsubmit="handleGridSearch(event)" class="relative w-full sm:w-72">
+                            <input type="text" id="grid-search-input" placeholder="ابحث مجدداً..."
+                                class="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-stone-50 dark:bg-zinc-950 py-2.5 pr-4 pl-10 text-xs focus:outline-none">
+                            <button type="submit" aria-label="بحث" class="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-700 dark:hover:text-white text-xs">
                                 <i class="fa-solid fa-magnifying-glass"></i>
                             </button>
                         </form>
                     </div>
-                    <div id="main-products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"></div>
+
+                    <div id="main-products-grid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5"></div>
                 </div>
             </div>
         </section>
 
-        <!-- WISHLIST VIEW -->
-        <section id="wishlist-view" class="view-section space-y-4">
-            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 sm:p-6 rounded-2xl flex items-center justify-between transition-colors duration-300">
+        <!-- 3. WISHLIST VIEW -->
+        <section id="wishlist-view" class="view-panel space-y-6">
+            <div class="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5 sm:p-6 flex items-center justify-between gap-4">
                 <div>
-                    <h2 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                        <i class="fa-solid fa-heart text-rose-500"></i> المفضلة
+                    <h2 class="text-xl font-black flex items-center gap-2">
+                        <i class="fa-solid fa-heart text-rose-500"></i>
+                        <span>المفضلة</span>
                     </h2>
-                    <p class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 mt-0.5">تتبع أسعار المنتجات المحفوظة</p>
+                    <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">المنتجات المحفوظة في حسابك</p>
                 </div>
-                <button onclick="clearAllFavorites()" class="bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-950 border border-rose-200 dark:border-rose-800/50 text-rose-600 dark:text-rose-400 text-xs font-bold px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl transition">
+                <button type="button" onclick="clearAllFavorites()" class="px-4 py-2 rounded-xl text-xs font-bold border border-rose-500/30 text-rose-600 dark:text-rose-400 hover:bg-rose-500/10 transition">
                     مسح الكل
                 </button>
             </div>
-            <div id="wishlist-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"></div>
+            <div id="wishlist-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"></div>
         </section>
 
-        <!-- ACCOUNT VIEW -->
-        <section id="account-view" class="view-section space-y-6 max-w-4xl mx-auto">
-            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-xl transition-colors duration-300">
-                <div class="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 border-b border-slate-200 dark:border-slate-800 pb-6 text-center sm:text-right">
-                    <div class="w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-tr from-sky-500 to-indigo-600 rounded-full flex items-center justify-center text-2xl sm:text-3xl font-black text-white shadow-lg shrink-0">
+        <!-- 4. ACCOUNT VIEW -->
+        <section id="account-view" class="view-panel max-w-3xl mx-auto">
+            <div class="rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 sm:p-8 space-y-6">
+                <div class="flex flex-col sm:flex-row items-center gap-5 border-b border-zinc-200 dark:border-zinc-800 pb-6 text-center sm:text-right">
+                    <div class="w-16 h-16 rounded-2xl bg-sky-600 text-white font-black text-2xl flex items-center justify-center shrink-0">
                         <span id="user-initial">م</span>
                     </div>
-                    <div class="space-y-1 flex-1 overflow-hidden w-full">
-                        <h2 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white truncate" id="profile-email-heading">مستخدم مسجل</h2>
-                        <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 truncate" id="profile-email-sub">guest@muqaran.sa</p>
-                        <span class="inline-block bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-500/20 text-[10px] sm:text-[11px] font-bold px-2.5 py-0.5 rounded-full mt-1">حساب مفعل عبر Google</span>
+                    <div class="min-w-0 flex-1 space-y-1">
+                        <h2 id="profile-email-heading" class="text-xl font-black truncate">مستخدم مسجل</h2>
+                        <p id="profile-email-sub" class="text-xs text-zinc-500 dark:text-zinc-400 truncate">user@example.com</p>
+                        <span class="inline-block text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300">حساب Google</span>
                     </div>
                 </div>
 
-                <div class="flex flex-wrap gap-4 pt-6 mt-2">
-                    <button onclick="handleLogout()" class="bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-900/50 border border-rose-200 dark:border-rose-800/50 text-rose-600 dark:text-rose-400 font-bold text-xs px-6 py-3 rounded-xl transition">
+                <div class="flex flex-wrap gap-3">
+                    <button type="button" onclick="handleLogout()" class="px-5 py-2.5 rounded-xl text-xs font-bold border border-zinc-300 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition">
                         تسجيل الخروج
                     </button>
-                    <button onclick="handleDeleteAccount()" class="bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs px-6 py-3 rounded-xl transition shadow">
+                    <button type="button" onclick="handleDeleteAccount()" class="px-5 py-2.5 rounded-xl text-xs font-bold bg-rose-600 hover:bg-rose-700 text-white transition">
                         حذف الحساب نهائياً
                     </button>
                 </div>
             </div>
         </section>
 
-        <!-- TERMS VIEW (شروط الاستخدام المحدثة) -->
-        <section id="terms-view" class="view-section space-y-6 max-w-4xl mx-auto">
-            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 sm:p-10 shadow-xl space-y-6 text-right transition-colors duration-300">
-                <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4">
-                    <h2 class="text-xl font-black text-slate-900 dark:text-white">الشروط والأحكام</h2>
-                    <button onclick="switchView('hero-view')" class="text-xs text-sky-600 dark:text-sky-400 hover:underline"><i class="fa-solid fa-arrow-right ml-1"></i> العودة للرئيسية</button>
+        <!-- 5. PRIVACY VIEW -->
+        <section id="privacy-view" class="view-panel max-w-4xl mx-auto">
+            <div class="rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 sm:p-10 space-y-6 text-right">
+                <div class="flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 pb-4">
+                    <h2 class="text-xl sm:text-2xl font-black">سياسة الخصوصية لـ "مقارن" (Privacy Policy)</h2>
+                    <button type="button" onclick="switchView('hero-view')" class="text-xs font-bold text-sky-500 hover:underline">العودة للرئيسية</button>
                 </div>
-                <div class="space-y-6 text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
-                    <div>
-                        <h3 class="font-bold text-slate-900 dark:text-white text-base mb-2">1️⃣ شروط إخلاء المسؤولية عن الأسعار (Price Disclaimer)</h3>
-                        <p class="text-slate-600 dark:text-slate-400 mb-1"><strong>دقة البيانات:</strong> التطبيق هو محرك بحث ومقارنة فقط، والأسعار المعروضة يتم تحديثها بشكل دوري، لكنها قد تختلف في نفس اللحظة على موقع الويب الأصلي نتيجة للعروض السريعة.</p>
-                        <p class="text-slate-600 dark:text-slate-400"><strong>المرجعية للموقع الأصلي:</strong> السعر النهائي المعتمد هو السعر الظاهر للمستخدم على صفحة الدفع داخل موقع الويب التابع للمتجر الإلكتروني الفعلي، ولا يتحمل التطبيق أي مسؤولية عن فروقات الأسعار.</p>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-slate-900 dark:text-white text-base mb-2">2️⃣ شروط وأحكام روابط الإحالة الخارجية (Third-Party Links)</h3>
-                        <p class="text-slate-600 dark:text-slate-400 mb-1"><strong>طبيعة الروابط:</strong> عند الضغط على "زيارة الموقع"، يتم توجيهك بالكامل إلى خوادم ومواقع ويب خارجية مستقلة لا تقع تحت إدارة أو تحكم تطبيق "مقارن".</p>
-                        <p class="text-slate-600 dark:text-slate-400"><strong>عمليات الشراء والشحن:</strong> التطبيق لا يبيع، لا يشحن، ولا يستلم أموالاً. أي عملية شراء، استرجاع، تقسيط (عبر تابي أو تمارا)، أو شكوى بخصوص جودة المنتج تتم مباشرة وبشكل كامل بين المستخدم وموقع الويب الذي تمت الشراء منه وفقاً لشروطه الخاصة.</p>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-slate-900 dark:text-white text-base mb-2">3️⃣ سياسة حقوق الملكية الفكرية والعلامات التجارية</h3>
-                        <p class="text-slate-600 dark:text-slate-400"><strong>العلامات التجارية للشركات:</strong> جميع أسماء المتاجر (مثل نون، جرير، أمازون) وشعارات المنتجات المعروضة هي حقوق ملكية فكرية وعلامات تجارية مسجلة لأصحابها الأصليين، ويستخدمها التطبيق فقط لأغراض التوضيح والمقارنة للمستهلك.</p>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-slate-900 dark:text-white text-base mb-2">4️⃣ سياسة الاستخدام العادل والخصوصية (Privacy & Usage)</h3>
-                        <p class="text-slate-600 dark:text-slate-400 mb-1"><strong>البيانات التي نجمعها:</strong> بما أن التطبيق لا يتطلب تسجيل حساب إجباري، فنحن لا نجمع أي بيانات شخصية (كالاسم أو البريد)، وإنما يتم حفظ تفضيلات البحث والوضع الليلي محلياً على ذاكرة جهازك فقط أو عبر حساب جوجل المختياري.</p>
-                        <p class="text-slate-600 dark:text-slate-400"><strong>الاستخدام التجاري:</strong> يُمنع استخدام محرك البحث الخاص بالتطبيق لغرض الكشط الآلي للبيانات (Scraping) أو الإضرار بخوادم المتاجر المقارنة.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
 
-        <!-- PRIVACY VIEW (سياسة الخصوصية الجديدة) -->
-        <section id="privacy-view" class="view-section space-y-6 max-w-4xl mx-auto">
-            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 sm:p-10 shadow-xl space-y-6 text-right transition-colors duration-300">
-                <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4">
-                    <h2 class="text-xl font-black text-slate-900 dark:text-white">سياسة الخصوصية</h2>
-                    <button onclick="switchView('hero-view')" class="text-xs text-sky-600 dark:text-sky-400 hover:underline"><i class="fa-solid fa-arrow-right ml-1"></i> العودة للرئيسية</button>
-                </div>
-                <div class="space-y-6 text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
-                    <p class="text-slate-600 dark:text-slate-400">أهلاً بك في "مقارن". نحن نحترم خصوصيتك ونلتزم بحماية بياناتك الشخصية وفقاً للأنظمة المعمول بها في المملكة العربية السعودية. توضح هذه السياسة كيفية التعامل مع بياناتك عند تسجيل الدخول باستخدام حساب جوجل الخاص بك.</p>
-                    
-                    <div>
-                        <h3 class="font-bold text-slate-900 dark:text-white text-base mb-2">1. البيانات التي نجمعها عبر حساب جوجل (Google)</h3>
-                        <p class="text-slate-600 dark:text-slate-400 mb-2">بما أن الموقع يدعم تسجيل الدخول حصرياً عبر حساب جوجل، فإننا نطلب ونصل إلى البيانات الأساسية التالية المصرح بمشاركتها من قِبل جوجل فقط:</p>
-                        <ul class="list-disc pr-5 space-y-1 text-slate-600 dark:text-slate-400">
+                <div class="space-y-6 text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed">
+                    <p class="text-zinc-600 dark:text-zinc-400">
+                        أهلاً بك في "مقارن". نحن نحترم خصوصيتك ونلتزم بحماية بياناتك الشخصية وفقاً للأنظمة المعمول بها في المملكة العربية السعودية. توضح هذه السياسة كيفية التعامل مع بياناتك عند تسجيل الدخول باستخدام حساب جوجل الخاص بك.
+                    </p>
+
+                    <div class="space-y-2">
+                        <h3 class="font-bold text-zinc-950 dark:text-white text-base">1. البيانات التي نجمعها عبر حساب جوجل (Google)</h3>
+                        <p class="text-zinc-600 dark:text-zinc-400">بما أن الموقع يدعم تسجيل الدخول حصرياً عبر حساب جوجل، فإننا نطلب ونصل إلى البيانات الأساسية التالية المصرح بمشاركتها من قِبل جوجل فقط:</p>
+                        <ul class="list-disc pr-5 space-y-1 text-zinc-600 dark:text-zinc-400">
                             <li>الاسم الشخصي (الظاهر في حسابك).</li>
                             <li>البريد الإلكتروني (المرتبط بحساب جوجل الخاص بك).</li>
                             <li>الصورة الشخصية (اختياري، لعرضها في ملفك الشخصي فقط).</li>
                         </ul>
-                        <p class="text-slate-600 dark:text-slate-400 mt-2"><strong>ملاحظة:</strong> نحن لا نصل ولا نطلع على كلمة مرور حساب جوجل الخاص بك مطلقاً، حيث تتم عملية التحقق بالكامل عبر خوادم جوجل الآمنة.</p>
+                        <p class="text-zinc-600 dark:text-zinc-400">ملاحظة: نحن لا نصل ولا نطلع على كلمة مرور حساب جوجل الخاص بك مطلقاً، حيث تتم عملية التحقق بالكامل عبر خوادم جوجل الآمنة.</p>
                     </div>
 
-                    <div>
-                        <h3 class="font-bold text-slate-900 dark:text-white text-base mb-2">2. كيف نستخدم بياناتك؟</h3>
-                        <p class="text-slate-600 dark:text-slate-400 mb-2">نستخدم المعلومات المحدودة التي نجمعها للأغراض التالية فقط:</p>
-                        <ul class="list-disc pr-5 space-y-1 text-slate-600 dark:text-slate-400">
+                    <div class="space-y-2">
+                        <h3 class="font-bold text-zinc-950 dark:text-white text-base">2. كيف نستخدم بياناتك؟</h3>
+                        <p class="text-zinc-600 dark:text-zinc-400">نستخدم المعلومات المحدودة التي نجمعها للأغراض التالية فقط:</p>
+                        <ul class="list-disc pr-5 space-y-1 text-zinc-600 dark:text-zinc-400">
                             <li>التعرف على هويتك وإدارة ملفك الشخصي داخل الموقع.</li>
                             <li>تخصيص تجربة البحث وحفظ تفضيلات المقارنة الخاصة بك.</li>
                             <li>حماية الحسابات ومنع عمليات الاستخدام المؤتمتة أو الضارة بالموقع.</li>
                         </ul>
                     </div>
 
-                    <div>
-                        <h3 class="font-bold text-slate-900 dark:text-white text-base mb-2">3. روابط المتاجر والجهات الخارجية</h3>
-                        <ul class="list-disc pr-5 space-y-1 text-slate-600 dark:text-slate-400">
+                    <div class="space-y-2">
+                        <h3 class="font-bold text-zinc-950 dark:text-white text-base">3. روابط المتاجر والجهات الخارجية</h3>
+                        <ul class="list-disc pr-5 space-y-1 text-zinc-600 dark:text-zinc-400">
                             <li>يحتوي موقعنا على روابط تنقلك مباشرة إلى مواقع المتاجر الإلكترونية (مثل أمازون، نون، جرير وغيرها).</li>
                             <li>بمجرد النقر على الرابط والانتقال إلى المتجر، فإنك تخضع لسياسة الخصوصية وشروط الاستخدام الخاصة بذلك الموقع المستقل، ولا نتحمل أي مسؤولية عن كيفية تعامل تلك المواقع مع بياناتك أو عمليات الشراء والتقسيط التي تقوم بها هناك.</li>
                         </ul>
                     </div>
 
-                    <div>
-                        <h3 class="font-bold text-slate-900 dark:text-white text-base mb-2">4. مشاركة وسرية البيانات</h3>
-                        <p class="text-slate-600 dark:text-slate-400">نحن نلتزم التزاماً تاماً بالمحافظة على سرية معلوماتك؛ ونؤكد أننا لا نقوم ببيع، أو تأجير، أو مشاركة بريدك الإلكتروني أو بياناتك الشخصية مع أي جهات إعلانية أو أطراف خارجية لأي غرض تجاري.</p>
+                    <div class="space-y-2">
+                        <h3 class="font-bold text-zinc-950 dark:text-white text-base">4. مشاركة وسرية البيانات</h3>
+                        <p class="text-zinc-600 dark:text-zinc-400">
+                            نحن نلتزم التزاماً تاماً بالمحافظة على سرية معلوماتك؛ ونؤكد أننا لا نقوم ببيع، أو تأجير، أو مشاركة بريدك الإلكتروني أو بياناتك الشخصية مع أي جهات إعلانية أو أطراف خارجية لأي غرض تجاري.
+                        </p>
                     </div>
 
-                    <div>
-                        <h3 class="font-bold text-slate-900 dark:text-white text-base mb-2">5. أمن المعلومات وحذف البيانات</h3>
-                        <ul class="list-disc pr-5 space-y-1 text-slate-600 dark:text-slate-400">
+                    <div class="space-y-2">
+                        <h3 class="font-bold text-zinc-950 dark:text-white text-base">5. أمن المعلومات وحذف البيانات</h3>
+                        <ul class="list-disc pr-5 space-y-1 text-zinc-600 dark:text-zinc-400">
                             <li>نطبق معايير أمان تقنية متطورة لحماية البيانات المربوطة بالموقع من الوصول غير المصرح به.</li>
-                            <li><strong>حق حذف البيانات:</strong> يمكنك في أي وقت إلغاء ربط حساب جوجل الخاص بك بالموقع، وتصفير أو حذف ملفك الشخصي وكافة تفضيلات البحث المرتبطة به من خوادمنا فوراً وبشكل نهائي.</li>
+                            <li>حق حذف البيانات: يمكنك في أي وقت إلغاء ربط حساب جوجل الخاص بك بالموقع، وتصفير أو حذف ملفك الشخصي وكافة تفضيلات البحث المرتبطة به من خوادمنا فوراً وبشكل نهائي.</li>
                         </ul>
                     </div>
                 </div>
             </div>
         </section>
 
+        <!-- 6. TERMS VIEW -->
+        <section id="terms-view" class="view-panel max-w-4xl mx-auto">
+            <div class="rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 sm:p-10 space-y-6 text-right">
+                <div class="flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 pb-4">
+                    <h2 class="text-xl sm:text-2xl font-black">الشروط والأحكام</h2>
+                    <button type="button" onclick="switchView('hero-view')" class="text-xs font-bold text-sky-500 hover:underline">العودة للرئيسية</button>
+                </div>
+
+                <div class="space-y-6 text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed">
+                    <div class="space-y-1.5">
+                        <h3 class="font-bold text-zinc-950 dark:text-white text-base">1️⃣ شروط إخلاء المسؤولية عن الأسعار (Price Disclaimer)</h3>
+                        <p class="text-zinc-600 dark:text-zinc-400">دقة البيانات: التطبيق هو محرك بحث ومقارنة فقط، والأسعار المعروضة يتم تحديثها بشكل دوري، لكنها قد تختلف في نفس اللحظة على موقع الويب الأصلي نتيجة للعروض السريعة.</p>
+                        <p class="text-zinc-600 dark:text-zinc-400">المرجعية للموقع الأصلي: السعر النهائي المعتمد هو السعر الظاهر للمستخدم على صفحة الدفع داخل موقع الويب التابع للمتجر الإلكتروني الفعلي، ولا يتحمل التطبيق أي مسؤولية عن فروقات الأسعار.</p>
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <h3 class="font-bold text-zinc-950 dark:text-white text-base">2️⃣ شروط وأحكام روابط الإحالة الخارجية (Third-Party Links)</h3>
+                        <p class="text-zinc-600 dark:text-zinc-400">طبيعة الروابط: عند الضغط على "زيارة الموقع"، يتم توجيهك بالكامل إلى خوادم ومواقع ويب خارجية مستقلة لا تقع تحت إدارة أو تحكم تطبيق "مقارن".</p>
+                        <p class="text-zinc-600 dark:text-zinc-400">عمليات الشراء والشحن: التطبيق لا يبيع، لا يشحن، ولا يستلم أموالاً. أي عملية شراء، استرجاع، تقسيط (عبر تابي أو تمارا)، أو شكوى بخصوص جودة المنتج تتم مباشرة وبشكل كامل بين المستخدم وموقع الويب الذي تمت الشراء منه وفقاً لشروطه الخاصة.</p>
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <h3 class="font-bold text-zinc-950 dark:text-white text-base">3️⃣ سياسة حقوق الملكية الفكرية والعلامات التجارية</h3>
+                        <p class="text-zinc-600 dark:text-zinc-400">العلامات التجارية للشركات: جميع أسماء المتاجر (مثل نون، جرير، أمازون) وشعارات المنتجات المعروضة هي حقوق ملكية فكرية وعلامات تجارية مسجلة لأصحابها الأصليين، ويستخدمها التطبيق فقط لأغراض التوضيح والمقارنة للمستهلك.</p>
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <h3 class="font-bold text-zinc-950 dark:text-white text-base">4️⃣ سياسة الاستخدام العادل والخصوصية (Privacy & Usage)</h3>
+                        <p class="text-zinc-600 dark:text-zinc-400">البيانات التي نجمعها: بما أن التطبيق لا يتطلب تسجيل حساب، فنحن لا نجمع أي بيانات شخصية (كالاسم أو البريد)، وإنما يتم حفظ تفضيلات البحث والوضع الليلي محلياً على ذاكرة جهازك فقط.</p>
+                        <p class="text-zinc-600 dark:text-zinc-400">الاستخدام التجاري: يُمنع استخدام محرك البحث الخاص بالتطبيق لغرض الكشط الآلي للبيانات (Scraping) أو الإضرار بخوادم المتاجر المقارنة.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
     </main>
 
-    <!-- AUTH MODAL -->
-    <div id="authModal" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-sm hidden flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl sm:rounded-3xl p-5 sm:p-8 w-full max-w-md shadow-2xl relative space-y-5 transition-colors duration-300">
-            <button onclick="closeAuthModal()" class="absolute left-4 top-4 sm:left-6 sm:top-6 text-slate-400 hover:text-slate-900 dark:hover:text-white transition p-2">
-                <i class="fa-solid fa-xmark text-lg sm:text-xl"></i>
+    <!-- Quick Preview Modal -->
+    <div id="previewModal" class="fixed inset-0 z-50 bg-zinc-950/80 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="w-full max-w-lg rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 relative space-y-5">
+            <button type="button" onclick="closePreviewModal()" aria-label="إغلاق المعاينة" class="absolute left-5 top-5 text-zinc-400 hover:text-zinc-900 dark:hover:text-white p-1.5">
+                <i class="fa-solid fa-xmark text-lg"></i>
             </button>
 
-            <div id="auth-main-step" class="space-y-5 pt-2">
-                <div>
-                    <h3 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">تسجيل الدخول</h3>
-                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">سجل الدخول للمتابعة وحفظ منتجاتك المفضلة</p>
-                </div>
+            <div class="h-52 rounded-2xl bg-stone-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 p-4 flex items-center justify-center">
+                <img id="modal-product-img" src="" alt="" class="max-h-full max-w-full object-contain">
+            </div>
 
-                <div class="space-y-3">
-                    <button type="button" onclick="handleGoogleLogin()" class="w-full bg-slate-100 dark:bg-slate-950 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-300 dark:border-slate-800 hover:border-sky-500 py-3.5 px-4 rounded-xl sm:rounded-2xl transition flex items-center justify-center gap-3 text-xs sm:text-sm font-bold text-slate-900 dark:text-white shadow-md">
-                        <i class="fa-brands fa-google text-base sm:text-lg text-rose-500"></i>
-                        <span>متابعة باستخدام Google</span>
-                    </button>
-                </div>
+            <div class="space-y-2 text-right">
+                <span id="modal-product-store" class="inline-block px-2.5 py-1 rounded-lg text-xs font-bold border border-zinc-200 dark:border-zinc-700 bg-stone-50 dark:bg-zinc-950"></span>
+                <h3 id="modal-product-title" class="text-base sm:text-lg font-black leading-snug"></h3>
+                <div id="modal-product-price" class="text-xl font-black text-sky-500"></div>
+            </div>
+
+            <div class="flex items-center gap-3 pt-1">
+                <button type="button" id="modal-fav-btn" class="px-4 py-3 rounded-xl border border-zinc-300 dark:border-zinc-700 text-xs font-bold flex items-center gap-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition">
+                    <i class="fa-regular fa-heart text-rose-500"></i>
+                    <span>المفضلة</span>
+                </button>
+                <a id="modal-product-link" href="#" target="_blank" rel="noopener noreferrer" class="flex-1 py-3 px-4 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-xs sm:text-sm font-extrabold flex items-center justify-center gap-2 transition">
+                    <span>الذهاب للمتجر</span>
+                    <i class="fa-solid fa-arrow-up-left text-xs"></i>
+                </a>
             </div>
         </div>
     </div>
 
-    <!-- FOOTER مع زر الدعم الفني -->
-    <footer id="main-footer" class="bg-white dark:bg-slate-900 border-t-2 border-sky-500/20 dark:border-sky-500/30 mt-16 py-8 shadow-inner transition-colors duration-300">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-right">
-            <div class="flex items-center justify-center gap-3">
-                <span class="bg-sky-600 text-white font-extrabold text-xs px-2.5 py-1 rounded-lg shadow">مُقارن</span>
-                <p class="text-xs text-slate-600 dark:text-slate-400 font-medium">© 2026 جميع الحقوق محفوظة لمنصة مقارن الأسعار</p>
+    <!-- Auth Modal -->
+    <div id="authModal" class="fixed inset-0 z-50 bg-zinc-950/80 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="w-full max-w-md rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 sm:p-8 relative space-y-5">
+            <button type="button" onclick="closeAuthModal()" aria-label="إغلاق" class="absolute left-5 top-5 text-zinc-400 hover:text-zinc-900 dark:hover:text-white p-1.5">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <div class="space-y-1.5 pt-1">
+                <h3 class="text-xl font-black">تسجيل الدخول</h3>
+                <p class="text-xs text-zinc-500 dark:text-zinc-400">سجّل الدخول بحساب Google للوصول إلى قائمة المفضلة.</p>
             </div>
-            <div class="flex items-center gap-6 text-xs text-slate-600 dark:text-slate-400 font-semibold flex-wrap justify-center">
-                <a href="#" onclick="switchView('privacy-view'); return false;" class="hover:text-sky-500 dark:hover:text-sky-400 transition">الخصوصية</a>
-                <span class="text-slate-300 dark:text-slate-700">|</span>
-                <a href="#" onclick="switchView('terms-view'); return false;" class="hover:text-sky-500 dark:hover:text-sky-400 transition">الشروط</a>
-                <span class="text-slate-300 dark:text-slate-700">|</span>
-                <a href="https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=DQSIkWdsW0yxEjajBLZtrQAAAAAAAAAAAAZAADfqI1tUMTMxT1Y3TkEzUU1GREs1VjMzT0wwWDNWNS4u" target="_blank" class="hover:text-sky-500 dark:hover:text-sky-400 transition flex items-center gap-1">
-                    <i class="fa-solid fa-headset text-sky-500"></i> الدعم الفني
+            <button type="button" onclick="handleGoogleLogin()" class="w-full py-3.5 px-4 rounded-2xl border border-zinc-300 dark:border-zinc-700 bg-stone-50 dark:bg-zinc-950 hover:border-zinc-500 transition flex items-center justify-center gap-3 text-xs sm:text-sm font-bold">
+                <i class="fa-brands fa-google text-rose-500 text-base"></i>
+                <span>متابعة باستخدام Google</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 mt-14 py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-right">
+            <div class="flex items-center gap-2.5 text-xs text-zinc-600 dark:text-zinc-400 font-medium">
+                <span class="px-2.5 py-1 rounded-lg bg-sky-600 text-white font-extrabold">مُقَارِن</span>
+                <span>© 2026 جميع الحقوق محفوظة لمنصة مقارن الأسعار</span>
+            </div>
+
+            <div class="flex items-center gap-5 text-xs font-bold text-zinc-600 dark:text-zinc-400 flex-wrap justify-center">
+                <a href="#" onclick="switchView('privacy-view'); return false;" class="hover:text-zinc-950 dark:hover:text-white transition">الخصوصية</a>
+                <span class="text-zinc-300 dark:text-zinc-700">|</span>
+                <a href="#" onclick="switchView('terms-view'); return false;" class="hover:text-zinc-950 dark:hover:text-white transition">الشروط</a>
+                <span class="text-zinc-300 dark:text-zinc-700">|</span>
+                <a href="https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=DQSIkWdsW0yxEjajBLZtrQAAAAAAAAAAAAZAADfqI1tUMTMxT1Y3TkEzUU1GREs1VjMzT0wwWDNWNS4u" target="_blank" rel="noopener noreferrer" class="hover:text-zinc-950 dark:hover:text-white transition inline-flex items-center gap-1.5">
+                    <i class="fa-solid fa-headset text-sky-500"></i>
+                    <span>الدعم الفني</span>
                 </a>
             </div>
         </div>
     </footer>
 
-    <!-- FIREBASE & APP LOGIC -->
+    <!-- Firebase Module -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, deleteUser, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, collection, doc, setDoc, deleteDoc, getDocs, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCGAjx8RU-Z6Er5viV6wDgZ6Bi0_N4Z0nU",
@@ -413,14 +465,14 @@
                 currentUser = user;
                 window.currentUser = user;
                 authControls.innerHTML = `
-                    <button onclick="switchView('account-view')" class="border border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-900 dark:text-slate-100 px-3 sm:px-4 py-2 rounded-xl font-bold text-xs transition flex items-center gap-1.5 shadow-sm">
-                        <i class="fa-solid fa-user-circle text-sm sm:text-base text-sky-500"></i>
-                        <span class="max-w-[100px] sm:max-w-[140px] truncate">${user.displayName || user.email || 'حسابي'}</span>
+                    <button type="button" onclick="switchView('account-view')" class="px-3.5 py-2 rounded-xl text-xs font-bold border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-zinc-400 transition flex items-center gap-2">
+                        <i class="fa-solid fa-user text-sky-500"></i>
+                        <span class="max-w-[110px] truncate">${user.displayName || user.email || 'حسابي'}</span>
                     </button>
                 `;
-                document.getElementById('profile-email-heading').textContent = user.displayName || "مستخدم مسجل";
-                document.getElementById('profile-email-sub').textContent = user.email || "guest@muqaran.sa";
-                document.getElementById('user-initial').textContent = (user.displayName || "م").charAt(0).toUpperCase();
+                document.getElementById('profile-email-heading').textContent = user.displayName || 'مستخدم مسجل';
+                document.getElementById('profile-email-sub').textContent = user.email || 'user@example.com';
+                document.getElementById('user-initial').textContent = (user.displayName || 'م').charAt(0).toUpperCase();
                 loadUserFavorites(user.uid);
             } else {
                 currentUser = null;
@@ -428,205 +480,301 @@
                 if (unsubscribeFavs) unsubscribeFavs();
                 window.favorites = [];
                 authControls.innerHTML = `
-                    <button onclick="openAuthModal()" class="border border-sky-600 bg-sky-600 hover:bg-sky-500 text-white px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-xl font-bold text-xs transition whitespace-nowrap shadow-sm">
+                    <button type="button" onclick="openAuthModal()" class="bg-sky-600 hover:bg-sky-500 text-white px-4 py-2 rounded-xl font-bold text-xs sm:text-sm transition whitespace-nowrap">
                         تسجيل دخول
                     </button>
                 `;
             }
         });
 
-        window.openAuthModal = () => document.getElementById('authModal').classList.remove('hidden');
-        window.closeAuthModal = () => document.getElementById('authModal').classList.add('hidden');
-        window.handleGoogleLogin = async () => {
-            try { await signInWithPopup(auth, googleProvider); showToast("تم تسجيل الدخول بنجاح!"); closeAuthModal(); } catch (err) { showToast("خطأ في تسجيل الدخول"); }
+        window.openAuthModal = () => {
+            const modal = document.getElementById('authModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
         };
-        window.handleLogout = async () => { await signOut(auth); showToast("تم تسجيل الخروج"); switchView('hero-view'); };
+
+        window.closeAuthModal = () => {
+            const modal = document.getElementById('authModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        };
+
+        window.handleGoogleLogin = async () => {
+            try {
+                await signInWithPopup(auth, googleProvider);
+                showToast('تم تسجيل الدخول بنجاح');
+                closeAuthModal();
+            } catch (err) {
+                showToast('تعذر إتمام تسجيل الدخول');
+            }
+        };
+
+        window.handleLogout = async () => {
+            await signOut(auth);
+            showToast('تم تسجيل الخروج');
+            switchView('hero-view');
+        };
+
         window.handleDeleteAccount = async () => {
-            if (!currentUser || !confirm("هل أنت متأكد من حذف الحساب نهائياً؟")) return;
-            try { await deleteUser(currentUser); showToast("تم حذف الحساب بنجاح"); switchView('hero-view'); } catch (err) { showToast("يرجى إعادة تسجيل الدخول لتأكيد الحذف"); }
+            if (!currentUser || !confirm('هل أنت متأكد من حذف الحساب نهائياً؟')) return;
+            try {
+                await deleteUser(currentUser);
+                showToast('تم حذف الحساب بنجاح');
+                switchView('hero-view');
+            } catch (err) {
+                showToast('يرجى إعادة تسجيل الدخول لتأكيد الحذف');
+            }
         };
 
         window.toggleFavorite = async function(id) {
-            if (!currentUser) { showToast("يجب تسجيل الدخول للمفضلة!"); openAuthModal(); return; }
-            const product = window.allFetchedProducts.find(p => p.id === id);
+            if (!currentUser) {
+                showToast('سجّل الدخول لحفظ المنتجات في المفضلة');
+                openAuthModal();
+                return;
+            }
+            const product = window.allFetchedProducts.find((p) => p.id === id);
             if (!product) return;
             const idx = window.favorites.indexOf(id);
-            const favRef = doc(db, "users", currentUser.uid, "favorites", String(id));
+            const favRef = doc(db, 'users', currentUser.uid, 'favorites', String(id));
             if (idx > -1) {
                 window.favorites.splice(idx, 1);
-                showToast("تم الحذف من المفضلة");
-                try { await deleteDoc(favRef); } catch(e){}
+                showToast('تمت الإزالة من المفضلة');
+                try { await deleteDoc(favRef); } catch (e) {}
             } else {
                 window.favorites.push(id);
-                showToast("تمت الإضافة للمفضلة ♥️");
-                try { await setDoc(favRef, { productId: product.id, title: product.title || product.name, price: product.price, store: product.store, image: product.image, link: product.link }); } catch(e){}
+                showToast('تمت الإضافة إلى المفضلة');
+                try {
+                    await setDoc(favRef, {
+                        productId: product.id,
+                        title: product.title || product.name,
+                        price: product.price,
+                        store: product.store,
+                        image: product.image,
+                        link: product.link
+                    });
+                } catch (e) {}
             }
-            if (document.getElementById('search-view').classList.contains('active')) filterClientSide();
-            if (document.getElementById('wishlist-view').classList.contains('active')) renderWishlist();
-        }
+            if (document.getElementById('search-view').classList.contains('is-active')) filterClientSide();
+            if (document.getElementById('wishlist-view').classList.contains('is-active')) renderWishlist();
+        };
 
         function loadUserFavorites(uid) {
             if (unsubscribeFavs) unsubscribeFavs();
-            unsubscribeFavs = onSnapshot(collection(db, "users", uid, "favorites"), (snapshot) => {
+            unsubscribeFavs = onSnapshot(collection(db, 'users', uid, 'favorites'), (snapshot) => {
                 window.favorites = [];
-                snapshot.forEach(d => window.favorites.push(Number(d.id) || Number(d.data().productId)));
-                if (document.getElementById('search-view').classList.contains('active')) filterClientSide();
-                if (document.getElementById('wishlist-view').classList.contains('active')) renderWishlist();
+                snapshot.forEach((d) => window.favorites.push(Number(d.id) || Number(d.data().productId)));
+                if (document.getElementById('search-view').classList.contains('is-active')) filterClientSide();
+                if (document.getElementById('wishlist-view').classList.contains('is-active')) renderWishlist();
             });
         }
     </script>
 
+    <!-- Core Interactive Application Logic -->
     <script>
         window.allFetchedProducts = [];
         window.favorites = [];
 
-        // تنبيه قريباً للأقسام غير المتاحة
-        window.showSoonAlert = function(sectionName) {
-            showToast(`قسم "${sectionName}" قريباً إن شاء الله 🚀`);
-        }
+        const FALLBACK_IMAGE = 'data:image/svg+xml;utf8,' + encodeURIComponent(`
+            <svg xmlns="http://www.w3.org/2000/svg" width="240" height="160" viewBox="0 0 240 160">
+                <rect width="240" height="160" rx="14" fill="#18181b"/>
+                <rect x="78" y="34" width="84" height="62" rx="10" fill="none" stroke="#71717a" stroke-width="2.2"/>
+                <circle cx="101" cy="57" r="6" fill="#71717a"/>
+                <path d="M86 87 L112 64 L131 80 L145 69 L154 87 Z" fill="#52525b"/>
+                <text x="120" y="122" text-anchor="middle" fill="#a1a1aa" font-family="Tajawal, sans-serif" font-size="13">لا تتوفر صورة</text>
+            </svg>
+        `);
 
-        // دوال بحث المتاجر الإلكترونية الكبرى (نون، أمازون، الخ)
+        window.showSoonAlert = function(name) {
+            showToast(`قسم "${name}" — قريباً`);
+        };
+
+        window.openPreviewModal = function(productId) {
+            const p = window.allFetchedProducts.find((item) => item.id === productId);
+            if (!p) return;
+            const title = p.name || p.title || 'منتج';
+            const numericPrice = p.price !== undefined && p.price !== null && p.price !== '' && !isNaN(Number(p.price)) && Number(p.price) > 0;
+
+            document.getElementById('modal-product-img').src = p.image || FALLBACK_IMAGE;
+            document.getElementById('modal-product-img').alt = title;
+            document.getElementById('modal-product-store').textContent = p.store || 'متجر';
+            document.getElementById('modal-product-title').textContent = title;
+            document.getElementById('modal-product-price').innerHTML = numericPrice
+                ? `${Number(p.price).toLocaleString()} <span class="text-xs font-normal text-zinc-500 dark:text-zinc-400">ر.س</span>`
+                : `<span class="text-sm font-bold text-zinc-600 dark:text-zinc-300">${p.price || 'تحقق من السعر في المتجر'}</span>`;
+            document.getElementById('modal-product-link').href = p.link || '#';
+
+            const favBtn = document.getElementById('modal-fav-btn');
+            favBtn.onclick = () => {
+                window.toggleFavorite(p.id);
+                closePreviewModal();
+            };
+
+            const modal = document.getElementById('previewModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        };
+
+        window.closePreviewModal = function() {
+            const modal = document.getElementById('previewModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        };
+
         window.handleHeroSearch = function(e) {
             e.preventDefault();
-            const query = document.getElementById('hero-search-input').value.trim();
+            const q = document.getElementById('hero-search-input').value.trim();
             switchView('search-view');
-            const gridSearchInput = document.getElementById('grid-search-input');
-            if (gridSearchInput) gridSearchInput.value = query;
-            fetchProductsFromServer(query);
-        }
+            const gridInput = document.getElementById('grid-search-input');
+            if (gridInput) gridInput.value = q;
+            fetchProductsFromServer(q);
+        };
 
         window.handleGridSearch = function(e) {
             e.preventDefault();
-            const query = document.getElementById('grid-search-input').value.trim();
-            fetchProductsFromServer(query);
-        }
+            const q = document.getElementById('grid-search-input').value.trim();
+            fetchProductsFromServer(q);
+        };
 
         async function fetchProductsFromServer(query) {
             const grid = document.getElementById('main-products-grid');
-            const titleLabel = document.getElementById('search-title');
-            if (titleLabel) titleLabel.textContent = query ? `نتائج البحث عن: "${query}"` : 'جميع المنتجات';
+            const titleEl = document.getElementById('search-title');
+            if (titleEl) titleEl.textContent = query ? `نتائج البحث عن "${query}"` : 'جميع المنتجات';
             if (grid) {
                 grid.innerHTML = `
-                    <div class="col-span-full py-12 text-center text-sky-500 dark:text-sky-400">
-                        <i class="fa-solid fa-spinner fa-spin text-3xl mb-3"></i>
-                        <p class="text-xs sm:text-sm font-bold">جاري البحث في المتاجر ومقارنة الأسعار...</p>
+                    <div class="col-span-full py-14 text-center text-zinc-500">
+                        <i class="fa-solid fa-circle-notch fa-spin text-2xl mb-3 text-sky-500"></i>
+                        <p class="text-xs sm:text-sm font-bold">جاري جلب النتائج من المتاجر...</p>
                     </div>
                 `;
             }
             try {
-                const response = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
-                const products = await response.json();
-                window.allFetchedProducts = products;
+                const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+                if (!res.ok) throw new Error('HTTP error');
+                const data = await res.json();
+                window.allFetchedProducts = Array.isArray(data) ? data : [];
                 filterClientSide();
             } catch (err) {
-                console.error(err);
-                if (grid) grid.innerHTML = '<div class="col-span-full py-12 text-center text-rose-500">حدث خطأ أثناء الاتصال بالسيرفر</div>';
+                window.allFetchedProducts = [];
+                if (grid) {
+                    grid.innerHTML = '<div class="col-span-full py-14 text-center text-rose-500 text-xs sm:text-sm font-bold">تعذر الاتصال بالسيرفر حالياً</div>';
+                }
             }
         }
 
         window.filterClientSide = function() {
-            const selectedStores = Array.from(document.querySelectorAll('.store-filter:checked')).map(cb => cb.value);
+            const checkedStores = Array.from(document.querySelectorAll('.store-filter:checked')).map((el) => el.value);
             const sortVal = document.getElementById('sort-select')?.value || 'default';
-            let filtered = window.allFetchedProducts.filter(p => selectedStores.some(s => (p.store || '').includes(s)));
-            if (sortVal === 'price-asc') filtered.sort((a, b) => Number(a.price) - Number(b.price));
-            if (sortVal === 'price-desc') filtered.sort((a, b) => Number(b.price) - Number(a.price));
+            let list = window.allFetchedProducts.filter((p) => checkedStores.some((s) => (p.store || '').includes(s)));
+
+            if (sortVal === 'price-asc') {
+                list.sort((a, b) => (isNaN(Number(a.price)) ? Infinity : Number(a.price)) - (isNaN(Number(b.price)) ? Infinity : Number(b.price)));
+            } else if (sortVal === 'price-desc') {
+                list.sort((a, b) => (isNaN(Number(b.price)) ? -Infinity : Number(b.price)) - (isNaN(Number(a.price)) ? -Infinity : Number(a.price)));
+            }
+
+            const countEl = document.getElementById('search-count');
+            if (countEl) countEl.textContent = `عدد النتائج المعروضة: ${list.length}`;
 
             const grid = document.getElementById('main-products-grid');
-            const countLabel = document.getElementById('search-count');
-            if (countLabel) countLabel.textContent = `تم العثور على ${filtered.length} منتج`;
             if (grid) {
-                grid.innerHTML = filtered.length === 0 ? `
-                    <div class="col-span-full py-12 text-center text-slate-500">
-                        <i class="fa-solid fa-box-open text-4xl mb-3 opacity-40"></i>
-                        <p class="text-xs sm:text-sm font-medium">لا توجد منتجات مطابقة لخيارات الفلترة</p>
-                    </div>
-                ` : filtered.map(createProductCardHTML).join('');
+                grid.innerHTML = list.length === 0
+                    ? '<div class="col-span-full py-14 text-center text-zinc-500 text-xs sm:text-sm font-bold">لا توجد نتائج مطابقة للفلترة الحالية</div>'
+                    : list.map(createProductCardHTML).join('');
             }
-        }
+        };
 
         window.resetFilters = function() {
-            document.querySelectorAll('.store-filter').forEach(cb => cb.checked = true);
+            document.querySelectorAll('.store-filter').forEach((el) => { el.checked = true; });
             const sortSelect = document.getElementById('sort-select');
             if (sortSelect) sortSelect.value = 'default';
             filterClientSide();
-        }
+        };
 
         window.filterByStore = function(storeName) {
             switchView('search-view');
-            document.querySelectorAll('.store-filter').forEach(cb => cb.checked = (cb.value === storeName));
+            document.querySelectorAll('.store-filter').forEach((el) => { el.checked = el.value === storeName; });
             if (window.allFetchedProducts.length === 0) fetchProductsFromServer('');
             else filterClientSide();
-        }
+        };
 
         function createProductCardHTML(p) {
             const isFav = window.favorites.includes(p.id);
-            const title = p.name || p.title;
+            const title = p.name || p.title || 'منتج';
+            const numericPrice = p.price !== undefined && p.price !== null && p.price !== '' && !isNaN(Number(p.price)) && Number(p.price) > 0;
+            const priceHtml = numericPrice
+                ? `${Number(p.price).toLocaleString()} <span class="text-xs font-normal text-zinc-500 dark:text-zinc-400">ر.س</span>`
+                : `<span class="text-xs sm:text-sm font-bold text-zinc-600 dark:text-zinc-300">${p.price || 'تحقق من السعر في المتجر'}</span>`;
+            const imgSrc = p.image || FALLBACK_IMAGE;
+
             return `
-                <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 rounded-2xl overflow-hidden flex flex-col justify-between shadow-md transition group">
+                <article class="product-card-interactive rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 overflow-hidden flex flex-col justify-between hover:border-zinc-400 dark:hover:border-zinc-600">
                     <div>
-                        <div class="relative w-full h-44 sm:h-48 bg-slate-100 dark:bg-slate-950 overflow-hidden flex items-center justify-center p-4">
-                            <img src="${p.image}" alt="${title}" class="h-full w-full object-contain group-hover:scale-105 transition duration-300" onerror="this.src='https://placehold.co/300x200/1e293b/ffffff?text=صورة+المنتج'">
-                            <button onclick="toggleFavorite(${p.id})" class="absolute top-3 left-3 w-9 h-9 rounded-full bg-white/80 dark:bg-slate-900/80 hover:bg-white dark:hover:bg-slate-900 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-700 dark:text-slate-300 hover:text-rose-500 transition shadow">
-                                <i class="${isFav ? 'fa-solid text-rose-500' : 'fa-regular'} fa-heart text-base"></i>
-                            </button>
-                            <span class="absolute top-3 right-3 bg-white/90 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-300 text-[11px] font-bold px-2.5 py-1 rounded-lg">
-                                ${p.store}
+                        <div class="relative h-44 bg-stone-50 dark:bg-zinc-950 p-4 flex items-center justify-center border-b border-zinc-100 dark:border-zinc-800/70">
+                            <img src="${imgSrc}" alt="${title}" loading="lazy" class="max-h-full max-w-full object-contain" onerror="this.onerror=null;this.src='${FALLBACK_IMAGE}';">
+                            <span class="absolute top-3 right-3 px-2.5 py-1 rounded-lg text-[11px] font-bold border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900">
+                                ${p.store || 'متجر'}
                             </span>
+                            <button type="button" onclick="toggleFavorite(${p.id})" aria-label="المفضلة" class="absolute top-3 left-3 w-8 h-8 rounded-full border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 flex items-center justify-center text-zinc-600 dark:text-zinc-300 hover:text-rose-500 transition">
+                                <i class="${isFav ? 'fa-solid text-rose-500' : 'fa-regular'} fa-heart text-xs"></i>
+                            </button>
                         </div>
+
                         <div class="p-4 sm:p-5 space-y-2">
-                            <h3 class="font-bold text-xs sm:text-sm text-slate-900 dark:text-white line-clamp-2 leading-snug">${title}</h3>
-                            <div class="text-lg sm:text-xl font-extrabold text-sky-600 dark:text-sky-400 pt-1">
-                                ${isNaN(Number(p.price)) ? p.price : Number(p.price).toLocaleString()} <span class="text-xs text-slate-500 dark:text-slate-400 font-normal">${isNaN(Number(p.price)) ? '' : 'ر.س'}</span>
-                            </div>
+                            <h3 class="text-xs sm:text-sm font-bold leading-relaxed line-clamp-2 text-zinc-900 dark:text-white">${title}</h3>
+                            <div class="text-lg sm:text-xl font-black text-sky-500 pt-1">${priceHtml}</div>
                         </div>
                     </div>
-                    <div class="px-4 pb-4 sm:px-5 sm:pb-5 pt-1">
-                        <a href="${p.link}" target="_blank" class="w-full py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-sky-600 dark:hover:bg-sky-600 text-slate-800 dark:text-slate-200 hover:text-white font-bold text-xs rounded-xl flex items-center justify-center gap-2 transition border border-slate-200 dark:border-slate-700">
+
+                    <div class="px-4 pb-4 sm:px-5 sm:pb-5 flex items-center gap-2">
+                        <button type="button" onclick="openPreviewModal(${p.id})" class="py-2.5 px-3 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-stone-50 dark:bg-zinc-950 hover:border-zinc-400 text-xs font-bold transition">
+                            معاينة
+                        </button>
+                        <a href="${p.link}" target="_blank" rel="noopener noreferrer" class="flex-1 py-2.5 px-4 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-stone-50 dark:bg-zinc-950 hover:border-zinc-400 dark:hover:border-zinc-500 text-xs font-bold flex items-center justify-center gap-2 transition">
                             <span>الذهاب للمتجر</span>
-                            <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                            <i class="fa-solid fa-arrow-up-left text-[11px]"></i>
                         </a>
                     </div>
-                </div>
+                </article>
             `;
         }
 
-        window.switchView = function(viewId, saveState = true) {
+        window.switchView = function(viewId, save = true) {
             if (viewId === 'wishlist-view' && !window.currentUser) {
-                showToast("يجب تسجيل الدخول للمفضلة!");
+                showToast('سجّل الدخول لعرض المفضلة');
                 openAuthModal();
                 return;
             }
-            document.querySelectorAll('.view-section').forEach(view => view.classList.remove('active'));
-            const targetView = document.getElementById(viewId);
-            if (targetView) targetView.classList.add('active');
+            document.querySelectorAll('.view-panel').forEach((el) => el.classList.remove('is-active'));
+            const target = document.getElementById(viewId);
+            if (target) target.classList.add('is-active');
 
             if (viewId === 'search-view' && window.allFetchedProducts.length === 0) fetchProductsFromServer('');
             if (viewId === 'wishlist-view') renderWishlist();
 
-            if (saveState) localStorage.setItem('muqaran_active_view', viewId);
+            if (save) localStorage.setItem('muqaran_active_view', viewId);
             window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
+        };
 
         window.toggleDarkMode = function() {
-            const htmlRoot = document.getElementById('html-root');
-            const isDark = htmlRoot.classList.contains('dark');
+            const root = document.getElementById('html-root');
+            const isDark = root.classList.contains('dark');
             if (isDark) {
-                htmlRoot.classList.remove('dark');
+                root.classList.remove('dark');
                 localStorage.setItem('muqaran_theme', 'light');
                 updateThemeIcon(false);
-                showToast("تم تفعيل الوضع الفاتح");
+                showToast('تم تفعيل الوضع الفاتح');
             } else {
-                htmlRoot.classList.add('dark');
+                root.classList.add('dark');
                 localStorage.setItem('muqaran_theme', 'dark');
                 updateThemeIcon(true);
-                showToast("تم تفعيل الوضع الداكن");
+                showToast('تم تفعيل الوضع الداكن');
             }
-        }
+        };
 
         function updateThemeIcon(isDark) {
             const icon = document.getElementById('theme-icon');
             if (!icon) return;
-            icon.className = isDark ? "fa-solid fa-sun text-sm sm:text-base text-amber-400" : "fa-solid fa-moon text-sm sm:text-base text-slate-700";
+            icon.className = isDark ? 'fa-solid fa-sun text-sm text-amber-400' : 'fa-solid fa-moon text-sm text-zinc-700';
         }
 
         window.handleImageSearch = function(event) {
@@ -636,58 +784,62 @@
             reader.onload = function(e) {
                 document.getElementById('preview-img').src = e.target.result;
                 document.getElementById('image-name-label').textContent = file.name;
-                document.getElementById('image-preview-container').classList.remove('hidden');
-                document.getElementById('image-preview-container').classList.add('flex');
-                showToast("تم رفـع الصورة بنجاح، جاري جلب النتائج...");
+                const box = document.getElementById('image-preview-container');
+                box.classList.remove('hidden');
+                box.classList.add('flex');
+                showToast('تم إرفاق الصورة، جاري البحث...');
                 setTimeout(() => {
-                    const simulatedQueries = ['ايفون 15', 'سماعات بلوتوث', 'ساعة ذكية'];
-                    const randomQuery = simulatedQueries[Math.floor(Math.random() * simulatedQueries.length)];
-                    document.getElementById('hero-search-input').value = randomQuery;
+                    const samples = ['آيفون 15', 'سماعات بلوتوث', 'ساعة ذكية'];
+                    const picked = samples[Math.floor(Math.random() * samples.length)];
+                    document.getElementById('hero-search-input').value = picked;
                     switchView('search-view');
-                    const gridSearchInput = document.getElementById('grid-search-input');
-                    if (gridSearchInput) gridSearchInput.value = randomQuery;
-                    fetchProductsFromServer(randomQuery);
-                }, 1500);
+                    const gridInput = document.getElementById('grid-search-input');
+                    if (gridInput) gridInput.value = picked;
+                    fetchProductsFromServer(picked);
+                }, 1100);
             };
             reader.readAsDataURL(file);
-        }
+        };
 
         window.clearImageSearch = function() {
             document.getElementById('image-upload-input').value = '';
-            document.getElementById('image-preview-container').classList.remove('flex');
-            document.getElementById('image-preview-container').classList.add('hidden');
-            showToast("تم إزالة الصورة");
-        }
+            const box = document.getElementById('image-preview-container');
+            box.classList.add('hidden');
+            box.classList.remove('flex');
+            showToast('تمت إزالة الصورة');
+        };
 
         window.renderWishlist = function() {
             const grid = document.getElementById('wishlist-grid');
-            const uniqueFavs = window.allFetchedProducts.filter(p => window.favorites.includes(p.id));
-
+            const favs = window.allFetchedProducts.filter((p) => window.favorites.includes(p.id));
             if (grid) {
-                grid.innerHTML = uniqueFavs.length === 0 ? `
-                    <div class="col-span-full py-12 text-center text-slate-500">
-                        <i class="fa-regular fa-heart text-4xl mb-3 opacity-30"></i>
-                        <p class="text-xs sm:text-sm font-medium">قائمة المفضلة فارغة حالياً</p>
-                    </div>
-                ` : uniqueFavs.map(createProductCardHTML).join('');
+                grid.innerHTML = favs.length === 0
+                    ? '<div class="col-span-full py-14 text-center text-zinc-500 text-xs sm:text-sm font-bold">قائمة المفضلة فارغة حالياً</div>'
+                    : favs.map(createProductCardHTML).join('');
             }
-        }
+        };
 
         window.clearAllFavorites = function() {
             if (window.favorites.length === 0) return;
-            const toRemove = [...window.favorites];
-            toRemove.forEach(id => window.toggleFavorite(id));
-        }
+            [...window.favorites].forEach((id) => window.toggleFavorite(id));
+        };
 
-        window.showToast = function(msg) {
+        window.showToast = function(message) {
             const container = document.getElementById('toast-container');
             if (!container) return;
             const toast = document.createElement('div');
-            toast.className = "bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white px-4 py-3 rounded-xl shadow-2xl text-xs font-bold flex items-center gap-3 animate-pulse pointer-events-auto";
-            toast.innerHTML = `<i class="fa-solid fa-circle-info text-sky-500"></i><span>${msg}</span>`;
+            toast.className = 'pointer-events-auto rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white px-4 py-3 text-xs font-bold shadow-lg flex items-center gap-2.5';
+            toast.innerHTML = `<i class="fa-solid fa-circle-info text-sky-500"></i><span>${message}</span>`;
             container.appendChild(toast);
             setTimeout(() => toast.remove(), 2200);
-        }
+        };
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closePreviewModal();
+                closeAuthModal();
+            }
+        });
 
         window.onload = function() {
             const savedTheme = localStorage.getItem('muqaran_theme');
@@ -697,6 +849,7 @@
             } else {
                 updateThemeIcon(true);
             }
+
             const savedView = localStorage.getItem('muqaran_active_view') || 'hero-view';
             switchView(savedView, false);
         };
